@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
 from models.gpt2_circuit import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel,PruningConfig
-from dataset.gt import GTDataset, load_or_generate_gt_data, create_two_digit_token_mapping, run_evaluation
+from dataset.gt_gpt2 import GTDataset, load_or_generate_gt_data, create_two_digit_token_mapping, run_evaluation
 
 
 import torch

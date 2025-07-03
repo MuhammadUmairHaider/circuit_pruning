@@ -40,7 +40,7 @@ def convert_disk_sample_to_gt_format(disk_sample):
     }
 
 def load_or_generate_gt_data(
-    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/edge_pruning/datasets/gt",
+    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/datasets/gt",
     split: str = "train",
     num_samples: Optional[int] = None
 ) -> List[Dict]:
@@ -152,7 +152,7 @@ def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: 
             outputs = model_to_eval(input_ids=batch['clean_input_ids'], corrupted_input_ids=batch.get('corrupted_input_ids'), attention_mask=batch['clean_attention_mask'])
             
             # This part is the same: get the logits for the last token position
-            last_token_logits = outputs.logits[torch.arange(outputs.logits.size(0)), batch['last_token_idx']-1, :]
+            last_token_logits = outputs.logits[torch.arange(outputs.logits.size(0)), batch['last_token_idx'], :]
 
             # --- RE-NORMALIZATION LOGIC ---
             # 1. Filter logits to only include our ~97 two-digit number tokens

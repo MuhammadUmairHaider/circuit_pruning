@@ -7,8 +7,8 @@ from torch.utils.data import Dataset, DataLoader
 from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
-from models.gpt2_test import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
-from dataset.ioi_t import IOIDataset, load_or_generate_ioi_data, run_evaluation
+from models.gpt2_circuit import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
+from dataset.gp import GPDataset, load_or_generate_gp_data, run_evaluation
 
 import torch
 import torch.nn as nn
@@ -24,53 +24,38 @@ from utils import disable_dropout, analyze_and_finalize_circuit
 # PRUNING CONFIGURATION
 # ==============================================================================
 from dataclasses import dataclass
-PRUNING_FACTOR = 1
+prune_factor = 0.009
 
-# @dataclass
 @dataclass
 class PruningConfig:
     init_value: float = 1.0
-    sparsity_warmup_steps: int = 1000
+    sparsity_warmup_steps: int = 1
 
-    # --- Fine-grained pruning (existing) ---
-    # Attention Head Pruning
+    # --- Control Panel for Pruning Granularity ---
+    
+    # Attention Head Pruning (what we already have)
     prune_attention_heads: bool = True
-    lambda_attention_heads: float = 0.01 * PRUNING_FACTOR
+    lambda_attention_heads: float = 0.05 * prune_factor  # The penalty for the attention head gates
 
-    # MLP neuron pruning
-    prune_mlp_hidden: bool = True
-    lambda_mlp_hidden: float = 0.00005 * PRUNING_FACTOR
-    prune_mlp_output: bool = True
-    lambda_mlp_output: float = 0.00005 * PRUNING_FACTOR
-    
-    
-    prune_attention_neurons: bool = True
-    lambda_attention_neurons: float = 0.0002 * PRUNING_FACTOR
+    # --- NEW: Separate controls for each MLP layer ---
+    prune_mlp_hidden: bool = True       # Prune the intermediate "fat" layer of the MLP
+    lambda_mlp_hidden: float = 0.0009 * prune_factor     # The penalty for the hidden layer gates
+
+    prune_mlp_output: bool = True      # Prune the final output of the entire MLP sub-block
+    lambda_mlp_output: float = 0.0009 * prune_factor    # The penalty for the output gates
     
     prune_embedding: bool = False
-    lambda_embedding: float = 1 * PRUNING_FACTOR
-    
-    # Prune entire attention blocks
-    prune_attention_blocks: bool = True
-    lambda_attention_blocks: float = 0.05 * PRUNING_FACTOR
-    
-    # Prune entire MLP blocks
-    prune_mlp_blocks: bool = True
-    lambda_mlp_blocks: float = 0.05 * PRUNING_FACTOR
-    
-    # Prune entire transformer layers
-    prune_full_layers: bool = False
-    lambda_full_layers: float = 0.005 * PRUNING_FACTOR
+    lambda_embedding: float = 0.1 * prune_factor  # This is a crucial hyperparameter to tune
 
 # ==============================================================================
-# MAIN EXECUTION FOR IOI TASK
+# MAIN EXECUTION FOR GENDER PRONOUNS TASK
 # ==============================================================================
 if __name__ == '__main__':
     # --- Configuration ---
-    MODEL_NAME = 'gpt2'
-    NUM_EPOCHS = 50
+    MODEL_NAME = 'gpt2-xl'
+    NUM_EPOCHS = 10
     LEARNING_RATE = 5e-3
-    BATCH_SIZE = 32
+    BATCH_SIZE = 8  # Matching the reference implementation
     MAX_SEQ_LEN = 64
     ACCURACY_BUDGET = 0.05  # Allow 5% accuracy drop from baseline
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -106,25 +91,28 @@ if __name__ == '__main__':
     print(f"\nTotal parameters: {total_params}")
     print(f"Trainable gate parameters: {trainable_params} ({trainable_params/total_params*100:.4f}%)")
 
-    print("\nVerifying trainable parameters:")
-    for name, param in circuit_model.named_parameters():
-        if param.requires_grad:
-            print(f"  TRAINABLE: {name} - shape: {param.shape}")
-
-    # # Double-check optimizer
-    # print(f"\nOptimizer is training {len(optimizer.param_groups[0]['params'])} parameter tensors")
-
     # --- Dataset Setup ---
-    print("\nSetting up IOI dataset...")
-    # Load from disk
-    train_data = load_or_generate_ioi_data(split="train_100k", num_samples=2000)  # Limit samples for efficiency
-    val_data = load_or_generate_ioi_data(split="validation", num_samples=1000)
-    test_data = load_or_generate_ioi_data(split="test", num_samples=1000)
+    print("\nSetting up Gender Pronouns dataset...")
+    # Load GP data - typically only has test split
+    test_data = load_or_generate_gp_data(split="test", num_samples=100000)  # Matching reference
+    
+    # Split into train/val/test (80/10/10)
+    random.shuffle(test_data)
+    train_size = int(0.8 * len(test_data))
+    val_size = int(0.1 * len(test_data))
+    
+    train_data = test_data[:train_size]
+    val_data = test_data[train_size:train_size + val_size]
+    test_data_final = test_data[train_size + val_size:]
+    
+    print(f"Train samples: {len(train_data)}")
+    print(f"Val samples: {len(val_data)}")
+    print(f"Test samples: {len(test_data_final)}")
 
     # Create dataset objects
-    train_dataset = IOIDataset(train_data, tokenizer, max_length=MAX_SEQ_LEN)
-    val_dataset = IOIDataset(val_data, tokenizer, max_length=MAX_SEQ_LEN)
-    test_dataset = IOIDataset(test_data, tokenizer, max_length=MAX_SEQ_LEN)
+    train_dataset = GPDataset(train_data, tokenizer, max_length=MAX_SEQ_LEN)
+    val_dataset = GPDataset(val_data, tokenizer, max_length=MAX_SEQ_LEN)
+    test_dataset = GPDataset(test_data_final, tokenizer, max_length=MAX_SEQ_LEN)
 
     # Create dataloaders
     train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -163,9 +151,7 @@ if __name__ == '__main__':
     gate_params = [p for p in circuit_model.parameters() if p.requires_grad]
     optimizer = AdamW(gate_params, lr=LEARNING_RATE)
     
-    
-    
-    print(f"\n--- Starting training to find 'Indirect Object Identification' circuit ---")
+    print(f"\n--- Starting training to find 'Gender Pronouns' circuit ---")
     print(f"Target: Maintain accuracy within {ACCURACY_BUDGET*100}% of baseline ({base_accuracy:.4f})")
     
     circuit_model.train()
@@ -184,7 +170,7 @@ if __name__ == '__main__':
                 if isinstance(val, torch.Tensor): 
                     batch[key] = val.to(DEVICE)
             
-            # Forward pass through circuit model with corrupted inputs
+            # Forward pass through circuit model
             circuit_outputs = circuit_model(
                 input_ids=batch['input_ids'], 
                 corrupted_input_ids=batch['corrupted_input_ids'], 
@@ -242,21 +228,21 @@ if __name__ == '__main__':
         print(f"  - Sparsity Loss: {avg_sparsity:.4f}")
         
         # --- Epoch Validation ---
-        # circuit_model.eval()
-        # val_results = run_evaluation(
-        #     model_to_eval=circuit_model, 
-        #     model_name=f"Circuit after Epoch {epoch+1}", 
-        #     full_model_for_faithfulness=full_model, 
-        #     dataloader=val_dataloader, 
-        #     device=DEVICE, 
-        #     tokenizer=tokenizer
-        # )
+        circuit_model.eval()
+        val_results = run_evaluation(
+            model_to_eval=circuit_model, 
+            model_name=f"Circuit after Epoch {epoch+1}", 
+            full_model_for_faithfulness=full_model, 
+            dataloader=val_dataloader, 
+            device=DEVICE, 
+            tokenizer=tokenizer
+        )
         
         # Check if we're within accuracy budget
-        # current_accuracy = val_results.get("accuracy", 0.0)
-        # accuracy_drop = base_accuracy - current_accuracy
-        # if accuracy_drop > ACCURACY_BUDGET:
-        #     print(f"  WARNING: Accuracy drop ({accuracy_drop:.4f}) exceeds budget ({ACCURACY_BUDGET})!")
+        current_accuracy = val_results.get("accuracy", 0.0)
+        accuracy_drop = base_accuracy - current_accuracy
+        if accuracy_drop > ACCURACY_BUDGET:
+            print(f"  WARNING: Accuracy drop ({accuracy_drop:.4f}) exceeds budget ({ACCURACY_BUDGET})!")
         
         circuit_model.train()
 
@@ -278,7 +264,7 @@ if __name__ == '__main__':
     
     # --- Summary ---
     print("\n" + "="*60)
-    print("FINAL SUMMARY - IOI Circuit Discovery")
+    print("FINAL SUMMARY - Gender Pronouns Circuit Discovery")
     print("="*60)
     print(f"Baseline Accuracy: {base_accuracy:.4f}")
     print(f"Baseline Logit Diff: {base_logit_diff:.4f}")
