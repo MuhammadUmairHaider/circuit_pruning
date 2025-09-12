@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
-from models.gpt2_circuit import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
+from models.gpt2_test import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
 from dataset.gp import GPDataset, load_or_generate_gp_data, run_evaluation
 
 import torch
@@ -24,38 +24,94 @@ from utils import disable_dropout, analyze_and_finalize_circuit
 # PRUNING CONFIGURATION
 # ==============================================================================
 from dataclasses import dataclass
-prune_factor = 0.009
+# PRUNING_FACTOR = 1.0
 
+# # @dataclass
+# @dataclass
+# class PruningConfig:
+#     init_value: float = 1.0
+#     sparsity_warmup_steps: int = 0
+
+#     # --- Fine-grained pruning (existing) ---
+#     # Attention Head Pruning
+#     prune_attention_heads: bool = True
+#     lambda_attention_heads: float = 0.02 * PRUNING_FACTOR
+
+#     # MLP neuron pruning
+#     prune_mlp_hidden: bool = True
+#     lambda_mlp_hidden: float = 0.00005 * PRUNING_FACTOR
+#     prune_mlp_output: bool = True
+#     lambda_mlp_output: float = 0.00005 * PRUNING_FACTOR
+    
+    
+#     prune_attention_neurons: bool = True
+#     lambda_attention_neurons: float = 0.0002 * PRUNING_FACTOR
+    
+#     prune_embedding: bool = False
+#     lambda_embedding: float = 1 * PRUNING_FACTOR
+    
+#     # Prune entire attention blocks
+#     prune_attention_blocks: bool = True
+#     lambda_attention_blocks: float = 0.000005 * PRUNING_FACTOR
+    
+#     # Prune entire MLP blocks
+#     prune_mlp_blocks: bool = True
+#     lambda_mlp_blocks: float = 0.05 * PRUNING_FACTOR
+    
+#     # Prune entire transformer layers
+#     prune_full_layers: bool = False
+#     lambda_full_layers: float = 0.0000005 * PRUNING_FACTOR
+
+
+
+
+PRUNING_FACTOR = 1.0
+
+# @dataclass
 @dataclass
 class PruningConfig:
     init_value: float = 1.0
-    sparsity_warmup_steps: int = 1
+    sparsity_warmup_steps: int = 0
 
-    # --- Control Panel for Pruning Granularity ---
-    
-    # Attention Head Pruning (what we already have)
+    # --- Fine-grained pruning (existing) ---
+    # Attention Head Pruning
     prune_attention_heads: bool = True
-    lambda_attention_heads: float = 0.05 * prune_factor  # The penalty for the attention head gates
+    lambda_attention_heads: float = 0.03 * PRUNING_FACTOR # 0.027 * PRUNING_FACTOR
 
-    # --- NEW: Separate controls for each MLP layer ---
-    prune_mlp_hidden: bool = True       # Prune the intermediate "fat" layer of the MLP
-    lambda_mlp_hidden: float = 0.0009 * prune_factor     # The penalty for the hidden layer gates
-
-    prune_mlp_output: bool = True      # Prune the final output of the entire MLP sub-block
-    lambda_mlp_output: float = 0.0009 * prune_factor    # The penalty for the output gates
+    # MLP neuron pruning
+    prune_mlp_hidden: bool = True
+    lambda_mlp_hidden: float = 0.00005 * PRUNING_FACTOR
+    prune_mlp_output: bool = True
+    lambda_mlp_output: float = 0.00005 * PRUNING_FACTOR
+    
+    
+    prune_attention_neurons: bool = True
+    lambda_attention_neurons: float = 0.0002 * PRUNING_FACTOR
     
     prune_embedding: bool = False
-    lambda_embedding: float = 0.1 * prune_factor  # This is a crucial hyperparameter to tune
+    lambda_embedding: float = 1 * PRUNING_FACTOR
+    
+    # Prune entire attention blocks
+    prune_attention_blocks: bool = True
+    lambda_attention_blocks: float = 0.000005 * PRUNING_FACTOR
+    
+    # Prune entire MLP blocks
+    prune_mlp_blocks: bool = True
+    lambda_mlp_blocks: float = 0.5 * PRUNING_FACTOR
+    
+    # Prune entire transformer layers
+    prune_full_layers: bool = False
+    lambda_full_layers: float = 0.0000005 * PRUNING_FACTOR
 
 # ==============================================================================
 # MAIN EXECUTION FOR GENDER PRONOUNS TASK
 # ==============================================================================
 if __name__ == '__main__':
     # --- Configuration ---
-    MODEL_NAME = 'gpt2-xl'
-    NUM_EPOCHS = 10
+    MODEL_NAME = 'gpt2'
+    NUM_EPOCHS = 500
     LEARNING_RATE = 5e-3
-    BATCH_SIZE = 8  # Matching the reference implementation
+    BATCH_SIZE = 32  # Matching the reference implementation
     MAX_SEQ_LEN = 64
     ACCURACY_BUDGET = 0.05  # Allow 5% accuracy drop from baseline
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -95,24 +151,30 @@ if __name__ == '__main__':
     print("\nSetting up Gender Pronouns dataset...")
     # Load GP data - typically only has test split
     test_data = load_or_generate_gp_data(split="test", num_samples=100000)  # Matching reference
+    train_data = load_or_generate_gp_data(split="train", num_samples=100000)  # Empty, not used
+    train_data_3k = load_or_generate_gp_data(split="train_3k", num_samples=500)  # Smaller subset for training
+    val_data = load_or_generate_gp_data(split="validation", num_samples=10000)  # Empty, not used
+
+    # test_data = test_data + val_data  + train_data# + train_data_3k  # Combine all for splitting
+    print(f"Total samples available: {len(test_data)}")
     
     # Split into train/val/test (80/10/10)
-    random.shuffle(test_data)
-    train_size = int(0.8 * len(test_data))
-    val_size = int(0.1 * len(test_data))
+    # random.shuffle(test_data)
+    # train_size = int(0.8 * len(test_data))
+    # val_size = int(0.1 * len(test_data))
     
-    train_data = test_data[:train_size]
-    val_data = test_data[train_size:train_size + val_size]
-    test_data_final = test_data[train_size + val_size:]
+    # train_data = test_data[:train_size]
+    # val_data = test_data[train_size:train_size + val_size]
+    # test_data_final = test_data[train_size + val_size:]
     
     print(f"Train samples: {len(train_data)}")
     print(f"Val samples: {len(val_data)}")
-    print(f"Test samples: {len(test_data_final)}")
+    print(f"Test samples: {len(test_data)}")
 
     # Create dataset objects
     train_dataset = GPDataset(train_data, tokenizer, max_length=MAX_SEQ_LEN)
     val_dataset = GPDataset(val_data, tokenizer, max_length=MAX_SEQ_LEN)
-    test_dataset = GPDataset(test_data_final, tokenizer, max_length=MAX_SEQ_LEN)
+    test_dataset = GPDataset(test_data, tokenizer, max_length=MAX_SEQ_LEN)
 
     # Create dataloaders
     train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -248,9 +310,11 @@ if __name__ == '__main__':
 
     # --- Final Analysis and Pruning ---
     print("\n--- Analyzing and finalizing circuit ---")
-    analyze_and_finalize_circuit(circuit_model)
-    
+    pruning_config.prune_full_layers = True  # Enable full layer pruning for final evaluation
+    circuit_model.set_pruning_config(pruning_config)
     # --- Final Evaluation on Test Set ---
+    analyze_and_finalize_circuit(circuit_model)
+  
     print("\n--- Final evaluation on test set ---")
     circuit_model.eval()
     final_results = run_evaluation(

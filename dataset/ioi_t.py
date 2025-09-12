@@ -191,8 +191,8 @@ class IOIDataset(Dataset):
                     'corrupted_sentence': corr_sentence,
                     'target': target,
                     'distractor': distractor,
-                    'target_token': target_tokens[0],
-                    'distractor_token': distractor_tokens[0],
+                    'target_tokens': target_tokens,
+                    'distractor_tokens': distractor_tokens,
                     'template_order': template_info['order']
                 })
         
@@ -224,16 +224,23 @@ class IOIDataset(Dataset):
         # Find the position before the last token (where we predict)
         # We need to find where the sentence actually ends (before padding)
         sentence_prefix = item['sentence'][:item['sentence'].rfind(" ")]
-        prefix_length = len(self.tokenizer.encode(sentence_prefix, add_special_tokens=True))
+        T_Start = len(self.tokenizer.encode(sentence_prefix, add_special_tokens=True))
+        T_End = T_Start + len(item['target_tokens'])#.size(0)
         
+        D_Start = T_Start  # Distractor starts right after target
+        D_End = D_Start + len(item['distractor_tokens'])#.size(0)
+
         return {
             "input_ids": inputs['input_ids'].squeeze(0),
             "attention_mask": inputs['attention_mask'].squeeze(0),
             "corrupted_input_ids": corrupted_inputs['input_ids'].squeeze(0),
             "corrupted_attention_mask": corrupted_inputs['attention_mask'].squeeze(0),
-            "target_token": torch.tensor(item['target_token'], dtype=torch.long),
-            "distractor_token": torch.tensor(item['distractor_token'], dtype=torch.long),
-            "prefix_length": torch.tensor(prefix_length, dtype=torch.long),
+            "target_tokens": torch.tensor(item['target_tokens'], dtype=torch.long),
+            "distractor_tokens": torch.tensor(item['distractor_tokens'], dtype=torch.long),
+            "T_Start": torch.tensor(T_Start, dtype=torch.long),
+            "T_End": torch.tensor(T_End, dtype=torch.long),
+            "D_Start": torch.tensor(D_Start, dtype=torch.long),
+            "D_End": torch.tensor(D_End, dtype=torch.long),
             "template_order": item['template_order']
         }
 
@@ -279,24 +286,45 @@ def run_evaluation(
             batch_size = outputs.logits.size(0)
             
             for i in range(batch_size):
-                # Get the position where we make prediction (before last token)
-                prefix_length = batch['prefix_length'][i].item()
-                pred_position = prefix_length - 1
+                # Get positions for target and distractor
+                t_start = batch['T_Start'][i].item()-1
+                t_end = batch['T_End'][i].item()-1
+                d_start = batch['D_Start'][i].item()-1
+                d_end = batch['D_End'][i].item()-1
                 
-                # Get logits at prediction position
-                logits = outputs.logits[i, pred_position, :]
+                # Get target and distractor token IDs
+                target_tokens = batch['target_tokens'][i]  # Can be multiple tokens
+                distractor_tokens = batch['distractor_tokens'][i]  # Can be multiple tokens
                 
-                # Get target and distractor logits
-                target_logit = logits[batch['target_token'][i]].item()
-                distractor_logit = logits[batch['distractor_token'][i]].item()
+                # Calculate average logit difference across all target/distractor positions
+                target_logits = []
+                distractor_logits = []
                 
-                # Calculate logit difference
-                logit_diff = target_logit - distractor_logit
-                total_logit_diff += logit_diff
+                # Collect logits for target tokens at their positions
+                for pos_idx, pos in enumerate(range(t_start, t_end)):
+                    if pos < outputs.logits.size(1):  # Check bounds
+                        token_id = target_tokens[pos_idx] if pos_idx < len(target_tokens) else target_tokens[0]
+                        logit = outputs.logits[i, pos, token_id].item()
+                        target_logits.append(logit)
                 
-                # Calculate accuracy (model chooses target over distractor)
-                if target_logit > distractor_logit:
-                    total_accuracy += 1
+                # Collect logits for distractor tokens at target positions 
+                # (what would the model assign to distractor tokens at target positions)
+                for pos_idx, pos in enumerate(range(t_start, t_end)):
+                    if pos < outputs.logits.size(1):  # Check bounds
+                        token_id = distractor_tokens[pos_idx] if pos_idx < len(distractor_tokens) else distractor_tokens[0]
+                        logit = outputs.logits[i, pos, token_id].item()
+                        distractor_logits.append(logit)
+                
+                # Calculate average logit difference
+                if target_logits and distractor_logits:
+                    avg_target_logit = sum(target_logits) / len(target_logits)
+                    avg_distractor_logit = sum(distractor_logits) / len(distractor_logits)
+                    logit_diff = avg_target_logit - avg_distractor_logit
+                    total_logit_diff += logit_diff
+                    
+                    # Calculate accuracy (model prefers target over distractor on average)
+                    if avg_target_logit >= avg_distractor_logit:
+                        total_accuracy += 1
                 
                 valid_samples += 1
             
@@ -308,25 +336,34 @@ def run_evaluation(
                 )
                 
                 for i in range(batch_size):
-                    prefix_length = batch['prefix_length'][i].item()
-                    pred_position = prefix_length - 1
+                    # Calculate KL from T_Start to end of sequence (or T_End + some margin)
+                    t_start = batch['T_Start'][i].item()
                     
-                    # Calculate KL divergence between distributions
-                    model_logits = outputs.logits[i, pred_position, :]
-                    full_logits = full_outputs.logits[i, pred_position, :]
+                    # Get valid sequence length (before padding)
+                    valid_length = batch['attention_mask'][i].sum().item()
                     
-                    kl = F.kl_div(
-                        F.log_softmax(model_logits, dim=-1),
-                        F.log_softmax(full_logits, dim=-1),
-                        log_target=True,
-                        reduction='sum'
-                    ).item()
-                    total_kl += kl
+                    # Calculate KL from target start position to end of valid sequence
+                    if t_start < valid_length:
+                        model_logits = outputs.logits[i, t_start:valid_length, :]
+                        full_logits = full_outputs.logits[i, t_start:valid_length, :]
+                        
+                        kl = F.kl_div(
+                            F.log_softmax(model_logits, dim=-1),
+                            F.log_softmax(full_logits, dim=-1),
+                            log_target=True,
+                            reduction='sum'
+                        ).item()
+                        
+                        # Normalize by number of tokens
+                        num_tokens = valid_length - t_start
+                        kl = kl / num_tokens if num_tokens > 0 else kl
+                        
+                        total_kl += kl
                     
-                    # Check exact match
-                    model_choice = torch.argmax(model_logits)
-                    full_choice = torch.argmax(full_logits)
-                    if model_choice == full_choice:
+                    # Check exact match at target positions
+                    model_pred = torch.argmax(outputs.logits[i, t_start, :])
+                    full_pred = torch.argmax(full_outputs.logits[i, t_start, :])
+                    if model_pred == full_pred:
                         total_exact_match += 1
     
     # Calculate averages

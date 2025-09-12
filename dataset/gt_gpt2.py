@@ -40,7 +40,7 @@ def convert_disk_sample_to_gt_format(disk_sample):
     }
 
 def load_or_generate_gt_data(
-    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/datasets/gt",
+    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/datasets/gt2",
     split: str = "train",
     num_samples: Optional[int] = None
 ) -> List[Dict]:
@@ -143,7 +143,8 @@ def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: 
     all_prob_diffs, all_cutoff_sharpness, total_kl = [], [], 0.0
     valid_samples = 0
     desc = f"Evaluating {model_name}" if verbose else "Binary Searching"
-
+    accuracy = 0.0
+    n = 0
     with torch.no_grad():
         for batch in tqdm(dataloader, desc=desc, leave=False):
             for key, val in batch.items():
@@ -156,17 +157,17 @@ def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: 
 
             # --- RE-NORMALIZATION LOGIC ---
             # 1. Filter logits to only include our ~97 two-digit number tokens
-            digit_logits = torch.gather( # <-- NEW
+            digit_logits = torch.gather( 
                 last_token_logits,
                 1, # Dimension to gather from (the vocabulary dimension)
                 digit_token_ids.unsqueeze(0).expand(last_token_logits.shape[0], -1)
             )
 
             # 2. Apply softmax to this smaller, filtered logit tensor
-            eval_probs = F.softmax(digit_logits, dim=-1) # <-- CHANGED: Now applied to digit_logits
+            eval_probs = F.softmax(digit_logits, dim=-1) 
 
             # --- UPDATED METRIC CALCULATION ---
-            for i in range(eval_probs.size(0)): # <-- This loop iterates through items in the batch
+            for i in range(eval_probs.size(0)):
                 YY = batch['threshold_suffix'][i].item()
                 if not (2 <= YY <= 98 and YY in num_to_idx): continue
                 
@@ -177,6 +178,9 @@ def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: 
                 # Calculate prob_diff using tensor slicing for efficiency
                 p_greater = probs[yy_index + 1:].sum() # <-- CHANGED
                 p_less_equal = probs[:yy_index + 1].sum() # <-- CHANGED
+                n+= 1
+                if(p_greater> p_less_equal):
+                    accuracy += 1.0
                 
                 all_prob_diffs.append((p_greater - p_less_equal).item())
 
@@ -214,6 +218,7 @@ def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: 
         if full_model_for_faithfulness: print(f"  - Faithfulness (KL Div):        {avg_kl:.4f}")
         print(f"  - Performance (Prob Diff):      {avg_pd:.4f}")
         print(f"  - Performance (Cutoff Sharpness): {avg_cs:.4f}")
+        print(f"  - Accuracy:                      {accuracy / n:.4f}" if n > 0 else "  - Accuracy:                      N/A")
         print("="*50)
     
     return {"prob_diff": avg_pd, "cutoff_sharpness": avg_cs, "kl_div": avg_kl}

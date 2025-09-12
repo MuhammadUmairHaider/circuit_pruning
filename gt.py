@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
-from models.gpt2_circuit import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel,PruningConfig
+from models.gpt2_test import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel
 from dataset.gt_gpt2 import GTDataset, load_or_generate_gt_data, create_two_digit_token_mapping, run_evaluation
 
 
@@ -24,37 +24,54 @@ from utils import disable_dropout, analyze_and_finalize_circuit
 # PRUNING CONFIGURATION
 # ==============================================================================
 from dataclasses import dataclass
-prune_factor = 0.009
+PRUNING_FACTOR = 4
+
+
+# @dataclass
 @dataclass
 class PruningConfig:
-    init_value: float = 1.0
-    sparsity_warmup_steps: int = 1
+    init_value: float = 1
+    sparsity_warmup_steps: int = 0
 
-    # --- Control Panel for Pruning Granularity ---
-    
-    # Attention Head Pruning (what we already have)
+    # --- Fine-grained pruning (existing) ---
+    # Attention Head Pruning
     prune_attention_heads: bool = True
-    lambda_attention_heads: float = 0.01 * prune_factor  # The penalty for the attention head gates
+    lambda_attention_heads: float = 0.001 * PRUNING_FACTOR
 
-    # --- NEW: Separate controls for each MLP layer ---
-    prune_mlp_hidden: bool = True       # Prune the intermediate "fat" layer of the MLP
-    lambda_mlp_hidden: float = 0.0005 * prune_factor     # The penalty for the hidden layer gates
-
-    prune_mlp_output: bool = True      # Prune the final output of the entire MLP sub-block
-    lambda_mlp_output: float = 0.0005 * prune_factor    # The penalty for the output gates
+    # MLP neuron pruning
+    prune_mlp_hidden: bool = True
+    lambda_mlp_hidden: float = 0.00005 * PRUNING_FACTOR
+    prune_mlp_output: bool = True
+    lambda_mlp_output: float = 0.00005 * PRUNING_FACTOR
+    
+    
+    prune_attention_neurons: bool = True
+    lambda_attention_neurons: float = 0.0002 * PRUNING_FACTOR
     
     prune_embedding: bool = False
-    lambda_embedding: float = 0.1 * prune_factor# This is a crucial hyperparameter to tune
+    lambda_embedding: float = 1 * PRUNING_FACTOR
+    
+    # Prune entire attention blocks
+    prune_attention_blocks: bool = True
+    lambda_attention_blocks: float = 0.05 * PRUNING_FACTOR
+    
+    # Prune entire MLP blocks
+    prune_mlp_blocks: bool = True
+    lambda_mlp_blocks: float = 0.05 * PRUNING_FACTOR
+    
+    # Prune entire transformer layers
+    prune_full_layers: bool = True
+    lambda_full_layers: float = 0.05 * PRUNING_FACTOR
 # ==============================================================================
-# 5. MAIN EXECUTION (WITH FINAL CORRECTION)
+# 5. MAIN EXECUTION
 # ==============================================================================
 if __name__ == '__main__':
     # --- Configuration ---
     # (Same as before)
-    MODEL_NAME = 'gpt2-xl'
-    NUM_EPOCHS = 10
+    MODEL_NAME = 'gpt2'
+    NUM_EPOCHS = 100
     LEARNING_RATE = 5e-3
-    BATCH_SIZE = 8
+    BATCH_SIZE = 32
     MAX_SEQ_LEN = 64
     PROB_DIFF_BUDGET = 0.2
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -100,6 +117,17 @@ if __name__ == '__main__':
     train_data = load_or_generate_gt_data(split="train")
     val_data = load_or_generate_gt_data(split="validation")
     test_data = load_or_generate_gt_data(split="test")
+    
+    # combine train and validation and test and split again
+    data = train_data + val_data + test_data
+    random.shuffle(data)
+    train_data = data[:int(0.5 * len(data))]
+    val_data = data[int(0.5 * len(data)):int(0.8 * len(data))]
+    test_data = data[int(0.8 * len(data)):]
+    print(f"Train size: {len(train_data)}, Validation size: {len(val_data)}, Test size: {len(test_data)}")
+    # Ensure all splits have at least 1 example
+    if len(train_data) == 0 or len(val_data) == 0 or len(test_data) == 0:
+        raise ValueError("One of the dataset splits is empty. Please check your data generation or loading process.")
 
     # Create dataset objects
     train_dataset = GTDataset(train_data, tokenizer, max_length=MAX_SEQ_LEN)
@@ -149,15 +177,19 @@ if __name__ == '__main__':
 
             kl_loss = F.kl_div(F.log_softmax(last_token_circuit_logits, dim=-1), F.log_softmax(last_token_target_logits, dim=-1), reduction='batchmean', log_target=True)
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
-            
+            kl_loss = kl_loss *2
             loss = kl_loss + sparsity_loss
             loss.backward()
             optimizer.step()
             total_steps += 1
         
+        print(f"\nEpoch {epoch+1}/{NUM_EPOCHS} - Loss: {loss.item():.4f} | KL Loss: {kl_loss.item():.4f} | Sparsity Loss: {sparsity_loss.item():.4f}")
         # --- Epoch Validation ---
         run_evaluation(model_to_eval=circuit_model, model_name=f"Circuit after Epoch {epoch+1}", full_model_for_faithfulness=full_model, dataloader=val_dataloader, device=DEVICE, two_digit_tokens=two_digit_tokens)
         circuit_model.train()
+        
+        #test main model
+        #run_evaluation(model_to_eval=full_model, model_name=f"Full Model after Epoch {epoch+1}", full_model_for_faithfulness=full_model, dataloader=val_dataloader, device=DEVICE, two_digit_tokens=two_digit_tokens, tokenizer=tokenizer)
 
     analyze_and_finalize_circuit(circuit_model)
     

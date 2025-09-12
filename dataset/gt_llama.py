@@ -44,7 +44,7 @@ Now complete: '''
     }
 
 def load_or_generate_gt_data(
-    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/edge_pruning/datasets/gt",
+    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/edge_pruning/datasets/gt2",
     split: str = "train",
     num_samples: Optional[int] = None
 ) -> List[Dict]:

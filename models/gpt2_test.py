@@ -1186,6 +1186,9 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
             attentions=all_self_attentions,
             cross_attentions=all_cross_attentions,
         )
+    def set_pruning_config(self, pruning_config: PruningConfig):
+        self.pruning_config = pruning_config
+        print("Pruning configuration updated.")
     def set_final_circuit_mode(self, enabled: bool):
         """
         Recursively finds all HardConcreteGate modules and sets their final_mode.
