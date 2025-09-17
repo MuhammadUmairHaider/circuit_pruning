@@ -24,7 +24,7 @@ from utils import disable_dropout, analyze_and_finalize_circuit
 # PRUNING CONFIGURATION
 # ==============================================================================
 from dataclasses import dataclass
-PRUNING_FACTOR = 0.18
+PRUNING_FACTOR = 0.15
 
 # @dataclass
 @dataclass
@@ -39,7 +39,7 @@ class PruningConfig:
 
     # MLP neuron pruning
     prune_mlp_hidden: bool = True
-    lambda_mlp_hidden: float = 0.00005 * PRUNING_FACTOR
+    lambda_mlp_hidden: float = 0.000005 * PRUNING_FACTOR
     prune_mlp_output: bool = True
     lambda_mlp_output: float = 0.0000005 * PRUNING_FACTOR
     
@@ -208,8 +208,8 @@ if __name__ == '__main__':
                 t_start = batch['T_Start'][i].item()-1
                 t_end = batch['T_End'][i].item()-1
                 
-                if(len(batch['target_tokens'][i])>1):
-                    print(len(batch['target_tokens'][i]), batch['target_tokens'][i], tokenizer.decode(batch['target_tokens'][i]))
+                # if(len(batch['target_tokens'][i])>1):
+                #     print(len(batch['target_tokens'][i]), batch['target_tokens'][i], tokenizer.decode(batch['target_tokens'][i]))
                 
                 # Fix 2: Get valid sequence length to avoid padding
                 valid_length = batch['attention_mask'][i].sum().item()

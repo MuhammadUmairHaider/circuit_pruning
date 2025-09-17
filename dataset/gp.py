@@ -197,6 +197,7 @@ def run_evaluation(
                 prefix_length = prefix_lengths[j]
                 
                 # Get logits at prediction position
+                # logit_target = logits[j, prefix_length-1, targets[i+j]].detach().cpu().item()
                 logit_target = logits[j, prefix_length-1, targets[j]].detach().cpu().item()
                 logit_distractor = logits[j, prefix_length-1, distractors[j]].detach().cpu().item()
                 logit_difference += logit_target - logit_distractor

@@ -185,16 +185,16 @@ class IOIDataset(Dataset):
             target_tokens = tokenizer.encode(" " + target, add_special_tokens=False)
             distractor_tokens = tokenizer.encode(" " + distractor, add_special_tokens=False)
             
-            if len(target_tokens) == 1 and len(distractor_tokens) == 1:
-                self.processed_data.append({
-                    'sentence': sentence,
-                    'corrupted_sentence': corr_sentence,
-                    'target': target,
-                    'distractor': distractor,
-                    'target_tokens': target_tokens,
-                    'distractor_tokens': distractor_tokens,
-                    'template_order': template_info['order']
-                })
+            # if len(target_tokens) == 1 and len(distractor_tokens) == 1:
+            self.processed_data.append({
+                'sentence': sentence,
+                'corrupted_sentence': corr_sentence,
+                'target': target,
+                'distractor': distractor,
+                'target_tokens': target_tokens,
+                'distractor_tokens': distractor_tokens,
+                'template_order': template_info['order']
+            })
         
         print(f"Processed {len(self.processed_data)} valid samples from {len(data)} total")
     
@@ -226,21 +226,28 @@ class IOIDataset(Dataset):
         sentence_prefix = item['sentence'][:item['sentence'].rfind(" ")]
         T_Start = len(self.tokenizer.encode(sentence_prefix, add_special_tokens=True))
         T_End = T_Start + len(item['target_tokens'])#.size(0)
+        T_len = T_End - T_Start
         
         D_Start = T_Start  # Distractor starts right after target
         D_End = D_Start + len(item['distractor_tokens'])#.size(0)
+        D_len = D_End - D_Start
+        
+        target_tokens =  self.tokenizer.encode(item['target'], padding='max_length', max_length=5, truncation=True, return_tensors='pt').squeeze(0)
+        distractor_tokens = self.tokenizer.encode(item['distractor'], padding='max_length', max_length=5, truncation=True, return_tensors='pt').squeeze(0)
 
         return {
             "input_ids": inputs['input_ids'].squeeze(0),
             "attention_mask": inputs['attention_mask'].squeeze(0),
             "corrupted_input_ids": corrupted_inputs['input_ids'].squeeze(0),
             "corrupted_attention_mask": corrupted_inputs['attention_mask'].squeeze(0),
-            "target_tokens": torch.tensor(item['target_tokens'], dtype=torch.long),
-            "distractor_tokens": torch.tensor(item['distractor_tokens'], dtype=torch.long),
+            "target_tokens": torch.tensor(target_tokens, dtype=torch.long),
+            "distractor_tokens": torch.tensor(distractor_tokens, dtype=torch.long),
             "T_Start": torch.tensor(T_Start, dtype=torch.long),
             "T_End": torch.tensor(T_End, dtype=torch.long),
             "D_Start": torch.tensor(D_Start, dtype=torch.long),
             "D_End": torch.tensor(D_End, dtype=torch.long),
+            "T_len": torch.tensor(T_len, dtype=torch.long),
+            "D_len": torch.tensor(D_len, dtype=torch.long),
             "template_order": item['template_order']
         }
 
@@ -293,9 +300,9 @@ def run_evaluation(
                 d_end = batch['D_End'][i].item()-1
                 
                 # Get target and distractor token IDs
-                target_tokens = batch['target_tokens'][i]  # Can be multiple tokens
-                distractor_tokens = batch['distractor_tokens'][i]  # Can be multiple tokens
-                
+                target_tokens = batch['target_tokens'][i][:batch['T_len'][i].item()]  # Can be multiple tokens
+                distractor_tokens = batch['distractor_tokens'][i][:batch['D_len'][i].item()]  # Can be multiple tokens
+
                 # Calculate average logit difference across all target/distractor positions
                 target_logits = []
                 distractor_logits = []
@@ -315,10 +322,13 @@ def run_evaluation(
                         logit = outputs.logits[i, pos, token_id].item()
                         distractor_logits.append(logit)
                 
+                avg_target_logit = target_logits[0]
+                avg_distractor_logit = distractor_logits[0]
+                
                 # Calculate average logit difference
                 if target_logits and distractor_logits:
-                    avg_target_logit = sum(target_logits) / len(target_logits)
-                    avg_distractor_logit = sum(distractor_logits) / len(distractor_logits)
+                    # avg_target_logit = sum(target_logits) / len(target_logits)
+                    # avg_distractor_logit = sum(distractor_logits) / len(distractor_logits)
                     logit_diff = avg_target_logit - avg_distractor_logit
                     total_logit_diff += logit_diff
                     

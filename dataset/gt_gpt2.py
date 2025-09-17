@@ -30,6 +30,15 @@ NOUN_POOL = [
     'voyage', 'warfare', 'work'
 ]
 
+templates = [
+    "The {noun} lasted from {start} to {end_century}",
+    "The {noun} stretched from {start} to {end_century}",
+    "The {noun} spanned the years {start} to {end_century}",
+    "The {noun} unfolded from {start} to {end_century}",
+    "The {noun} took place between {start} and {end_century}",
+    "The {noun} persisted from {start} to {end_century}",
+]
+
 def convert_disk_sample_to_gt_format(disk_sample):
     """Convert a sample from the disk dataset format to the GT format expected by the code"""
     # Direct mapping: prefix -> clean_prompt, corr_prefix -> corrupted_prompt, digits -> threshold_suffix
@@ -89,14 +98,14 @@ def load_or_generate_gt_data(
 def generate_gt_sample_pair():
     """Original generation function as fallback"""
     noun = random.choice(NOUN_POOL)
-    template = "The {noun} lasted from the year {year} to the year {prefix}"
+    template = random.choice(templates)
     XX = random.randint(11, 17)
     YY = random.randint(2, 98)
     year1 = XX * 100 + YY
-    clean_prompt = template.format(noun=noun, year=year1, prefix=str(XX))
+    clean_prompt = template.format(noun=noun, start=year1, end_century=str(XX))
     corrupted_year = XX * 100 + 1
-    corrupted_prompt = template.format(noun=noun, year=corrupted_year, prefix=str(XX))
-    return {"clean_prompt": clean_prompt, "corrupted_prompt": corrupted_prompt, "threshold_suffix": YY}
+    corrupted_prompt = template.format(noun=noun, start=corrupted_year, end_century=str(XX))
+    return {'clean_prompt': clean_prompt, 'corrupted_prompt': corrupted_prompt, 'threshold_suffix': YY}
 
 class GTDataset(Dataset):
     def __init__(self, data: List[Dict], tokenizer: GPT2Tokenizer, max_length: int = 32):
@@ -176,8 +185,14 @@ def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: 
                 yy_index = num_to_idx[YY] # Find the index corresponding to our threshold YY
                 
                 # Calculate prob_diff using tensor slicing for efficiency
-                p_greater = probs[yy_index + 1:].sum() # <-- CHANGED
-                p_less_equal = probs[:yy_index + 1].sum() # <-- CHANGED
+                if(yy_index + 11 > len(probs)):
+                    p_greater = probs[yy_index + 1:].sum()
+                else:
+                    p_greater = probs[yy_index + 1: yy_index + 11].sum()
+                if(yy_index + 1 -11 <0):
+                    p_less_equal = probs[:yy_index + 1].sum()
+                else:
+                    p_less_equal = probs[yy_index + 1 - 11: yy_index + 1].sum()
                 n+= 1
                 if(p_greater> p_less_equal):
                     accuracy += 1.0
@@ -185,8 +200,8 @@ def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: 
                 all_prob_diffs.append((p_greater - p_less_equal).item())
 
                 # Cutoff sharpness logic also needs to use the new index mapping
-                p_yy_plus_1 = probs[num_to_idx[YY + 1]].item() if (YY + 1) in num_to_idx else 0.0 # <-- CHANGED
-                p_yy_minus_1 = probs[num_to_idx[YY - 1]].item() if (YY - 1) in num_to_idx else 0.0 # <-- CHANGED
+                p_yy_plus_1 = probs[num_to_idx[YY + 1]].item() if (YY + 1) in num_to_idx else 0.0
+                p_yy_minus_1 = probs[num_to_idx[YY - 1]].item() if (YY - 1) in num_to_idx else 0.0
                 all_cutoff_sharpness.append(p_yy_plus_1 - p_yy_minus_1)
                 valid_samples += 1
 

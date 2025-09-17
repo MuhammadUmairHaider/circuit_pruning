@@ -301,7 +301,7 @@ def analyze_prunable_compression(model, layer_report_data, config, verbose=True)
         
         # Active attention parameters
         if report.get('attn_block') == 'Active':
-            if hasattr(block.attn, 'neuron_gates'):
+            if hasattr(block.attn, 'neuron_gates') and block.attn.neuron_gates!=None:
                 active_attention_neurons = (block.attn.neuron_gates() > 0.5).sum().item()
             else:
                 active_attention_neurons = hidden_size
@@ -320,12 +320,12 @@ def analyze_prunable_compression(model, layer_report_data, config, verbose=True)
         
         # Active MLP parameters  
         if report.get('mlp_block') == 'Active':
-            if hasattr(block.mlp, 'hidden_gates'):
+            if hasattr(block.mlp, 'hidden_gates') and block.mlp.hidden_gates!=None:
                 active_hidden_neurons = (block.mlp.hidden_gates() > 0.5).sum().item()
             else:
                 active_hidden_neurons = intermediate_size
                 
-            if hasattr(block.mlp, 'output_gates'):
+            if hasattr(block.mlp, 'output_gates') and block.mlp.output_gates!=None:
                 active_output_neurons = (block.mlp.output_gates() > 0.5).sum().item()
             else:
                 active_output_neurons = hidden_size

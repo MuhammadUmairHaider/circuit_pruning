@@ -24,6 +24,7 @@ from utils import disable_dropout, analyze_and_finalize_circuit
 # PRUNING CONFIGURATION
 # ==============================================================================
 from dataclasses import dataclass
+from datasets import Dataset, DatasetDict
 PRUNING_FACTOR = 4
 
 
@@ -114,9 +115,25 @@ if __name__ == '__main__':
     # --- Dataset Setup ---
     print("\nSetting up dataset...")
     # Load from disk with fallback to generation
-    train_data = load_or_generate_gt_data(split="train")
-    val_data = load_or_generate_gt_data(split="validation")
-    test_data = load_or_generate_gt_data(split="test")
+    train_data = load_or_generate_gt_data(split="train", num_samples=200)
+    val_data = load_or_generate_gt_data(split="validation", num_samples=200)
+    test_data = load_or_generate_gt_data(split="test", num_samples=12256)
+    
+    train_dataset = Dataset.from_pandas(train_data) if hasattr(train_data, 'to_dict') else Dataset.from_list(train_data)
+    val_dataset = Dataset.from_pandas(val_data) if hasattr(val_data, 'to_dict') else Dataset.from_list(val_data)
+    test_dataset = Dataset.from_pandas(test_data) if hasattr(test_data, 'to_dict') else Dataset.from_list(test_data)
+    
+    dataset_dict = DatasetDict({
+        "train": train_dataset,
+        "validation": val_dataset,
+        "test": test_dataset
+    })
+
+    # Save to disk in Arrow format
+    dataset_dict.save_to_disk("/u/amo-d1/grad/mha361/work/circuits/data/datasets/gt_gen")
+        # Save dataset arrow files
+    
+    t =  load_or_generate_gt_data(split="train_90k")
     
     # combine train and validation and test and split again
     data = train_data + val_data + test_data

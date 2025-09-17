@@ -76,7 +76,7 @@ class PruningConfig:
     # --- Fine-grained pruning (existing) ---
     # Attention Head Pruning
     prune_attention_heads: bool = True
-    lambda_attention_heads: float = 0.03 * PRUNING_FACTOR # 0.027 * PRUNING_FACTOR
+    lambda_attention_heads: float = 0.035 * PRUNING_FACTOR # 0.027 * PRUNING_FACTOR
 
     # MLP neuron pruning
     prune_mlp_hidden: bool = True
@@ -109,9 +109,9 @@ class PruningConfig:
 if __name__ == '__main__':
     # --- Configuration ---
     MODEL_NAME = 'gpt2'
-    NUM_EPOCHS = 500
+    NUM_EPOCHS = 200
     LEARNING_RATE = 5e-3
-    BATCH_SIZE = 32  # Matching the reference implementation
+    BATCH_SIZE = 16  # Matching the reference implementation
     MAX_SEQ_LEN = 64
     ACCURACY_BUDGET = 0.05  # Allow 5% accuracy drop from baseline
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'

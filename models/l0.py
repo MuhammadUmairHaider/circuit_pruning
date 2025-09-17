@@ -17,6 +17,8 @@ class HardConcreteGate(nn.Module):
         beta: float = 2.0/3.0,
         gamma: float = -0.1,
         zeta: float = 1.1,
+        # init_min: float = 0.1, 
+        # init_max: float = 1.1
         init_min=1.5, 
         init_max=2.5
     ):

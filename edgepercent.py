@@ -109,20 +109,19 @@ def calculate_pruned_edges(pruning_summary: dict):
 
 # Paste your summary table here
 summary_table = """
-Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
 -----------------------------------------------------------------------------------------------------------------
-0      | Active   | Active      | Active     | 5/12         | 198/768         | 2209/3072       | 702/768        
+0      | Active   | Active      | Active     | 7/12         | 320/768         | 2621/3072       | 731/768        
 1      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
 2      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
 3      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-4      | Active   | Active      | Pruned     | 12/12        | 560/768         | 0/3072          | 0/768          
+4      | Active   | Active      | Pruned     | 12/12        | 667/768         | 0/3072          | 0/768          
 5      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-6      | Active   | Active      | Pruned     | 3/12         | 142/768         | 0/3072          | 0/768          
-7      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1454/3072       | 698/768        
+6      | Active   | Active      | Pruned     | 3/12         | 154/768         | 0/3072          | 0/768          
+7      | Active   | Pruned      | Active     | 0/12         | 0/768           | 2035/3072       | 728/768        
 8      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-9      | Active   | Active      | Pruned     | 8/12         | 237/768         | 0/3072          | 0/768          
-10     | Active   | Active      | Pruned     | 12/12        | 380/768         | 0/3072          | 0/768          
-11     | Active   | Active      | Active     | 5/12         | 141/768         | 805/3072        | 596/768   
+9      | Active   | Active      | Pruned     | 11/12        | 470/768         | 0/3072          | 0/768          
+10     | Active   | Active      | Pruned     | 12/12        | 517/768         | 0/3072          | 0/768          
+11     | Active   | Active      | Active     | 11/12        | 446/768         | 1178/3072       | 638/768  
 """
 
 # Parse the table and run the calculation
