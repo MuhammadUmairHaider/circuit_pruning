@@ -7,8 +7,9 @@ class HardConcreteGate(nn.Module):
     A gate that uses the Hard Concrete distribution to learn binary decisions.
     Based on "Learning Sparse Neural Networks through L0 Regularization" by Louizos et al.
     
-    The Hard Concrete distribution is a stretched and clipped sigmoid that allows
-    for exact zeros while maintaining differentiability.
+    Includes Straight-Through Estimator (STE) for training stability, ensuring
+    the model learns to handle binary (0/1) signals during training rather than
+    relying on partial "dimmed" signals.
     """
     
     def __init__(
@@ -17,8 +18,7 @@ class HardConcreteGate(nn.Module):
         beta: float = 2.0/3.0,
         gamma: float = -0.1,
         zeta: float = 1.1,
-        # init_min: float = 0.1, 
-        # init_max: float = 1.1
+        # Initialize slightly positive to start with open gates
         init_min=1.5, 
         init_max=2.5
     ):
@@ -53,52 +53,46 @@ class HardConcreteGate(nn.Module):
             self.log_alpha.uniform_(init_min, init_max)
     
     def forward(self) -> torch.Tensor:
-        """
-        Samples from the Hard Concrete distribution.
-        
-        Returns:
-            Gate values in [0, 1]
-            - Training: Stochastic samples from Hard Concrete
-            - Eval: Deterministic gates based on expected value
-            - Final mode: Hard binary decisions (0 or 1)
-        """
-        if self.final_mode:
-            # Hard binary decisions for final circuit
+        # 1. Training with Noise
+        if self.training:
+            u = torch.rand_like(self.log_alpha).clamp(1e-8, 1.0 - 1e-8)
+            s = torch.sigmoid((torch.log(u) - torch.log(1 - u) + self.log_alpha) / self.beta)
+            s_stretched = s * (self.zeta - self.gamma) + self.gamma
+            gate_soft = F.hardtanh(s_stretched, min_val=0, max_val=1)
+            
+            # STE: Binary 0/1 during training
+            gate_hard = (gate_soft > 0.5).float()
+            return (gate_hard - gate_soft).detach() + gate_soft
+
+        # 2. Final Mode / Eval (Deterministic)
+        else:
+            # Remove noise (use expectation)
             s = torch.sigmoid(self.log_alpha)
             s_stretched = s * (self.zeta - self.gamma) + self.gamma
-            gate = F.hardtanh(s_stretched, min_val=0, max_val=1)
-            return (gate > 0.5).float()
-        
-        if self.training:
-            # Sample from Hard Concrete during training
-            u = torch.rand_like(self.log_alpha)
-            u = u.clamp(1e-8, 1.0 - 1e-8)  # Numerical stability
+            gate_soft = F.hardtanh(s_stretched, min_val=0, max_val=1)
             
-            # Reparameterization trick with Gumbel-Softmax
-            s = torch.sigmoid(
-                (torch.log(u) - torch.log(1 - u) + self.log_alpha) / self.beta
-            )
-        else:
-            # Expected value during evaluation
-            s = torch.sigmoid(self.log_alpha)
-        
-        # Stretch and clip
-        s_stretched = s * (self.zeta - self.gamma) + self.gamma
-        gate = F.hardtanh(s_stretched, min_val=0, max_val=1)
-        
-        return gate
-    
+            if self.final_mode:
+                # MATCH TRAINING: Use the exact same threshold logic (Value > 0.5)
+                # This is equivalent to checking if log_alpha > 0
+                return (gate_soft > 0.5).float()
+            else:
+                return (gate_soft > 0.5).float()
+
+    def num_gates(self) -> int:
+        """Return the number of independent gate logits."""
+        return int(self.log_alpha.numel())
+
     def get_sparsity_loss(self) -> torch.Tensor:
         """
-        Calculates the expected L0 norm under the Hard Concrete distribution.
+        Calculates the expected L0 norm (probability of gate being open).
         
-        This is the expected number of non-zero gates.
+        CRITICAL CHANGE: Returns the MEAN (density) instead of SUM (count).
+        This makes the loss scale-invariant to model size.
         """
-        # Probability of gate being non-zero
         p_open = torch.sigmoid(
             self.log_alpha - self.beta * torch.log(-self.gamma / self.zeta)
         )
-        return p_open.sum()
+        return p_open.mean()
     
     def get_sparsity_rate(self) -> float:
         """Returns the expected sparsity rate (fraction of gates that are zero)."""
@@ -108,12 +102,10 @@ class HardConcreteGate(nn.Module):
         return 1.0 - p_open.mean().item()
     
     def get_num_active(self) -> int:
-        """Returns the number of active (non-zero) gates in final mode."""
+        """Returns the number of active (non-zero) gates if we were to finalize now."""
         with torch.no_grad():
-            s = torch.sigmoid(self.log_alpha)
-            s_stretched = s * (self.zeta - self.gamma) + self.gamma
-            gate = F.hardtanh(s_stretched, min_val=0, max_val=1)
-            return (gate > 0.5).sum().item()
+            cutoff = self.beta * torch.log(-self.gamma / self.zeta)
+            return (self.log_alpha > cutoff).sum().item()
     
     def set_final_mode(self, mode: bool = True):
         """Enable/disable final hard pruning mode."""
@@ -122,6 +114,7 @@ class HardConcreteGate(nn.Module):
     def get_mask_statistics(self) -> dict:
         """Get detailed statistics about the gates."""
         with torch.no_grad():
+            # Use the deterministic evaluation view for stats
             s = torch.sigmoid(self.log_alpha)
             s_stretched = s * (self.zeta - self.gamma) + self.gamma
             gate = F.hardtanh(s_stretched, min_val=0, max_val=1)
@@ -132,9 +125,9 @@ class HardConcreteGate(nn.Module):
                 'min_gate': gate.min().item(),
                 'max_gate': gate.max().item(),
                 'sparsity_rate': self.get_sparsity_rate(),
-                'num_active': (gate > 0.5).sum().item(),
+                'num_active': self.get_num_active(),
                 'num_total': gate.numel(),
-                'expected_l0': self.get_sparsity_loss().item()
+                'expected_density': self.get_sparsity_loss().item()
             }
             
             # Add percentiles

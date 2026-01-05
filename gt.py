@@ -7,8 +7,8 @@ from torch.utils.data import Dataset, DataLoader
 from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
-from models.gpt2_test import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel
-from dataset.gt_gpt2 import GTDataset, load_or_generate_gt_data, create_two_digit_token_mapping, run_evaluation
+from models.gpt2_test_copy import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel
+from dataset.gt_gpt2 import GTDataset, load_or_generate_gt_data, create_two_digit_token_mapping, run_evaluation, filter_dataset_by_model_correctness
 
 
 import torch
@@ -25,55 +25,107 @@ from utils import disable_dropout, analyze_and_finalize_circuit
 # ==============================================================================
 from dataclasses import dataclass
 from datasets import Dataset, DatasetDict
-PRUNING_FACTOR = 4
+# PRUNING_FACTOR = 0.9
 
 
 # @dataclass
+# class PruningConfig:
+#     init_value: float = 1
+#     sparsity_warmup_steps: int = 0
+
+#     # --- Fine-grained pruning (existing) ---
+#     # Attention Head Pruning
+#     prune_attention_heads: bool = True
+#     lambda_attention_heads: float = 0.07 * PRUNING_FACTOR
+
+#     # MLP neuron pruning
+#     prune_mlp_hidden: bool = True
+#     lambda_mlp_hidden: float = 0.0005 * PRUNING_FACTOR
+#     prune_mlp_output: bool = True
+#     lambda_mlp_output: float = 0.0005 * PRUNING_FACTOR
+    
+    
+#     prune_attention_neurons: bool = True
+#     lambda_attention_neurons: float = 0.0002 * PRUNING_FACTOR
+    
+#     prune_embedding: bool = False
+#     lambda_embedding: float = 1 * PRUNING_FACTOR
+    
+#     # Prune entire attention blocks
+#     prune_attention_blocks: bool = True
+#     lambda_attention_blocks: float = 0.05 * PRUNING_FACTOR
+    
+#     # Prune entire MLP blocks
+#     prune_mlp_blocks: bool = True
+#     lambda_mlp_blocks: float = 0.5 * PRUNING_FACTOR
+    
+#     # Prune entire transformer layers
+#     prune_full_layers: bool = False
+#     lambda_full_layers: float = 0.05 * PRUNING_FACTOR
+
+
+
+PRUNING_FACTOR = 0.001  # Keep this at 1.0 to keep math simple
+
 @dataclass
 class PruningConfig:
-    init_value: float = 1
-    sparsity_warmup_steps: int = 0
+    # Start with gates FULLY OPEN (log_alpha > 0) so gradient flows immediately
+    init_value: float = 0.5 
+    
+    # CRITICAL: Don't prune for the first ~5-10 epochs
+    sparsity_warmup_steps: int = 1000 
 
-    # --- Fine-grained pruning (existing) ---
-    # Attention Head Pruning
+    # --- Lambdas ---
+    # These values are tuned for GPT-2 Small scale.
+    # If a lambda is too high, the gate dies instantly (instability).
+    # If too low, it never closes.
+    
+    depth_penalty_scaling: float = 0.1
+    
+    # 1. Heads: Moderate cost. We want to remove many, but they are useful.
     prune_attention_heads: bool = True
-    lambda_attention_heads: float = 0.001 * PRUNING_FACTOR
+    lambda_attention_heads: float = 1.0 
 
-    # MLP neuron pruning
+    # 2. Neurons (Hidden): There are 3072 of them. 
+    # Individual neurons are weak. The penalty must be small, or you kill them all.
     prune_mlp_hidden: bool = True
-    lambda_mlp_hidden: float = 0.00005 * PRUNING_FACTOR
+    lambda_mlp_hidden: float = 1.0  # Much lower than 25.0!
+
+    # 3. MLP Output (Residual): This is a "strong" cut.
     prune_mlp_output: bool = True
-    lambda_mlp_output: float = 0.00005 * PRUNING_FACTOR
+    lambda_mlp_output: float = 1.0 
     
-    
+    # 4. Attention Neurons: 
     prune_attention_neurons: bool = True
-    lambda_attention_neurons: float = 0.0002 * PRUNING_FACTOR
+    lambda_attention_neurons: float = 0.15
+
+    # Structure pruning (Blocks/Layers)
+    # Usually easier to prune fine-grained first, then structure.
+    prune_attention_blocks: bool = True
+    lambda_attention_blocks: float = 0.5
+    
+    prune_mlp_blocks: bool = True
+    lambda_mlp_blocks: float = 0.7 
+    
+    prune_full_layers: bool = False
+    lambda_full_layers: float = 0.0
     
     prune_embedding: bool = False
     lambda_embedding: float = 1 * PRUNING_FACTOR
-    
-    # Prune entire attention blocks
-    prune_attention_blocks: bool = True
-    lambda_attention_blocks: float = 0.05 * PRUNING_FACTOR
-    
-    # Prune entire MLP blocks
-    prune_mlp_blocks: bool = True
-    lambda_mlp_blocks: float = 0.05 * PRUNING_FACTOR
-    
-    # Prune entire transformer layers
-    prune_full_layers: bool = True
-    lambda_full_layers: float = 0.05 * PRUNING_FACTOR
+# ==============================================================================
+# 5. MAIN EXECUTION
+# ==============================================================================
 # ==============================================================================
 # 5. MAIN EXECUTION
 # ==============================================================================
 if __name__ == '__main__':
     # --- Configuration ---
     # (Same as before)
-    MODEL_NAME = 'gpt2'
-    NUM_EPOCHS = 100
-    LEARNING_RATE = 5e-3
-    BATCH_SIZE = 32
-    MAX_SEQ_LEN = 64
+    MODEL_NAME = 'gpt2-xl'
+    NUM_EPOCHS = 250
+    LEARNING_RATE = 5e-2
+    BATCH_SIZE = 16
+    MAX_SEQ_LEN = 32
     PROB_DIFF_BUDGET = 0.2
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -83,18 +135,14 @@ if __name__ == '__main__':
     tokenizer = GPT2Tokenizer.from_pretrained(MODEL_NAME)
     if tokenizer.pad_token is None: tokenizer.pad_token = tokenizer.eos_token
     
-
-    
     circuit_model = CircuitDiscoveryGPT2.from_pretrained_with_pruning(MODEL_NAME, pruning_config).to(DEVICE).eval()
     full_model = GPT2LMHeadModel.from_pretrained(MODEL_NAME).to(DEVICE).eval()
     for param in full_model.parameters(): param.requires_grad = False
 
-    
     # ----- Disable all built-in dropout layers in the circuit model ---
     print("\n--- Disabling all built-in dropout layers in the circuit model ---")
     disable_dropout(circuit_model)
     # -----------------------------------------------------------------
-    
     
     # --- Freeze the base model and unfreeze only the gates ---
     print("Freezing base model weights and unfreezing gate parameters...")
@@ -105,42 +153,54 @@ if __name__ == '__main__':
         if 'gate' not in name:
             param.requires_grad = False
         else:
-            print(f"  Unfreezing for training: {name}")
+            # print(f"  Unfreezing for training: {name}")
             param.requires_grad = True
             trainable_params += param.numel()
             
     print(f"\nTotal parameters: {total_params}")
     print(f"Trainable gate parameters: {trainable_params} ({trainable_params/total_params*100:.4f}%)")
-
+    two_digit_tokens = create_two_digit_token_mapping(tokenizer)
+    
     # --- Dataset Setup ---
     print("\nSetting up dataset...")
     # Load from disk with fallback to generation
     train_data = load_or_generate_gt_data(split="train", num_samples=200)
     val_data = load_or_generate_gt_data(split="validation", num_samples=200)
-    test_data = load_or_generate_gt_data(split="test", num_samples=12256)
+    test_data = load_or_generate_gt_data(split="test", num_samples=1000)
+
+    # Filter datasets to keep only samples where the full model is correct
+    train_data = filter_dataset_by_model_correctness(train_data, full_model, tokenizer, DEVICE, two_digit_tokens)
+    val_data = filter_dataset_by_model_correctness(val_data, full_model, tokenizer, DEVICE, two_digit_tokens)
+    test_data = filter_dataset_by_model_correctness(test_data, full_model, tokenizer, DEVICE, two_digit_tokens)
     
-    train_dataset = Dataset.from_pandas(train_data) if hasattr(train_data, 'to_dict') else Dataset.from_list(train_data)
-    val_dataset = Dataset.from_pandas(val_data) if hasattr(val_data, 'to_dict') else Dataset.from_list(val_data)
-    test_dataset = Dataset.from_pandas(test_data) if hasattr(test_data, 'to_dict') else Dataset.from_list(test_data)
-    
+    import os
+    from datasets import Dataset, DatasetDict
+
+    # ==============================================================================
+    # SAVE FILTERED DATASETS (ARROW FORMAT)
+    # ==============================================================================
+    print("\n--- Saving filtered datasets to Arrow format ---")
+
+    # Define where you want the data saved
+    save_path = "./filtered_datasets/gt"
+
+    # 1. Convert the filtered lists (dicts) back into Hugging Face Datasets
+    #    (Assuming train_data, val_data, test_data are lists of dictionaries)
+    train_dataset = Dataset.from_list(train_data)
+    val_dataset = Dataset.from_list(val_data)
+    test_dataset = Dataset.from_list(test_data)
+
+    # 2. Combine into a single DatasetDict (optional, but cleaner for loading later)
     dataset_dict = DatasetDict({
-        "train": train_dataset,
-        "validation": val_dataset,
-        "test": test_dataset
+        'train': train_dataset,
+        'validation': val_dataset,
+        'test': test_dataset
     })
 
-    # Save to disk in Arrow format
-    dataset_dict.save_to_disk("/u/amo-d1/grad/mha361/work/circuits/data/datasets/gt_gen")
-        # Save dataset arrow files
-    
-    t =  load_or_generate_gt_data(split="train_90k")
-    
-    # combine train and validation and test and split again
-    data = train_data + val_data + test_data
-    random.shuffle(data)
-    train_data = data[:int(0.5 * len(data))]
-    val_data = data[int(0.5 * len(data)):int(0.8 * len(data))]
-    test_data = data[int(0.8 * len(data)):]
+    # 3. Save to disk
+    #    This creates a folder structure containing the Arrow files
+    dataset_dict.save_to_disk(save_path)
+
     print(f"Train size: {len(train_data)}, Validation size: {len(val_data)}, Test size: {len(test_data)}")
     # Ensure all splits have at least 1 example
     if len(train_data) == 0 or len(val_data) == 0 or len(test_data) == 0:
@@ -156,16 +216,17 @@ if __name__ == '__main__':
     val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
     test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
 
-    # Create token mapping
-    two_digit_tokens = create_two_digit_token_mapping(tokenizer)
-
-
     # --- Baseline Evaluation ---
-    baseline_results = run_evaluation(model_to_eval=full_model, model_name="Baseline Full Model", full_model_for_faithfulness=None, dataloader=val_dataloader, device=DEVICE, two_digit_tokens=two_digit_tokens, tokenizer=tokenizer)
+    print("\n--- Test Loader ---")
+    baseline_results = run_evaluation(model_to_eval=full_model, model_name="Baseline Full Model", full_model_for_faithfulness=None, dataloader=test_dataloader, device=DEVICE, two_digit_tokens=two_digit_tokens, tokenizer=tokenizer)
+    
+    # Optional: Baseline on Val/Train if needed
+    # print("Validation Results:")
+    # run_evaluation(model_to_eval=full_model, model_name="Baseline Full Model", ...)
+    
     base_prob_diff = baseline_results.get("prob_diff", 0.0)
     
     # --- Test Circuit model ---
-    
     print("\n--- Initial evaluation of the Circuit Discovery Model ---")
     circuit_model.eval()
     initial_results = run_evaluation(model_to_eval=circuit_model, model_name="Initial Circuit Model", full_model_for_faithfulness=full_model, dataloader=val_dataloader, device=DEVICE, two_digit_tokens=two_digit_tokens)
@@ -179,36 +240,110 @@ if __name__ == '__main__':
     print(f"\n--- Starting training to find 'Greater-Than' circuit ---")
     circuit_model.train()
     total_steps = 0
-    for epoch in range(NUM_EPOCHS):
-        for batch in tqdm(train_dataloader, desc=f"Epoch {epoch+1}/{NUM_EPOCHS}"):
+    
+    # Pre-compute token mapping tensors
+    sorted_tokens = sorted(two_digit_tokens.items()) 
+    sorted_nums = [item[0] for item in sorted_tokens] 
+    num_to_idx = {num: i for i, num in enumerate(sorted_nums)} 
+    digit_token_ids = torch.tensor([item[1] for item in sorted_tokens], device=DEVICE) 
+
+    # --- CHANGED: Single tqdm loop over epochs ---
+    epoch_pbar = tqdm(range(NUM_EPOCHS), desc="Training Progress")
+
+    for epoch in epoch_pbar:
+        epoch_loss = 0
+        epoch_kl = 0
+        epoch_sparsity = 0
+        
+        # --- CHANGED: Removed inner tqdm ---
+        for batch in train_dataloader:
             optimizer.zero_grad()
             for key, val in batch.items():
                 if isinstance(val, torch.Tensor): batch[key] = val.to(DEVICE)
             
-            circuit_outputs = circuit_model(input_ids=batch['clean_input_ids'], corrupted_input_ids=batch['corrupted_input_ids'], attention_mask=batch['clean_attention_mask'])
+            circuit_outputs = circuit_model(
+                input_ids=batch['clean_input_ids'], 
+                corrupted_input_ids=batch['corrupted_input_ids'], 
+                attention_mask=batch['clean_attention_mask']
+            )
+            
             with torch.no_grad():
-                target_outputs = full_model(input_ids=batch['clean_input_ids'], attention_mask=batch['clean_attention_mask'])
+                target_outputs = full_model(
+                    input_ids=batch['clean_input_ids'], 
+                    attention_mask=batch['clean_attention_mask']
+                )
 
             last_token_circuit_logits = circuit_outputs.logits[torch.arange(circuit_outputs.logits.size(0)), batch['last_token_idx'], :]
             last_token_target_logits = target_outputs.logits[torch.arange(target_outputs.logits.size(0)), batch['last_token_idx'], :]
-
-            kl_loss = F.kl_div(F.log_softmax(last_token_circuit_logits, dim=-1), F.log_softmax(last_token_target_logits, dim=-1), reduction='batchmean', log_target=True)
+            
+            digit_logits_circuit = torch.gather( 
+                last_token_circuit_logits,
+                1, 
+                digit_token_ids.unsqueeze(0).expand(last_token_circuit_logits.shape[0], -1)
+            )
+            digit_logits_target = torch.gather(
+                last_token_target_logits,
+                1, 
+                digit_token_ids.unsqueeze(0).expand(last_token_target_logits.shape[0], -1)
+            )  
+            
+            kl_loss = F.kl_div(
+                F.log_softmax(digit_logits_circuit, dim=-1), 
+                F.log_softmax(digit_logits_target, dim=-1), 
+                reduction='batchmean', 
+                log_target=True
+            )
+            
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
-            kl_loss = kl_loss *2
-            loss = kl_loss + sparsity_loss
+            
+            # Weighted loss
+            kl_loss_weighted = kl_loss * 10.0
+            loss = kl_loss_weighted + sparsity_loss
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(gate_params, max_norm=1.0)
             optimizer.step()
             total_steps += 1
+            
+            # Track accumulation
+            epoch_loss += loss.item()
+            epoch_kl += kl_loss.item() # Tracking raw KL
+            epoch_sparsity += sparsity_loss.item()
         
-        print(f"\nEpoch {epoch+1}/{NUM_EPOCHS} - Loss: {loss.item():.4f} | KL Loss: {kl_loss.item():.4f} | Sparsity Loss: {sparsity_loss.item():.4f}")
-        # --- Epoch Validation ---
-        run_evaluation(model_to_eval=circuit_model, model_name=f"Circuit after Epoch {epoch+1}", full_model_for_faithfulness=full_model, dataloader=val_dataloader, device=DEVICE, two_digit_tokens=two_digit_tokens)
-        circuit_model.train()
+        # Update progress bar
+        avg_loss = epoch_loss / len(train_dataloader)
+        avg_kl = epoch_kl / len(train_dataloader)
+        avg_sp = epoch_sparsity / len(train_dataloader)
         
-        #test main model
-        #run_evaluation(model_to_eval=full_model, model_name=f"Full Model after Epoch {epoch+1}", full_model_for_faithfulness=full_model, dataloader=val_dataloader, device=DEVICE, two_digit_tokens=two_digit_tokens, tokenizer=tokenizer)
+        epoch_pbar.set_postfix({
+            'L': f"{avg_loss:.3f}", 
+            'KL': f"{avg_kl:.3f}", 
+            'Sp': f"{avg_sp:.3f}"
+        })
 
+        # --- CHANGED: Run evaluation every 10 epochs ---
+        if (epoch + 1) % 10 == 0:
+            circuit_model.eval()
+            print(f"\n--- Validation at Epoch {epoch+1} ---")
+            run_evaluation(
+                model_to_eval=circuit_model, 
+                model_name=f"Circuit after Epoch {epoch+1}", 
+                full_model_for_faithfulness=full_model, 
+                dataloader=val_dataloader, 
+                device=DEVICE, 
+                two_digit_tokens=two_digit_tokens
+            )
+            circuit_model.train()
+
+    # --- Finalize ---
     analyze_and_finalize_circuit(circuit_model)
     
-
-    final_results = run_evaluation(model_to_eval=circuit_model, model_name="Final Pruned Circuit (Optimal Thresholds)", full_model_for_faithfulness=full_model, dataloader=test_dataloader, device=DEVICE, two_digit_tokens=two_digit_tokens)
+    final_results = run_evaluation(
+        model_to_eval=circuit_model, 
+        model_name="Final Pruned Circuit (Optimal Thresholds)", 
+        full_model_for_faithfulness=full_model, 
+        dataloader=test_dataloader, 
+        device=DEVICE, 
+        two_digit_tokens=two_digit_tokens
+    )
+    
+    print("Baseline Results:", baseline_results)

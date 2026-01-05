@@ -16,11 +16,10 @@ import os
 def convert_disk_sample_to_gp_format(disk_sample):
     """Convert a sample from the disk dataset format to the GP format expected by the code"""
     return {
+        **disk_sample,
         "sentence": disk_sample['prefix'] + " " + disk_sample['pronoun'],
         "corrupted_sentence": disk_sample['corr_prefix'] + " " + disk_sample['corr_pronoun'],
-        "target": disk_sample['pronoun'].lower().strip(),
-        "prefix": disk_sample['prefix'],
-        "corr_prefix": disk_sample['corr_prefix']
+        "target": disk_sample['pronoun'].lower().strip()
     }
 
 def load_or_generate_gp_data(
@@ -74,6 +73,7 @@ class GPDataset(Dataset):
         # Process data to extract targets and distractors
         self.processed_data = []
         for item in data:
+            
             sentence = item['sentence']
             corr_sentence = item['corrupted_sentence']
             target = item['target']
@@ -88,13 +88,13 @@ class GPDataset(Dataset):
             # Only keep samples where both pronouns tokenize to single tokens
             if len(target_tokens) == 1 and len(distractor_tokens) == 1:
                 self.processed_data.append({
+                    **item,
                     'sentence': sentence,
                     'corrupted_sentence': corr_sentence,
                     'target': target,
                     'distractor': distractor,
                     'target_token': target_tokens[0],
                     'distractor_token': distractor_tokens[0],
-                    'prefix': item['prefix']
                 })
         
         print(f"Processed {len(self.processed_data)} valid samples from {len(data)} total")
@@ -214,7 +214,9 @@ def run_evaluation(
                 
                 # Check accuracy (exact match with argmax)
                 choice = torch.argmax(logits[j, prefix_length-1])
-                accuracy += (choice == targets[j]).int().detach().cpu().item()
+                # accuracy += (choice == targets[j]).int().detach().cpu().item()
+                if logit_target > logit_distractor:
+                    accuracy += 1
                 
                 # Check exact match with control model
                 if control_logits is not None:
@@ -266,3 +268,58 @@ def run_evaluation(
         "exact_match": exact_match,
         "outputs": outputs_
     }
+#import dataloader
+from torch.utils.data import DataLoader
+
+def filter_dataset_by_model_correctness(data_list, model, tokenizer, device, max_length=32, batch_size=32):
+    """
+    Filters a list of raw data samples, keeping only those where the base model 
+    predicts the correct target token (argmax).
+    """
+    if not data_list:
+        return []
+
+    print(f"Filtering {len(data_list)} samples for base model correctness...")
+    
+    # Create a temporary dataset/loader for efficient batch processing
+    # We assume GPDataset can take the raw list just like in main()
+    temp_dataset = GPDataset(data_list, tokenizer, max_length=max_length)
+    temp_loader = DataLoader(temp_dataset, batch_size=batch_size, shuffle=False)
+    
+    valid_indices = []
+    
+    model.eval()
+    with torch.no_grad():
+        for batch_idx, batch in enumerate(tqdm(temp_loader, desc="Checking model predictions")):
+            # Move inputs to device
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
+            targets = batch['target_token'].to(device)
+            prefix_lengths = batch['prefix_length'].tolist() # Convert to list for easy indexing
+            
+            # Forward pass on Base Model
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+            logits = outputs.logits
+            
+            # Check every item in the batch
+            current_batch_size = input_ids.size(0)
+            for i in range(current_batch_size):
+                # Logic matches run_evaluation: check prediction at the last token of the prompt
+                pred_pos = prefix_lengths[i] - 1
+                
+                # Get the token with the highest probability
+                predicted_token_id = torch.argmax(logits[i, pred_pos]).item()
+                target_token_id = targets[i].item()
+                
+                # If correct, save the global index
+                if predicted_token_id == target_token_id:
+                    global_idx = (batch_idx * batch_size) + i
+                    valid_indices.append(global_idx)
+
+    # Reconstruct the list using only valid indices
+    filtered_data = [data_list[i] for i in valid_indices]
+    
+    print(f"  -> Retained: {len(filtered_data)}/{len(data_list)} "
+          f"({len(filtered_data)/len(data_list)*100:.2f}%)")
+    
+    return filtered_data

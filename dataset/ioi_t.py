@@ -52,12 +52,15 @@ ABBA_TEMPLATES = [
 
 def convert_disk_sample_to_ioi_format(disk_sample):
     """Convert a sample from the disk dataset format to the IOI format expected by the code"""
+    # print("keys in disk_sample:", disk_sample.keys())
     return {
+        **disk_sample,
         "sentence": disk_sample['ioi_sentences'],
         "corrupted_sentence": disk_sample['corr_ioi_sentences'],
         # Parse target and distractor from the sentence if not directly available
         "target": None,  # Will be computed during processing
-        "distractor": None  # Will be computed during processing
+        "distractor": None,  # Will be computed during processing
+        
     }
 
 def try_fit_template(string: str, template: str) -> Optional[Dict[str, str]]:
@@ -116,7 +119,7 @@ def find_template(string: str) -> Optional[Dict[str, str]]:
     return None
 
 def load_or_generate_ioi_data(
-    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/datasets/ioi",
+    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/filtered_datasets/ioi",
     split: str = "train",
     num_samples: Optional[int] = None
 ) -> List[Dict]:
@@ -176,24 +179,30 @@ class IOIDataset(Dataset):
             if template_info is None:
                 continue
             
+            
             # The target is the last word in the sentence (should be name A)
             target = sentence.strip().split()[-1]
             # The distractor is the other name (B)
-            distractor = template_info["b"] if template_info["a"] == target else template_info["a"]
+            distractor = item["b"] if item["a"] == target else item["a"]
             
             # Tokenize names with space prefix for consistency
             target_tokens = tokenizer.encode(" " + target, add_special_tokens=False)
+            
             distractor_tokens = tokenizer.encode(" " + distractor, add_special_tokens=False)
+            
+            
+            
             
             # if len(target_tokens) == 1 and len(distractor_tokens) == 1:
             self.processed_data.append({
+                **item,
                 'sentence': sentence,
                 'corrupted_sentence': corr_sentence,
                 'target': target,
                 'distractor': distractor,
                 'target_tokens': target_tokens,
                 'distractor_tokens': distractor_tokens,
-                'template_order': template_info['order']
+                'template_order': template_info['order'],
             })
         
         print(f"Processed {len(self.processed_data)} valid samples from {len(data)} total")
@@ -224,16 +233,16 @@ class IOIDataset(Dataset):
         # Find the position before the last token (where we predict)
         # We need to find where the sentence actually ends (before padding)
         sentence_prefix = item['sentence'][:item['sentence'].rfind(" ")]
-        T_Start = len(self.tokenizer.encode(sentence_prefix, add_special_tokens=True))
+        T_Start = len(self.tokenizer.encode(sentence_prefix))#, add_special_tokens=True))
         T_End = T_Start + len(item['target_tokens'])#.size(0)
         T_len = T_End - T_Start
         
         D_Start = T_Start  # Distractor starts right after target
         D_End = D_Start + len(item['distractor_tokens'])#.size(0)
         D_len = D_End - D_Start
-        
-        target_tokens =  self.tokenizer.encode(item['target'], padding='max_length', max_length=5, truncation=True, return_tensors='pt').squeeze(0)
-        distractor_tokens = self.tokenizer.encode(item['distractor'], padding='max_length', max_length=5, truncation=True, return_tensors='pt').squeeze(0)
+
+        target_tokens =  self.tokenizer.encode(" " + item['target'], padding='max_length', max_length=5, truncation=True, return_tensors='pt').squeeze(0)
+        distractor_tokens = self.tokenizer.encode(" " + item['distractor'], padding='max_length', max_length=5, truncation=True, return_tensors='pt').squeeze(0)
 
         return {
             "input_ids": inputs['input_ids'].squeeze(0),
@@ -316,7 +325,7 @@ def run_evaluation(
                 
                 # Collect logits for distractor tokens at target positions 
                 # (what would the model assign to distractor tokens at target positions)
-                for pos_idx, pos in enumerate(range(t_start, t_end)):
+                for pos_idx, pos in enumerate(range(d_start, d_end)):
                     if pos < outputs.logits.size(1):  # Check bounds
                         token_id = distractor_tokens[pos_idx] if pos_idx < len(distractor_tokens) else distractor_tokens[0]
                         logit = outputs.logits[i, pos, token_id].item()
@@ -347,15 +356,16 @@ def run_evaluation(
                 
                 for i in range(batch_size):
                     # Calculate KL from T_Start to end of sequence (or T_End + some margin)
-                    t_start = batch['T_Start'][i].item()
+                    t_start = batch['T_Start'][i].item()-1
+                    t_end = batch['T_End'][i].item()-1
                     
                     # Get valid sequence length (before padding)
                     valid_length = batch['attention_mask'][i].sum().item()
                     
                     # Calculate KL from target start position to end of valid sequence
                     if t_start < valid_length:
-                        model_logits = outputs.logits[i, t_start:valid_length, :]
-                        full_logits = full_outputs.logits[i, t_start:valid_length, :]
+                        model_logits = outputs.logits[i, t_start:t_end, :]
+                        full_logits = full_outputs.logits[i, t_start:t_end, :]
                         
                         kl = F.kl_div(
                             F.log_softmax(model_logits, dim=-1),
@@ -365,7 +375,7 @@ def run_evaluation(
                         ).item()
                         
                         # Normalize by number of tokens
-                        num_tokens = valid_length - t_start
+                        num_tokens = t_end - t_start
                         kl = kl / num_tokens if num_tokens > 0 else kl
                         
                         total_kl += kl
@@ -399,3 +409,78 @@ def run_evaluation(
         "kl_div": avg_kl,
         "exact_match": exact_match_rate
     }
+    
+    
+from torch.utils.data import DataLoader
+def filter_dataset_by_model_correctness(data_list, model, tokenizer, device, batch_size=32):
+    """
+    Filters a list of raw IOI data samples, keeping only those where the base model 
+    assigns a higher logit to the target than the distractor (matching run_evaluation logic).
+    """
+    if not data_list:
+        return []
+
+    print(f"Filtering {len(data_list)} samples for base model correctness...")
+    
+    # Create temporary dataset/loader
+    # Assumes your dataset class is named IOIDataset
+    temp_dataset = IOIDataset(data_list, tokenizer) 
+    temp_loader = DataLoader(temp_dataset, batch_size=batch_size, shuffle=False)
+    
+    valid_indices = []
+    
+    model.eval()
+    with torch.no_grad():
+        for batch_idx, batch in enumerate(tqdm(temp_loader, desc="Checking model predictions")):
+            # Move batch to device
+            for key, val in batch.items():
+                if isinstance(val, torch.Tensor):
+                    batch[key] = val.to(device)
+            
+            # Forward pass
+            outputs = model(
+                input_ids=batch['input_ids'], 
+                attention_mask=batch['attention_mask']
+            )
+            
+            current_batch_size = outputs.logits.size(0)
+            
+            for i in range(current_batch_size):
+                # Replicating the logic from your run_evaluation exactly
+                t_start = batch['T_Start'][i].item() - 1
+                d_start = batch['D_Start'][i].item() - 1
+                
+                # Get the specific target and distractor tokens used in eval
+                # Note: Your eval code takes the first token of the target/distractor span
+                target_token_id = batch['target_tokens'][i][0].item()
+                distractor_token_id = batch['distractor_tokens'][i][0].item()
+
+                # Extract logits
+                # Using [t_start] because your eval code essentially does target_logits[0]
+                target_logit = outputs.logits[i, t_start, target_token_id].item()
+                
+                # Using [d_start] logic from your code implies comparing target vs distractor strength
+                # However, usually IOI compares (Target - Distractor) at the PREDICTION position (End of sentence).
+                # Your run_evaluation snippet seems to look at t_start/d_start. 
+                # I will strictly follow your `avg_target_logit` vs `avg_distractor_logit` logic:
+                
+                # Re-reading your snippet:
+                # It collects logits at t_start...t_end. Then takes index 0.
+                target_logit = outputs.logits[i, t_start, target_token_id].item()
+                
+                # For distractor logic in your snippet:
+                # It iterates d_start...d_end. Then takes index 0.
+                distractor_logit = outputs.logits[i, d_start, distractor_token_id].item()
+
+                # Check "Correctness" defined by your eval: Target > Distractor
+                if target_logit >= distractor_logit:
+                    global_idx = (batch_idx * batch_size) + i
+                    valid_indices.append(global_idx)
+
+    # Reconstruct the list
+    filtered_data = [data_list[i] for i in valid_indices]
+    
+    print(f"  -> Retained: {len(filtered_data)}/{len(data_list)} "
+          f"({len(filtered_data)/len(data_list)*100:.2f}%)")
+    
+    return filtered_data

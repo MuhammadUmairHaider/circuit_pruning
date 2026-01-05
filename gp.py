@@ -7,8 +7,8 @@ from torch.utils.data import Dataset, DataLoader
 from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
-from models.gpt2_test import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
-from dataset.gp import GPDataset, load_or_generate_gp_data, run_evaluation
+from models.gpt2_test_copy import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
+from dataset.gp import GPDataset, load_or_generate_gp_data, run_evaluation, filter_dataset_by_model_correctness
 
 import torch
 import torch.nn as nn
@@ -65,54 +65,102 @@ from dataclasses import dataclass
 
 
 
-PRUNING_FACTOR = 1.0
+# PRUNING_FACTOR = 1.0
 
+# # @dataclass
 # @dataclass
+# class PruningConfig:
+#     init_value: float = 1.0
+#     sparsity_warmup_steps: int = 0
+
+#     # --- Fine-grained pruning (existing) ---
+#     # Attention Head Pruning
+#     prune_attention_heads: bool = True
+#     lambda_attention_heads: float = 0.045 * PRUNING_FACTOR # 0.027 * PRUNING_FACTOR
+
+#     # MLP neuron pruning
+#     prune_mlp_hidden: bool = True
+#     lambda_mlp_hidden: float = 0.0005 * PRUNING_FACTOR
+#     prune_mlp_output: bool = True
+#     lambda_mlp_output: float = 0.0005 * PRUNING_FACTOR
+    
+    
+#     prune_attention_neurons: bool = True
+#     lambda_attention_neurons: float = 0.0002 * PRUNING_FACTOR
+    
+#     prune_embedding: bool = False
+#     lambda_embedding: float = 1 * PRUNING_FACTOR
+    
+#     # Prune entire attention blocks
+#     prune_attention_blocks: bool = True
+#     lambda_attention_blocks: float = 0.000005 * PRUNING_FACTOR
+    
+#     # Prune entire MLP blocks
+#     prune_mlp_blocks: bool = True
+#     lambda_mlp_blocks: float = 0.6 * PRUNING_FACTOR
+    
+#     # Prune entire transformer layers
+#     prune_full_layers: bool = False
+#     lambda_full_layers: float = 0.000000005 * PRUNING_FACTOR
+
+
+PRUNING_FACTOR = 0.01  # Keep this at 1.0 to keep math simple
+
 @dataclass
 class PruningConfig:
-    init_value: float = 1.0
-    sparsity_warmup_steps: int = 0
+    # Start with gates FULLY OPEN (log_alpha > 0) so gradient flows immediately
+    init_value: float = 0.5 
+    
+    # CRITICAL: Don't prune for the first ~5-10 epochs
+    sparsity_warmup_steps: int = 1000 
 
-    # --- Fine-grained pruning (existing) ---
-    # Attention Head Pruning
+    # --- Lambdas ---
+    # These values are tuned for GPT-2 Small scale.
+    # If a lambda is too high, the gate dies instantly (instability).
+    # If too low, it never closes.
+    
+    depth_penalty_scaling: float = 0.1
+    
+    # 1. Heads: Moderate cost. We want to remove many, but they are useful.
     prune_attention_heads: bool = True
-    lambda_attention_heads: float = 0.035 * PRUNING_FACTOR # 0.027 * PRUNING_FACTOR
+    lambda_attention_heads: float = 0.8 
 
-    # MLP neuron pruning
+    # 2. Neurons (Hidden): There are 3072 of them. 
+    # Individual neurons are weak. The penalty must be small, or you kill them all.
     prune_mlp_hidden: bool = True
-    lambda_mlp_hidden: float = 0.00005 * PRUNING_FACTOR
+    lambda_mlp_hidden: float = 1.0  # Much lower than 25.0!
+
+    # 3. MLP Output (Residual): This is a "strong" cut.
     prune_mlp_output: bool = True
-    lambda_mlp_output: float = 0.00005 * PRUNING_FACTOR
+    lambda_mlp_output: float = 1.0 
     
-    
+    # 4. Attention Neurons: 
     prune_attention_neurons: bool = True
-    lambda_attention_neurons: float = 0.0002 * PRUNING_FACTOR
+    lambda_attention_neurons: float = 0.15
+
+    # Structure pruning (Blocks/Layers)
+    # Usually easier to prune fine-grained first, then structure.
+    prune_attention_blocks: bool = True
+    lambda_attention_blocks: float = 0.5
+    
+    prune_mlp_blocks: bool = True
+    lambda_mlp_blocks: float = 0.5 
+    
+    prune_full_layers: bool = False
+    lambda_full_layers: float = 0.0
     
     prune_embedding: bool = False
     lambda_embedding: float = 1 * PRUNING_FACTOR
-    
-    # Prune entire attention blocks
-    prune_attention_blocks: bool = True
-    lambda_attention_blocks: float = 0.000005 * PRUNING_FACTOR
-    
-    # Prune entire MLP blocks
-    prune_mlp_blocks: bool = True
-    lambda_mlp_blocks: float = 0.5 * PRUNING_FACTOR
-    
-    # Prune entire transformer layers
-    prune_full_layers: bool = False
-    lambda_full_layers: float = 0.0000005 * PRUNING_FACTOR
-
 # ==============================================================================
 # MAIN EXECUTION FOR GENDER PRONOUNS TASK
 # ==============================================================================
 if __name__ == '__main__':
     # --- Configuration ---
     MODEL_NAME = 'gpt2'
-    NUM_EPOCHS = 200
-    LEARNING_RATE = 5e-3
-    BATCH_SIZE = 16  # Matching the reference implementation
-    MAX_SEQ_LEN = 64
+    NUM_EPOCHS = 500
+    LEARNING_RATE = 3e-2
+    BATCH_SIZE = 64  # Matching the reference implementation
+    MAX_SEQ_LEN = 32
     ACCURACY_BUDGET = 0.05  # Allow 5% accuracy drop from baseline
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -138,9 +186,10 @@ if __name__ == '__main__':
     for name, param in circuit_model.named_parameters():
         total_params += param.numel()
         if 'gate' not in name:
+            # print(f"  Freezing parameter: {name}")
             param.requires_grad = False
         else:
-            print(f"  Unfreezing for training: {name}")
+            # print(f"  Unfreezing for training: {name}")
             param.requires_grad = True
             trainable_params += param.numel()
             
@@ -149,33 +198,63 @@ if __name__ == '__main__':
 
     # --- Dataset Setup ---
     print("\nSetting up Gender Pronouns dataset...")
-    # Load GP data - typically only has test split
-    test_data = load_or_generate_gp_data(split="test", num_samples=100000)  # Matching reference
-    train_data = load_or_generate_gp_data(split="train", num_samples=100000)  # Empty, not used
-    train_data_3k = load_or_generate_gp_data(split="train_3k", num_samples=500)  # Smaller subset for training
-    val_data = load_or_generate_gp_data(split="validation", num_samples=10000)  # Empty, not used
+    # 1. Load Raw Data (Lists of dictionaries)
+    test_data = load_or_generate_gp_data(split="test", num_samples=100000)
+    train_data = load_or_generate_gp_data(split="train", num_samples=100000)
+    val_data = load_or_generate_gp_data(split="validation", num_samples=10000)
 
-    # test_data = test_data + val_data  + train_data# + train_data_3k  # Combine all for splitting
-    print(f"Total samples available: {len(test_data)}")
+    # 2. Filter the Raw Data Lists (Pass *_data, NOT *_dataset)
+    print("\n--- Filtering datasets based on Base Model correctness ---")
     
-    # Split into train/val/test (80/10/10)
-    # random.shuffle(test_data)
-    # train_size = int(0.8 * len(test_data))
-    # val_size = int(0.1 * len(test_data))
+    # train_data = filter_dataset_by_model_correctness(
+    #     train_data, full_model, tokenizer, DEVICE, max_length=MAX_SEQ_LEN, batch_size=BATCH_SIZE
+    # )
     
-    # train_data = test_data[:train_size]
-    # val_data = test_data[train_size:train_size + val_size]
-    # test_data_final = test_data[train_size + val_size:]
+    val_data = filter_dataset_by_model_correctness(
+        val_data, full_model, tokenizer, DEVICE, max_length=MAX_SEQ_LEN, batch_size=BATCH_SIZE
+    )
     
-    print(f"Train samples: {len(train_data)}")
-    print(f"Val samples: {len(val_data)}")
-    print(f"Test samples: {len(test_data)}")
+    test_data = filter_dataset_by_model_correctness(
+        test_data, full_model, tokenizer, DEVICE, max_length=MAX_SEQ_LEN, batch_size=BATCH_SIZE
+    )
 
+    print(f"\nFinal Train samples: {len(train_data)}")
+    print(f"Final Val samples: {len(val_data)}")
+    print(f"Final Test samples: {len(test_data)}")
+    
+    import os
+    from datasets import Dataset, DatasetDict
+
+    # ==============================================================================
+    # SAVE FILTERED DATASETS (ARROW FORMAT)
+    # ==============================================================================
+    print("\n--- Saving filtered datasets to Arrow format ---")
+
+    # Define where you want the data saved
+    save_path = "./filtered_datasets/gp"
+
+    # 1. Convert the filtered lists (dicts) back into Hugging Face Datasets
+    #    (Assuming train_data, val_data, test_data are lists of dictionaries)
+    train_dataset = Dataset.from_list(train_data)
+    val_dataset = Dataset.from_list(val_data)
+    test_dataset = Dataset.from_list(test_data)
+
+    # 2. Combine into a single DatasetDict (optional, but cleaner for loading later)
+    dataset_dict = DatasetDict({
+        'train': train_dataset,
+        'validation': val_dataset,
+        'test': test_dataset
+    })
+
+    # 3. Save to disk
+    #    This creates a folder structure containing the Arrow files
+    dataset_dict.save_to_disk(save_path)
+    
     # Create dataset objects
     train_dataset = GPDataset(train_data, tokenizer, max_length=MAX_SEQ_LEN)
     val_dataset = GPDataset(val_data, tokenizer, max_length=MAX_SEQ_LEN)
     test_dataset = GPDataset(test_data, tokenizer, max_length=MAX_SEQ_LEN)
-
+    
     # Create dataloaders
     train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
@@ -187,7 +266,7 @@ if __name__ == '__main__':
         model_to_eval=full_model, 
         model_name="Baseline Full Model", 
         full_model_for_faithfulness=None, 
-        dataloader=val_dataloader, 
+        dataloader=test_dataloader, 
         device=DEVICE, 
         tokenizer=tokenizer
     )
@@ -201,7 +280,7 @@ if __name__ == '__main__':
         model_to_eval=circuit_model, 
         model_name="Initial Circuit Model", 
         full_model_for_faithfulness=full_model, 
-        dataloader=val_dataloader, 
+        dataloader=test_dataloader, 
         device=DEVICE, 
         tokenizer=tokenizer
     )
@@ -219,12 +298,16 @@ if __name__ == '__main__':
     circuit_model.train()
     total_steps = 0
     
-    for epoch in range(NUM_EPOCHS):
+    # --- CHANGED: Single tqdm loop over epochs ---
+    epoch_pbar = tqdm(range(NUM_EPOCHS), desc="Training Progress")
+    
+    for epoch in epoch_pbar:
         epoch_loss = 0
         epoch_kl_loss = 0
         epoch_sparsity_loss = 0
         
-        for batch in tqdm(train_dataloader, desc=f"Epoch {epoch+1}/{NUM_EPOCHS}"):
+        # --- CHANGED: Removed inner tqdm ---
+        for batch in train_dataloader:
             optimizer.zero_grad()
             
             # Move batch to device
@@ -265,12 +348,27 @@ if __name__ == '__main__':
                 )
                 total_kl += kl
             
+            # Task loss (Commented out in original, kept commented out here)
+            logit_good = circuit_outputs.logits[
+                torch.arange(batch_size), 
+                batch['prefix_length'] - 1, 
+                batch['target_token']
+            ]
+
+            logit_bad = circuit_outputs.logits[
+                torch.arange(batch_size), 
+                batch['prefix_length'] - 1, 
+                batch['distractor_token']
+            ]
+            task_loss = F.relu(4.0 - (logit_good - logit_bad)).mean()
+            
             kl_loss = total_kl / batch_size
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
             
             # Total loss
-            loss = kl_loss + sparsity_loss
+            loss = kl_loss*4.0 + sparsity_loss# + task_loss
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(gate_params, max_norm=1.0)
             optimizer.step()
             
             # Track losses
@@ -278,35 +376,38 @@ if __name__ == '__main__':
             epoch_kl_loss += kl_loss.item()
             epoch_sparsity_loss += sparsity_loss.item()
             total_steps += 1
-        
-        # Print epoch statistics
+
+        # Calculate averages for progress bar
         avg_loss = epoch_loss / len(train_dataloader)
         avg_kl = epoch_kl_loss / len(train_dataloader)
         avg_sparsity = epoch_sparsity_loss / len(train_dataloader)
         
-        print(f"\nEpoch {epoch+1} Summary:")
-        print(f"  - Total Loss: {avg_loss:.4f}")
-        print(f"  - KL Loss: {avg_kl:.4f}")
-        print(f"  - Sparsity Loss: {avg_sparsity:.4f}")
+        # Update progress bar description
+        epoch_pbar.set_postfix({
+            'L': f"{avg_loss:.3f}", 
+            'KL': f"{avg_kl:.3f}", 
+            'Sp': f"{avg_sparsity:.3f}"
+        })
         
-        # --- Epoch Validation ---
-        circuit_model.eval()
-        val_results = run_evaluation(
-            model_to_eval=circuit_model, 
-            model_name=f"Circuit after Epoch {epoch+1}", 
-            full_model_for_faithfulness=full_model, 
-            dataloader=val_dataloader, 
-            device=DEVICE, 
-            tokenizer=tokenizer
-        )
-        
-        # Check if we're within accuracy budget
-        current_accuracy = val_results.get("accuracy", 0.0)
-        accuracy_drop = base_accuracy - current_accuracy
-        if accuracy_drop > ACCURACY_BUDGET:
-            print(f"  WARNING: Accuracy drop ({accuracy_drop:.4f}) exceeds budget ({ACCURACY_BUDGET})!")
-        
-        circuit_model.train()
+        # --- CHANGED: Run evaluation every 10 epochs ---
+        if (epoch + 1) % 10 == 0:
+            circuit_model.eval()
+            print(f"\n--- Validation at Epoch {epoch+1} ---")
+            val_results = run_evaluation(
+                model_to_eval=circuit_model, 
+                model_name=f"Circuit after Epoch {epoch+1}", 
+                full_model_for_faithfulness=full_model, 
+                dataloader=test_dataloader, 
+                device=DEVICE, 
+                tokenizer=tokenizer
+            )
+            
+            current_accuracy = val_results.get("accuracy", 0.0)
+            accuracy_drop = base_accuracy - current_accuracy
+            if accuracy_drop > ACCURACY_BUDGET:
+                print(f"  WARNING: Accuracy drop ({accuracy_drop:.4f}) exceeds budget ({ACCURACY_BUDGET})!")
+            
+            circuit_model.train()
 
     # --- Final Analysis and Pruning ---
     print("\n--- Analyzing and finalizing circuit ---")

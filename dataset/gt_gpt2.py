@@ -45,11 +45,12 @@ def convert_disk_sample_to_gt_format(disk_sample):
     return {
         "clean_prompt": disk_sample['prefix'],
         "corrupted_prompt": disk_sample['corr_prefix'],
-        "threshold_suffix": int(disk_sample['digits'])
+        "threshold_suffix": int(disk_sample['digits']),
+        **disk_sample,
     }
 
 def load_or_generate_gt_data(
-    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/datasets/gt2",
+    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/datasets/gt_gen",
     split: str = "train",
     num_samples: Optional[int] = None
 ) -> List[Dict]:
@@ -114,126 +115,245 @@ class GTDataset(Dataset):
     def __len__(self): return len(self.data)
     def __getitem__(self, idx):
         item = self.data[idx]
-        clean_inputs = self.tokenizer(item['clean_prompt'], padding='max_length', max_length=self.max_length, truncation=True, return_tensors='pt')
+        clean_inputs = self.tokenizer(item['prefix'], padding='max_length', max_length=self.max_length, truncation=True, return_tensors='pt')
         corrupted_inputs = self.tokenizer(item['corrupted_prompt'], padding='max_length', max_length=self.max_length, truncation=True, return_tensors='pt')
+        last_token_idx = self.tokenizer(item['prefix'], return_tensors='pt')['input_ids']
+        last_token_idx = len(self.tokenizer.tokenize(item['prefix'])) - 1
         last_token_idx = clean_inputs['attention_mask'].squeeze().sum().item() - 1
         return {"clean_input_ids": clean_inputs['input_ids'].squeeze(0), "clean_attention_mask": clean_inputs['attention_mask'].squeeze(0),
                 "corrupted_input_ids": corrupted_inputs['input_ids'].squeeze(0), "threshold_suffix": torch.tensor(item['threshold_suffix'], dtype=torch.long),
-                "last_token_idx": torch.tensor(last_token_idx, dtype=torch.long)}
+                "last_token_idx": torch.tensor(last_token_idx, dtype=torch.long),
+                **item}
 
 def create_two_digit_token_mapping(tokenizer):
     """Create a robust mapping of two-digit numbers to their token IDs"""
     two_digit_tokens = {}
     print("Creating two-digit token mapping...")
-    for i in range(2, 99):  # Only include numbers that can be thresholds (2-98)
-        candidates = [f"{i:02d}", f" {i:02d}", str(i), f" {i}"]
-        for candidate in candidates:
-            tokens = tokenizer.encode(candidate, add_special_tokens=False)
-            if len(tokens) == 1:
-                two_digit_tokens[i] = tokens[0]
-                break
+    for i in range(0, 100):  # Only include numbers that can be thresholds (2-98)
+        s = f" {i:02d}"
+        enc = tokenizer.encode(s, add_special_tokens=False)
+        assert len(enc) == 1, f"{s!r} does not map to a single token: {enc}"
+        two_digit_tokens[i] = enc[0]
     print(f"Successfully mapped {len(two_digit_tokens)} two-digit numbers to tokens")
     return two_digit_tokens
 
+
+
 def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: Optional[nn.Module], dataloader, device, two_digit_tokens, verbose=True, tokenizer=None):
-    if verbose: print("\n" + "="*50 + f"\n  EVALUATING: {model_name} (with Re-Normalization)\n" + "="*50) # <-- Updated title
+    if verbose: print("\n" + "="*50 + f"\n  EVALUATING: {model_name} (with Re-Normalization)\n" + "="*50)
     model_to_eval.eval()
     if full_model_for_faithfulness: full_model_for_faithfulness.eval()
     if not two_digit_tokens: return {}
 
     # --- SETUP FOR RE-NORMALIZATION ---
-    # Create a sorted list of the numbers and their corresponding token IDs
-    # This is crucial for indexing the re-normalized probabilities correctly.
-    sorted_tokens = sorted(two_digit_tokens.items()) # <-- NEW: Sort by number
-    sorted_nums = [item[0] for item in sorted_tokens] # <-- NEW: Just the numbers [2, 3, ...]
-    num_to_idx = {num: i for i, num in enumerate(sorted_nums)} # <-- NEW: Map number to its index in the sorted list
-    digit_token_ids = torch.tensor([item[1] for item in sorted_tokens], device=device) # <-- NEW: Tensor of token IDs on the correct device
+    sorted_tokens = sorted(two_digit_tokens.items())
+    sorted_nums = [item[0] for item in sorted_tokens]
+    num_to_idx = {num: i for i, num in enumerate(sorted_nums)}
+    digit_token_ids = torch.tensor([item[1] for item in sorted_tokens], device=device)
 
-    all_prob_diffs, all_cutoff_sharpness, total_kl = [], [], 0.0
+    all_prob_diffs, all_cutoff_sharpness, all_kl_divs, all_prob_diffs_global = [], [], [], []
     valid_samples = 0
     desc = f"Evaluating {model_name}" if verbose else "Binary Searching"
     accuracy = 0.0
     n = 0
+    
     with torch.no_grad():
         for batch in tqdm(dataloader, desc=desc, leave=False):
             for key, val in batch.items():
                 if isinstance(val, torch.Tensor): batch[key] = val.to(device)
             
             outputs = model_to_eval(input_ids=batch['clean_input_ids'], corrupted_input_ids=batch.get('corrupted_input_ids'), attention_mask=batch['clean_attention_mask'])
-            
-            # This part is the same: get the logits for the last token position
             last_token_logits = outputs.logits[torch.arange(outputs.logits.size(0)), batch['last_token_idx'], :]
 
-            # --- RE-NORMALIZATION LOGIC ---
-            # 1. Filter logits to only include our ~97 two-digit number tokens
+            # Filter logits to only include two-digit number tokens
             digit_logits = torch.gather( 
                 last_token_logits,
-                1, # Dimension to gather from (the vocabulary dimension)
+                1,
                 digit_token_ids.unsqueeze(0).expand(last_token_logits.shape[0], -1)
             )
 
-            # 2. Apply softmax to this smaller, filtered logit tensor
             eval_probs = F.softmax(digit_logits, dim=-1) 
-
-            # --- UPDATED METRIC CALCULATION ---
-            for i in range(eval_probs.size(0)):
-                YY = batch['threshold_suffix'][i].item()
-                if not (2 <= YY <= 98 and YY in num_to_idx): continue
-                
-                probs = eval_probs[i] # This is now a vector of ~97 probabilities that sum to 1
-                
-                yy_index = num_to_idx[YY] # Find the index corresponding to our threshold YY
-                
-                # Calculate prob_diff using tensor slicing for efficiency
-                if(yy_index + 11 > len(probs)):
-                    p_greater = probs[yy_index + 1:].sum()
-                else:
-                    p_greater = probs[yy_index + 1: yy_index + 11].sum()
-                if(yy_index + 1 -11 <0):
-                    p_less_equal = probs[:yy_index + 1].sum()
-                else:
-                    p_less_equal = probs[yy_index + 1 - 11: yy_index + 1].sum()
-                n+= 1
-                if(p_greater> p_less_equal):
-                    accuracy += 1.0
-                
-                all_prob_diffs.append((p_greater - p_less_equal).item())
-
-                # Cutoff sharpness logic also needs to use the new index mapping
-                p_yy_plus_1 = probs[num_to_idx[YY + 1]].item() if (YY + 1) in num_to_idx else 0.0
-                p_yy_minus_1 = probs[num_to_idx[YY - 1]].item() if (YY - 1) in num_to_idx else 0.0
-                all_cutoff_sharpness.append(p_yy_plus_1 - p_yy_minus_1)
-                valid_samples += 1
-
-            # --- UPDATED FAITHFULNESS (KL DIVERGENCE) CALCULATION ---
+            W = 10
+            N = eval_probs.size(1)
+            
+            # --- GET FULL MODEL LOGITS (if computing faithfulness) ---
             if full_model_for_faithfulness:
                 full_model_outputs = full_model_for_faithfulness(input_ids=batch['clean_input_ids'], attention_mask=batch['clean_attention_mask'])
                 last_full_logits = full_model_outputs.logits[torch.arange(full_model_outputs.logits.size(0)), batch['last_token_idx'], :]
                 
-                # Also filter the full model's logits to ensure a fair comparison
-                full_digit_logits = torch.gather( # <-- NEW
+                # Filter the full model's logits to the same token set
+                full_digit_logits = torch.gather(
                     last_full_logits, 1, digit_token_ids.unsqueeze(0).expand(last_full_logits.shape[0], -1)
                 )
+            
+            # --- PER-SAMPLE METRICS (including windowed KL) ---
+            for i in range(eval_probs.size(0)):
+                YY = batch['threshold_suffix'][i].item()
+                if YY not in num_to_idx:
+                    continue
+            
+                probs = eval_probs[i]
+                yy_index = num_to_idx[YY]
+            
+                # ----- PROBABILITY DIFFERENCE (ABOVE vs BELOW) -----
+                if yy_index + W + 1 <= N:
+                    p_greater = probs[yy_index + 1 : yy_index + W + 1].sum()
+                else:
+                    p_greater = probs[yy_index + 1 : N].sum()
+            
+                if yy_index - W >= 0:
+                    p_less_equal = probs[yy_index - W : yy_index].sum()
+                else:
+                    p_less_equal = probs[0 : yy_index].sum()
+            
+                n += 1
                 
-                # Compare the log_softmax of the two re-normalized distributions
-                total_kl += F.kl_div( # <-- CHANGED
-                    F.log_softmax(digit_logits, dim=-1), 
-                    F.log_softmax(full_digit_logits, dim=-1), 
-                    log_target=True, reduction='batchmean'
-                ).item()
+            
+                all_prob_diffs.append((p_greater - p_less_equal).item())
 
+                # ----- CUTOFF SHARPNESS -----
+                p_yy_plus = probs[num_to_idx[YY + 1]].item() if (YY + 1) in num_to_idx else 0.0
+                p_yy_minus = probs[num_to_idx[YY - 1]].item() if (YY - 1) in num_to_idx else 0.0
+                all_cutoff_sharpness.append(p_yy_plus - p_yy_minus)
+                
+                # ----- Non Windowed Probability Difference -----
+                
+                p_greater_global = probs[yy_index + 1 : ].sum()
+                p_less_global = probs[ : yy_index].sum()
+                
+                if p_greater > p_less_equal:
+                    accuracy += 1.0
+                all_prob_diffs_global.append((p_greater_global - p_less_global).item())
+                
+                # ----- WINDOWED KL DIVERGENCE -----
+                if full_model_for_faithfulness:
+                    # Define window indices
+                    window_start = max(0, yy_index - W)
+                    window_end = min(N, yy_index + W + 1)
+                    
+                    # Extract windowed logits for both models
+                    sparse_window_logits = digit_logits[i, window_start:window_end]
+                    full_window_logits = full_digit_logits[i, window_start:window_end]
+                    
+                    # Compute KL divergence on the windowed distributions
+                    kl_div = F.kl_div(
+                        F.log_softmax(sparse_window_logits, dim=-1),
+                        F.log_softmax(full_window_logits, dim=-1),
+                        log_target=True,
+                        reduction='sum'
+                    ).item()
+                    
+                    all_kl_divs.append(kl_div)
+                
+                valid_samples += 1
+
+    # --- COMPUTE AVERAGES ---
     avg_pd = sum(all_prob_diffs) / len(all_prob_diffs) if all_prob_diffs else 0
     avg_cs = sum(all_cutoff_sharpness) / len(all_cutoff_sharpness) if all_cutoff_sharpness else 0
-    avg_kl = total_kl / len(dataloader) if len(dataloader) > 0 else 0
+    avg_kl = sum(all_kl_divs) / len(all_kl_divs) if all_kl_divs else 0
     
     if verbose:
         print(f"\nProcessed {valid_samples} valid samples.")
         print("\n" + "="*50)
-        print(f"{model_name} Evaluation Summary (Re-Normalized):") # <-- Updated title
-        if full_model_for_faithfulness: print(f"  - Faithfulness (KL Div):        {avg_kl:.4f}")
-        print(f"  - Performance (Prob Diff):      {avg_pd:.4f}")
-        print(f"  - Performance (Cutoff Sharpness): {avg_cs:.4f}")
-        print(f"  - Accuracy:                      {accuracy / n:.4f}" if n > 0 else "  - Accuracy:                      N/A")
+        print(f"{model_name} Evaluation Summary (Re-Normalized):")
+        if full_model_for_faithfulness: print(f"  - Faithfulness (Windowed KL Div): {avg_kl:.4f}")
+        print(f"  - Performance (Prob Diff):         {avg_pd:.4f}")
+        print(f"  - Performance (Cutoff Sharpness):  {avg_cs:.4f}")
+        print(f"  - Accuracy:                         {accuracy / n:.4f}" if n > 0 else "  - Accuracy:                         N/A")
+        print(f"Non-Windowed Avg Prob Diff:        {sum(all_prob_diffs_global) / len(all_prob_diffs_global) if all_prob_diffs_global else 0:.4f}")
         print("="*50)
     
     return {"prob_diff": avg_pd, "cutoff_sharpness": avg_cs, "kl_div": avg_kl}
+
+from torch.utils.data import DataLoader
+def filter_dataset_by_model_correctness(data_list, model, tokenizer, device, two_digit_tokens, batch_size=32):
+    """
+    Filters the GT dataset, keeping only samples where the base model correctly 
+    predicts the year range (P(> year) > P(<= year)) using re-normalized probabilities.
+    """
+    if not data_list:
+        return []
+
+    print(f"Filtering {len(data_list)} samples for base model correctness...")
+
+    # --- SETUP FOR RE-NORMALIZATION (Exact copy from run_evaluation) ---
+    sorted_tokens = sorted(two_digit_tokens.items())
+    sorted_nums = [item[0] for item in sorted_tokens]
+    num_to_idx = {num: i for i, num in enumerate(sorted_nums)}
+    digit_token_ids = torch.tensor([item[1] for item in sorted_tokens], device=device)
+    
+    # Create temporary dataset/loader
+    # We use GTDataset to ensure tokens and 'threshold_suffix' are processed exactly like in training
+    temp_dataset = GTDataset(data_list, tokenizer, max_length=32) 
+    temp_loader = DataLoader(temp_dataset, batch_size=batch_size, shuffle=False)
+    
+    valid_indices = []
+    
+    model.eval()
+    with torch.no_grad():
+        for batch_idx, batch in enumerate(tqdm(temp_loader, desc="Checking model predictions")):
+            # Move batch to device
+            for key, val in batch.items():
+                if isinstance(val, torch.Tensor):
+                    batch[key] = val.to(device)
+            
+            # Forward pass (using clean inputs)
+            outputs = model(
+                input_ids=batch['clean_input_ids'], 
+                attention_mask=batch['clean_attention_mask']
+            )
+            
+            # Get logits for the last token
+            last_token_logits = outputs.logits[torch.arange(outputs.logits.size(0)), batch['last_token_idx'], :]
+
+            # Filter logits to only include two-digit number tokens (Re-normalization)
+            digit_logits = torch.gather( 
+                last_token_logits,
+                1,
+                digit_token_ids.unsqueeze(0).expand(last_token_logits.shape[0], -1)
+            )
+
+            # Compute Softmax on just the digit tokens
+            eval_probs = torch.nn.functional.softmax(digit_logits, dim=-1)
+            
+            W = 10
+            N = eval_probs.size(1)
+            current_batch_size = eval_probs.size(0)
+
+            for i in range(current_batch_size):
+                YY = batch['threshold_suffix'][i].item()
+                
+                # Skip if the year isn't in our map (safety check)
+                if YY not in num_to_idx:
+                    continue
+                
+                probs = eval_probs[i]
+                yy_index = num_to_idx[YY]
+                
+                # --- LOGIC COPIED FROM run_evaluation ---
+                
+                # Calculate P(> YY)
+                if yy_index + W + 1 <= N:
+                    p_greater = probs[yy_index + 1 : yy_index + W + 1].sum()
+                else:
+                    p_greater = probs[yy_index + 1 : N].sum()
+                
+                # Calculate P(<= YY)
+                if yy_index - W >= 0:
+                    p_less_equal = probs[yy_index - W : yy_index].sum()
+                else:
+                    p_less_equal = probs[0 : yy_index].sum()
+                p_greater_global = probs[yy_index + 1 : ].sum()
+                p_less_global = probs[ : yy_index].sum()
+                
+                if p_greater > p_less_equal:
+                    global_idx = (batch_idx * batch_size) + i
+                    valid_indices.append(global_idx)
+
+    # Reconstruct the list
+    filtered_data = [data_list[i] for i in valid_indices]
+    
+    print(f"  -> Retained: {len(filtered_data)}/{len(data_list)} "
+          f"({len(filtered_data)/len(data_list)*100:.2f}%)")
+    
+    return filtered_data

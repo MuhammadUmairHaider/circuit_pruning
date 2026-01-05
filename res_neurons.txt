@@ -1,0 +1,516 @@
+GP Final:
+
+📍 DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | Active      | Active     | 4/12         | 177/768         | 1104/3072       | 669/768        
+1      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+2      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+3      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+4      | Active   | Active      | Pruned     | 11/12        | 612/768         | 0/3072          | 0/768          
+5      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+6      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+7      | Active   | Pruned      | Active     | 0/12         | 0/768           | 149/3072        | 407/768        
+8      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+9      | Active   | Active      | Pruned     | 7/12         | 290/768         | 0/3072          | 0/768          
+10     | Active   | Active      | Pruned     | 11/12        | 474/768         | 0/3072          | 0/768          
+11     | Active   | Active      | Active     | 4/12         | 149/768         | 80/3072         | 335/768        
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 1 / 1  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Layer Level:
+  - Active: 12 / 12  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Blocks:
+  - Active: 5 / 12  (41.7%)
+  - Pruned: 7 (58.3%)
+
+Mlp Blocks:
+  - Active: 3 / 12  (25.0%)
+  - Pruned: 9 (75.0%)
+
+Attention Heads:
+  - Active: 37 / 144  (25.7%)
+  - Pruned: 107 (74.3%)
+
+Attention Neurons:
+  - Active: 1,702 / 9,216  (18.5%)
+  - Pruned: 7,514 (81.5%)
+
+Mlp Hidden:
+  - Active: 1,333 / 36,864  (3.6%)
+  - Pruned: 35,531 (96.4%)
+
+Mlp Output:
+  - Active: 1,411 / 9,216  (15.3%)
+  - Pruned: 7,805 (84.7%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 7,089,997 out of 85,017,600 prunable parameters
+  - Prunable compression: 12.0x
+  - Prunable reduction: 91.7%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+--- Final evaluation on test set ---
+
+==================================================
+  EVALUATING: Final Pruned Circuit (Optimal Thresholds)
+==================================================
+Acc: 0.696, LD: 2.615: : 378it [00:01, 232.14it/s]                                                                                                                                                                                   
+
+Processed 378 valid samples.
+
+==================================================
+Final Pruned Circuit (Optimal Thresholds) Evaluation Summary:
+  - Accuracy:              0.6958
+  - Logit Difference:      2.6150
+  - KL Divergence:         0.4909
+  - Exact Match:           0.7275
+==================================================
+
+============================================================
+FINAL SUMMARY - Gender Pronouns Circuit Discovery
+============================================================
+Baseline Accuracy: 0.6878
+Baseline Logit Diff: 2.6198
+Final Circuit Accuracy: 0.6958 (drop: -0.0079)
+Final Circuit Logit Diff: 2.6150
+Final KL Divergence: 0.4909
+Exact Match Rate: 0.7275
+
+Sparsity Statistics:
+  - attention_blocks: 4.9842
+  - mlp_blocks: 2.9527
+  - attention_heads: 36.2196
+  - attention_neurons: 1988.1173
+  - mlp_hidden: 1885.5187
+  - mlp_output: 1529.1583
+
+
+
+GT Final:
+
+
+
+
+================================================================================
+
+📍 GLOBAL COMPONENTS:
+  - Embedding Gate: Active
+
+📍 LAYER-LEVEL PRUNING:
+  - Active Layers: 12/12 (100.0%)
+
+📍 DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | Active      | Active     | 3/12         | 167/768         | 1184/3072       | 743/768        
+1      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1265/3072       | 708/768        
+2      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+3      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+4      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+5      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+6      | Active   | Active      | Pruned     | 4/12         | 251/768         | 0/3072          | 0/768          
+7      | Active   | Active      | Pruned     | 3/12         | 181/768         | 0/3072          | 0/768          
+8      | Active   | Active      | Active     | 7/12         | 427/768         | 664/3072        | 675/768        
+9      | Active   | Active      | Active     | 11/12        | 675/768         | 707/3072        | 704/768        
+10     | Active   | Pruned      | Active     | 0/12         | 0/768           | 750/3072        | 690/768        
+11     | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 1 / 1  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Layer Level:
+  - Active: 12 / 12  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Blocks:
+  - Active: 5 / 12  (41.7%)
+  - Pruned: 7 (58.3%)
+
+Mlp Blocks:
+  - Active: 5 / 12  (41.7%)
+  - Pruned: 7 (58.3%)
+
+Attention Heads:
+  - Active: 28 / 144  (19.4%)
+  - Pruned: 116 (80.6%)
+
+Attention Neurons:
+  - Active: 1,701 / 9,216  (18.5%)
+  - Pruned: 7,515 (81.5%)
+
+Mlp Hidden:
+  - Active: 4,570 / 36,864  (12.4%)
+  - Pruned: 32,294 (87.6%)
+
+Mlp Output:
+  - Active: 3,520 / 9,216  (38.2%)
+  - Pruned: 5,696 (61.8%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 11,991,025 out of 85,017,600 prunable parameters
+  - Prunable compression: 7.1x
+  - Prunable reduction: 85.9%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+==================================================
+  EVALUATING: Final Pruned Circuit (Optimal Thresholds) (with Re-Normalization)
+==================================================
+                                                                                                                                                                                                                                     
+Processed 12256 valid samples.
+
+==================================================
+Final Pruned Circuit (Optimal Thresholds) Evaluation Summary (Re-Normalized):
+  - Faithfulness (Windowed KL Div): 0.0059
+  - Performance (Prob Diff):         0.3912
+  - Performance (Cutoff Sharpness):  0.0655
+  - Accuracy:                         0.9615
+==================================================
+
+
+
+IOI:
+
+
+📍 DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | Active      | Active     | 9/12         | 282/768         | 2302/3072       | 746/768        
+1      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1542/3072       | 661/768        
+2      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1410/3072       | 608/768        
+3      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1502/3072       | 617/768        
+4      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1521/3072       | 608/768        
+5      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1553/3072       | 607/768        
+6      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1615/3072       | 612/768        
+7      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1681/3072       | 618/768        
+8      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1647/3072       | 608/768        
+9      | Active   | Active      | Active     | 3/12         | 166/768         | 1644/3072       | 568/768        
+10     | Active   | Active      | Active     | 3/12         | 180/768         | 1696/3072       | 622/768        
+11     | Active   | Pruned      | Active     | 0/12         | 0/768           | 1867/3072       | 621/768        
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 1 / 1  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Layer Level:
+  - Active: 12 / 12  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Blocks:
+  - Active: 3 / 12  (25.0%)
+  - Pruned: 9 (75.0%)
+
+Mlp Blocks:
+  - Active: 12 / 12  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Heads:
+  - Active: 15 / 144  (10.4%)
+  - Pruned: 129 (89.6%)
+
+Attention Neurons:
+  - Active: 628 / 9,216  (6.8%)
+  - Pruned: 8,588 (93.2%)
+
+Mlp Hidden:
+  - Active: 19,980 / 36,864  (54.2%)
+  - Pruned: 16,884 (45.8%)
+
+Mlp Output:
+  - Active: 7,496 / 9,216  (81.3%)
+  - Pruned: 1,720 (18.7%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 29,870,252 out of 85,017,600 prunable parameters
+  - Prunable compression: 2.8x
+  - Prunable reduction: 64.9%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+--- Final evaluation on test set ---
+
+==================================================
+  EVALUATING: Final Pruned Circuit (Optimal Thresholds)
+==================================================
+                                                                                                                                                                                                                                     
+Processed 36084 valid samples.
+
+==================================================
+Final Pruned Circuit (Optimal Thresholds) Evaluation Summary:
+  - Accuracy:              0.8310
+  - Logit Difference:      3.1236
+  - Faithfulness (KL Div): 1.1634
+  - Exact Match Rate:      0.2494
+==================================================
+
+============================================================
+FINAL SUMMARY - IOI Circuit Discovery
+============================================================
+Baseline Accuracy: 0.9656
+Baseline Logit Diff: 3.1791
+Final Circuit Accuracy: 0.8310 (drop: 0.1346)
+Final Circuit Logit Diff: 3.1236
+Final KL Divergence: 1.1634
+Exact Match Rate: 0.2494
+
+Sparsity Statistics:
+  - attention_blocks: 2.9945
+  - mlp_blocks: 11.9510
+  - attention_heads: 14.5931
+  - attention_neurons: 752.7720
+  - mlp_hidden: 27451.4766
+  - mlp_output: 8240.8496
+
+
+
+
+
+
+  Temp IOI
+
+
+📍 DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | Active      | Active     | 4/12         | 124/768         | 1765/3072       | 756/768        
+1      | Active   | Pruned      | Active     | 0/12         | 0/768           | 565/3072        | 440/768        
+2      | Active   | Pruned      | Active     | 0/12         | 0/768           | 386/3072        | 314/768        
+3      | Active   | Pruned      | Active     | 0/12         | 0/768           | 273/3072        | 277/768        
+4      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+5      | Active   | Pruned      | Active     | 0/12         | 0/768           | 279/3072        | 281/768        
+6      | Active   | Pruned      | Active     | 0/12         | 0/768           | 392/3072        | 364/768        
+7      | Active   | Pruned      | Active     | 0/12         | 0/768           | 374/3072        | 391/768        
+8      | Active   | Pruned      | Active     | 0/12         | 0/768           | 380/3072        | 376/768        
+9      | Active   | Active      | Active     | 2/12         | 88/768          | 362/3072        | 303/768        
+10     | Active   | Active      | Pruned     | 10/12        | 475/768         | 0/3072          | 0/768          
+11     | Active   | Pruned      | Active     | 0/12         | 0/768           | 454/3072        | 335/768        
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 1 / 1  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Layer Level:
+  - Active: 12 / 12  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Blocks:
+  - Active: 3 / 12  (25.0%)
+  - Pruned: 9 (75.0%)
+
+Mlp Blocks:
+  - Active: 10 / 12  (83.3%)
+  - Pruned: 2 (16.7%)
+
+Attention Heads:
+  - Active: 16 / 144  (11.1%)
+  - Pruned: 128 (88.9%)
+
+Attention Neurons:
+  - Active: 687 / 9,216  (7.5%)
+  - Pruned: 8,529 (92.5%)
+
+Mlp Hidden:
+  - Active: 5,230 / 36,864  (14.2%)
+  - Pruned: 31,634 (85.8%)
+
+Mlp Output:
+  - Active: 3,837 / 9,216  (41.6%)
+  - Pruned: 5,379 (58.4%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 8,692,278 out of 85,017,600 prunable parameters
+  - Prunable compression: 9.8x
+  - Prunable reduction: 89.8%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+--- Final evaluation on test set ---
+
+==================================================
+  EVALUATING: Final Pruned Circuit (Optimal Thresholds)
+==================================================
+                                                                                                                                                                                                                                                                                            
+Processed 36084 valid samples.
+
+==================================================
+Final Pruned Circuit (Optimal Thresholds) Evaluation Summary:
+  - Accuracy:              0.8122
+  - Logit Difference:      3.7389
+  - Faithfulness (KL Div): 0.6801
+  - Exact Match Rate:      0.5971
+==================================================
+
+============================================================
+FINAL SUMMARY - IOI Circuit Discovery
+============================================================
+Baseline Accuracy: 0.9656
+Baseline Logit Diff: 3.1791
+Final Circuit Accuracy: 0.8122 (drop: 0.1535)
+Final Circuit Logit Diff: 3.7389
+Final KL Divergence: 0.6801
+Exact Match Rate: 0.5971
+
+Sparsity Statistics:
+  - attention_blocks_raw_E_L0: 2.9836
+  - attention_blocks_norm: 2.9836
+  - mlp_blocks_raw_E_L0: 9.5630
+  - mlp_blocks_norm: 9.5630
+  - attention_heads_raw_E_L0: 15.6930
+  - attention_heads_norm: 0.1090
+  - attention_neurons_raw_E_L0: 691.7121
+  - attention_neurons_norm: 0.0751
+  - mlp_hidden_raw_E_L0: 5581.1484
+  - mlp_hidden_norm: 0.1514
+  - mlp_output_raw_E_L0: 3923.1172
+  - mlp_output_norm: 0.4257
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   GLOBAL COMPONENTS:
+  - Embedding Gate: Active
+
+📍 LAYER-LEVEL PRUNING:
+  - Active Layers: 12/12 (100.0%)
+
+📍 DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | Active      | Active     | 4/12         | 130/768         | 1813/3072       | 759/768        
+1      | Active   | Pruned      | Active     | 0/12         | 0/768           | 585/3072        | 482/768        
+2      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+3      | Active   | Pruned      | Active     | 0/12         | 0/768           | 291/3072        | 293/768        
+4      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+5      | Active   | Pruned      | Active     | 0/12         | 0/768           | 314/3072        | 322/768        
+6      | Active   | Pruned      | Active     | 0/12         | 0/768           | 407/3072        | 380/768        
+7      | Active   | Pruned      | Active     | 0/12         | 0/768           | 417/3072        | 418/768        
+8      | Active   | Pruned      | Active     | 0/12         | 0/768           | 387/3072        | 380/768        
+9      | Active   | Active      | Active     | 1/12         | 43/768          | 328/3072        | 292/768        
+10     | Active   | Active      | Pruned     | 9/12         | 435/768         | 0/3072          | 0/768          
+11     | Active   | Active      | Active     | 3/12         | 131/768         | 456/3072        | 344/768        
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 1 / 1  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Layer Level:
+  - Active: 12 / 12  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Blocks:
+  - Active: 4 / 12  (33.3%)
+  - Pruned: 8 (66.7%)
+
+Mlp Blocks:
+  - Active: 9 / 12  (75.0%)
+  - Pruned: 3 (25.0%)
+
+Attention Heads:
+  - Active: 17 / 144  (11.8%)
+  - Pruned: 127 (88.2%)
+
+Attention Neurons:
+  - Active: 739 / 9,216  (8.0%)
+  - Pruned: 8,477 (92.0%)
+
+Mlp Hidden:
+  - Active: 4,998 / 36,864  (13.6%)
+  - Pruned: 31,866 (86.4%)
+
+Mlp Output:
+  - Active: 3,670 / 9,216  (39.8%)
+  - Pruned: 5,546 (60.2%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 8,695,703 out of 85,017,600 prunable parameters
+  - Prunable compression: 9.8x
+  - Prunable reduction: 89.8%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+--- Final evaluation on test set ---
+
+==================================================
+  EVALUATING: Final Pruned Circuit (Optimal Thresholds)
+==================================================
+                                                                                                                                                       
+Processed 36084 valid samples.
+
+==================================================
+Final Pruned Circuit (Optimal Thresholds) Evaluation Summary:
+  - Accuracy:              0.8012
+  - Logit Difference:      3.0463
+  - Faithfulness (KL Div): 0.6653
+  - Exact Match Rate:      0.6244
+==================================================
+
+============================================================
+FINAL SUMMARY - IOI Circuit Discovery
+============================================================
+Baseline Accuracy: 0.9656
+Baseline Logit Diff: 3.1791
+Final Circuit Accuracy: 0.8012 (drop: 0.1644)
+Final Circuit Logit Diff: 3.0463
+Final KL Divergence: 0.6653
+Exact Match Rate: 0.6244
+
+Sparsity Statistics:
+  - attention_blocks_raw_E_L0: 3.7826
+  - attention_blocks_norm: 3.7826
+  - mlp_blocks_raw_E_L0: 8.8866
+  - mlp_blocks_norm: 8.8866
+  - attention_heads_raw_E_L0: 16.6553
+  - attention_heads_norm: 0.1157
+  - attention_neurons_raw_E_L0: 742.2610
+  - attention_neurons_norm: 0.0805
+  - mlp_hidden_raw_E_L0: 5307.2388
+  - mlp_hidden_norm: 0.1440
+  - mlp_output_raw_E_L0: 3721.8313
+  - mlp_output_norm: 0.4038

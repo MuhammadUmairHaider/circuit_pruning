@@ -865,6 +865,8 @@ class PrunableMLP(nn.Module):
             losses['mlp_output'] = self.output_gates.get_sparsity_loss()
         return losses
 
+from collections import defaultdict
+
 
 class PrunableGPT2Block(nn.Module):
     def __init__(self, original_block, gpt_config: GPT2Config, pruning_config: PruningConfig):
@@ -1213,73 +1215,182 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
             print("    Gates are now in hard 0/1 mode for final inference.")
         else:
             print("    Gates are back to soft/stochastic mode.")
+    def gate_group_sizes(self) -> Dict[str, int]:
+        sizes = defaultdict(int)
+
+        # Embedding
+        if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
+            sizes['embedding'] += self.embedding_gate.num_gates()
+
+        # Full layers (layer gates)
+        if getattr(self, 'layer_gates', None) is not None:
+            for layer_gate in self.layer_gates:
+                # each layer gate is typically a single scalar gate; adjust if vector
+                sizes['full_layers'] += layer_gate.num_gates()
+
+        # Blocks + fine-grained
+        for block in self.transformer.h:
+            # Block-level gates
+            if hasattr(block, 'get_sparsity_loss') and hasattr(block, 'gate'):  # adapt if your API differs
+                # If block.get_sparsity_loss() returns keys like 'attention_blocks', 'mlp_blocks',
+                # estimate their sizes from the underlying gate modules:
+                if hasattr(block, 'attn_block_gate'):
+                    sizes['attention_blocks'] += block.attn_block_gate.num_gates()
+                if hasattr(block, 'mlp_block_gate'):
+                    sizes['mlp_blocks'] += block.mlp_block_gate.num_gates()
+
+            # Attention heads
+            if hasattr(block.attn, 'head_gates') and block.attn.head_gates is not None:
+                sizes['attention_heads'] += block.attn.head_gates.num_gates()
+
+            # Attention neurons (your custom)
+            if hasattr(block.attn, 'neuron_gates') and block.attn.neuron_gates is not None:
+                sizes['attention_neurons'] += block.attn.neuron_gates.num_gates()
+
+            # MLP (hidden/output)
+            if hasattr(block.mlp, 'hidden_gates'):
+                sizes['mlp_hidden'] += block.mlp.hidden_gates.num_gates()
+            if hasattr(block.mlp, 'output_gates'):
+                sizes['mlp_output'] += block.mlp.output_gates.num_gates()
+
+        return dict(sizes)
+    
     def get_sparsity_loss(self, step: int = 0) -> Dict[str, torch.Tensor]:
         losses, total_loss = {}, torch.tensor(0.0, device=self.device)
-        warmup_mult = min(1.0, step / self.pruning_config.sparsity_warmup_steps if self.pruning_config.sparsity_warmup_steps > 0 else 1.0)
-        
-        # Embedding loss
+        warmup_mult = min(
+            1.0,
+            step / self.pruning_config.sparsity_warmup_steps
+            if self.pruning_config.sparsity_warmup_steps > 0 else 1.0
+        )
+
+        # --- build raw expected L0 counts per group (your current code) ---
         if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
             losses.setdefault('embedding', torch.tensor(0.0, device=self.device))
             losses['embedding'] += self.embedding_gate.get_sparsity_loss()
-        
-        # Layer-level losses
+
         if self.layer_gates is not None:
             losses.setdefault('full_layers', torch.tensor(0.0, device=self.device))
             for layer_gate in self.layer_gates:
                 losses['full_layers'] += layer_gate.get_sparsity_loss()
-        
-        # Block and fine-grained losses
+
         for block in self.transformer.h:
-            # Block-level losses
             if hasattr(block, 'get_sparsity_loss'):
                 block_losses = block.get_sparsity_loss()
                 for key, loss in block_losses.items():
                     losses.setdefault(key, torch.tensor(0.0, device=self.device))
                     losses[key] += loss
-            
-            # Fine-grained attention losses (heads)
+
             if hasattr(block.attn, 'head_gates') and block.attn.head_gates is not None:
                 losses.setdefault('attention_heads', torch.tensor(0.0, device=self.device))
                 losses['attention_heads'] += block.attn.head_gates.get_sparsity_loss()
-                
-            ### ADDED FOR ATTENTION NEURONS ###
-            # Fine-grained attention losses (neurons)
+
             if hasattr(block.attn, 'neuron_gates') and block.attn.neuron_gates is not None:
                 losses.setdefault('attention_neurons', torch.tensor(0.0, device=self.device))
                 losses['attention_neurons'] += block.attn.neuron_gates.get_sparsity_loss()
-            ### END ADDITION ###
-                
-            # Fine-grained MLP losses
+
             if hasattr(block.mlp, 'get_sparsity_loss'):
                 mlp_losses = block.mlp.get_sparsity_loss()
                 for key, loss in mlp_losses.items():
                     losses.setdefault(key, torch.tensor(0.0, device=self.device))
                     losses[key] += loss
 
-        # Apply lambdas for each component
-        if 'embedding' in losses:
-            total_loss += self.pruning_config.lambda_embedding * warmup_mult * losses['embedding']
-        if 'full_layers' in losses:
-            total_loss += self.pruning_config.lambda_full_layers * warmup_mult * losses['full_layers']
-        if 'attention_blocks' in losses:
-            total_loss += self.pruning_config.lambda_attention_blocks * warmup_mult * losses['attention_blocks']
-        if 'mlp_blocks' in losses:
-            total_loss += self.pruning_config.lambda_mlp_blocks * warmup_mult * losses['mlp_blocks']
-        if 'attention_heads' in losses: 
-            total_loss += self.pruning_config.lambda_attention_heads * warmup_mult * losses['attention_heads']
-            
-        ### ADDED FOR ATTENTION NEURONS ###
-        if 'attention_neurons' in losses:
-            total_loss += self.pruning_config.lambda_attention_neurons * warmup_mult * losses['attention_neurons']
-        ### END ADDITION ###
-            
-        if 'mlp_hidden' in losses: 
-            total_loss += self.pruning_config.lambda_mlp_hidden * warmup_mult * losses['mlp_hidden']
-        if 'mlp_output' in losses:
-            total_loss += self.pruning_config.lambda_mlp_output * warmup_mult * losses['mlp_output']
+        # --- NEW: normalize by group sizes before weighting ---
+        sizes = self.gate_group_sizes()  # dict of ints
+        normalized = {}
+        for k, v in losses.items():
+            denom = float(max(1, sizes.get(k, 0)))  # safe scalar
+            normalized[k] = v / denom
 
-        losses['total_sparsity'] = total_loss
-        return losses
+        # --- apply lambdas on normalized terms ---
+        def add(term_key, lam):
+            nonlocal total_loss
+            if term_key in normalized:
+                total_loss = total_loss + lam * warmup_mult * normalized[term_key]
+
+        add('embedding',          self.pruning_config.lambda_embedding)
+        add('full_layers',        self.pruning_config.lambda_full_layers)
+        add('attention_blocks',   self.pruning_config.lambda_attention_blocks)
+        add('mlp_blocks',         self.pruning_config.lambda_mlp_blocks)
+        add('attention_heads',    self.pruning_config.lambda_attention_heads)
+        add('attention_neurons',  self.pruning_config.lambda_attention_neurons)
+        add('mlp_hidden',         self.pruning_config.lambda_mlp_hidden)
+        add('mlp_output',         self.pruning_config.lambda_mlp_output)
+
+        # Return both raw and normalized for logging/plots
+        out = {}
+        for k in losses:
+            out[f'{k}_raw_E_L0'] = losses[k].detach()
+            out[f'{k}_norm']     = normalized[k].detach()
+        out['total_sparsity'] = total_loss
+        return out
+    
+    # def get_sparsity_loss(self, step: int = 0) -> Dict[str, torch.Tensor]:
+    #     losses, total_loss = {}, torch.tensor(0.0, device=self.device)
+    #     warmup_mult = min(1.0, step / self.pruning_config.sparsity_warmup_steps if self.pruning_config.sparsity_warmup_steps > 0 else 1.0)
+        
+    #     # Embedding loss
+    #     if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
+    #         losses.setdefault('embedding', torch.tensor(0.0, device=self.device))
+    #         losses['embedding'] += self.embedding_gate.get_sparsity_loss()
+        
+    #     # Layer-level losses
+    #     if self.layer_gates is not None:
+    #         losses.setdefault('full_layers', torch.tensor(0.0, device=self.device))
+    #         for layer_gate in self.layer_gates:
+    #             losses['full_layers'] += layer_gate.get_sparsity_loss()
+        
+    #     # Block and fine-grained losses
+    #     for block in self.transformer.h:
+    #         # Block-level losses
+    #         if hasattr(block, 'get_sparsity_loss'):
+    #             block_losses = block.get_sparsity_loss()
+    #             for key, loss in block_losses.items():
+    #                 losses.setdefault(key, torch.tensor(0.0, device=self.device))
+    #                 losses[key] += loss
+            
+    #         # Fine-grained attention losses (heads)
+    #         if hasattr(block.attn, 'head_gates') and block.attn.head_gates is not None:
+    #             losses.setdefault('attention_heads', torch.tensor(0.0, device=self.device))
+    #             losses['attention_heads'] += block.attn.head_gates.get_sparsity_loss()
+                
+    #         ### ADDED FOR ATTENTION NEURONS ###
+    #         # Fine-grained attention losses (neurons)
+    #         if hasattr(block.attn, 'neuron_gates') and block.attn.neuron_gates is not None:
+    #             losses.setdefault('attention_neurons', torch.tensor(0.0, device=self.device))
+    #             losses['attention_neurons'] += block.attn.neuron_gates.get_sparsity_loss()
+    #         ### END ADDITION ###
+                
+    #         # Fine-grained MLP losses
+    #         if hasattr(block.mlp, 'get_sparsity_loss'):
+    #             mlp_losses = block.mlp.get_sparsity_loss()
+    #             for key, loss in mlp_losses.items():
+    #                 losses.setdefault(key, torch.tensor(0.0, device=self.device))
+    #                 losses[key] += loss
+
+    #     # Apply lambdas for each component
+    #     if 'embedding' in losses:
+    #         total_loss += self.pruning_config.lambda_embedding * warmup_mult * losses['embedding']
+    #     if 'full_layers' in losses:
+    #         total_loss += self.pruning_config.lambda_full_layers * warmup_mult * losses['full_layers']
+    #     if 'attention_blocks' in losses:
+    #         total_loss += self.pruning_config.lambda_attention_blocks * warmup_mult * losses['attention_blocks']
+    #     if 'mlp_blocks' in losses:
+    #         total_loss += self.pruning_config.lambda_mlp_blocks * warmup_mult * losses['mlp_blocks']
+    #     if 'attention_heads' in losses: 
+    #         total_loss += self.pruning_config.lambda_attention_heads * warmup_mult * losses['attention_heads']
+            
+    #     ### ADDED FOR ATTENTION NEURONS ###
+    #     if 'attention_neurons' in losses:
+    #         total_loss += self.pruning_config.lambda_attention_neurons * warmup_mult * losses['attention_neurons']
+    #     ### END ADDITION ###
+            
+    #     if 'mlp_hidden' in losses: 
+    #         total_loss += self.pruning_config.lambda_mlp_hidden * warmup_mult * losses['mlp_hidden']
+    #     if 'mlp_output' in losses:
+    #         total_loss += self.pruning_config.lambda_mlp_output * warmup_mult * losses['mlp_output']
+
+    #     losses['total_sparsity'] = total_loss
+    #     return losses
 
 
     

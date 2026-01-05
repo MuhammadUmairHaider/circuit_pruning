@@ -109,20 +109,22 @@ def calculate_pruned_edges(pruning_summary: dict):
 
 # Paste your summary table here
 summary_table = """
+📍 DETAILED LAYER REPORT:
+📍 DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
 -----------------------------------------------------------------------------------------------------------------
-0      | Active   | Active      | Active     | 7/12         | 320/768         | 2621/3072       | 731/768        
-1      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+0      | Active   | Active      | Active     | 3/12         | 144/768         | 895/3072        | 440/768        
+1      | Active   | Pruned      | Active     | 0/12         | 0/768           | 569/3072        | 155/768        
 2      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
 3      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-4      | Active   | Active      | Pruned     | 12/12        | 667/768         | 0/3072          | 0/768          
+4      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
 5      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-6      | Active   | Active      | Pruned     | 3/12         | 154/768         | 0/3072          | 0/768          
-7      | Active   | Pruned      | Active     | 0/12         | 0/768           | 2035/3072       | 728/768        
-8      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-9      | Active   | Active      | Pruned     | 11/12        | 470/768         | 0/3072          | 0/768          
-10     | Active   | Active      | Pruned     | 12/12        | 517/768         | 0/3072          | 0/768          
-11     | Active   | Active      | Active     | 11/12        | 446/768         | 1178/3072       | 638/768  
-"""
+6      | Active   | Active      | Pruned     | 2/12         | 92/768          | 0/3072          | 0/768          
+7      | Active   | Active      | Pruned     | 1/12         | 53/768          | 0/3072          | 0/768          
+8      | Active   | Active      | Active     | 2/12         | 90/768          | 382/3072        | 130/768        
+9      | Active   | Active      | Active     | 1/12         | 60/768          | 481/3072        | 335/768        
+10     | Active   | Pruned      | Active     | 0/12         | 0/768           | 619/3072        | 338/768        
+11     | Active   | Pruned      | Active     | 0/12         | 0/768           | 420/3072        | 108/768                      """
 
 # Parse the table and run the calculation
 parsed_summary = parse_summary_table(summary_table)
