@@ -113,18 +113,18 @@ summary_table = """
 📍 DETAILED LAYER REPORT:
 Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
 -----------------------------------------------------------------------------------------------------------------
-0      | Active   | Active      | Active     | 3/12         | 144/768         | 895/3072        | 440/768        
-1      | Active   | Pruned      | Active     | 0/12         | 0/768           | 569/3072        | 155/768        
+0      | Active   | Active      | Active     | 9/12         | 299/768         | 2120/3072       | 732/768        
+1      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1588/3072       | 635/768        
 2      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-3      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
+3      | Active   | Active      | Pruned     | 6/12         | 272/768         | 0/3072          | 0/768          
 4      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-5      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-6      | Active   | Active      | Pruned     | 2/12         | 92/768          | 0/3072          | 0/768          
-7      | Active   | Active      | Pruned     | 1/12         | 53/768          | 0/3072          | 0/768          
-8      | Active   | Active      | Active     | 2/12         | 90/768          | 382/3072        | 130/768        
-9      | Active   | Active      | Active     | 1/12         | 60/768          | 481/3072        | 335/768        
-10     | Active   | Pruned      | Active     | 0/12         | 0/768           | 619/3072        | 338/768        
-11     | Active   | Pruned      | Active     | 0/12         | 0/768           | 420/3072        | 108/768                      """
+5      | Active   | Active      | Active     | 3/12         | 138/768         | 1513/3072       | 604/768        
+6      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1495/3072       | 595/768        
+7      | Active   | Active      | Pruned     | 5/12         | 247/768         | 0/3072          | 0/768          
+8      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1454/3072       | 562/768        
+9      | Active   | Active      | Pruned     | 4/12         | 189/768         | 0/3072          | 0/768          
+10     | Active   | Active      | Pruned     | 7/12         | 276/768         | 0/3072          | 0/768          
+11     | Active   | Pruned      | Active     | 0/12         | 0/768           | 1565/3072       | 571/768"""
 
 # Parse the table and run the calculation
 parsed_summary = parse_summary_table(summary_table)

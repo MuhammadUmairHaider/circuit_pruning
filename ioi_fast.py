@@ -32,7 +32,7 @@ class PruningConfig:
     # If a lambda is too high, the gate dies instantly (instability).
     # If too low, it never closes.
     
-    depth_penalty_scaling: float = 0.1
+    depth_penalty_scaling: float = 0.0
     
     # 1. Heads: Moderate cost. We want to remove many, but they are useful.
     prune_attention_heads: bool = True
@@ -240,7 +240,7 @@ if __name__ == '__main__':
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
             
             # Total loss
-            loss = kl_loss*4.0 + sparsity_loss# + task_loss
+            loss = kl_loss*12.0 + sparsity_loss# + task_loss
             loss.backward()
             optimizer.step()
             

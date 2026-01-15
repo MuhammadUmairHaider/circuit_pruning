@@ -1,5 +1,9 @@
 GP:
 
+(EP) mha361@blackbird:~/work/circuits$ python edges_ep_2.py edges.json
+[Step 1] Nodes reachable from output (Value/MLP paths only): 56
+[Step 2] Final Active Nodes after pruning blind spots: 54
+--- Edge Circuit Summary (Strict Value Flow) ---
 | Layer |  Status  |  Attention Heads Active   |  MLP Block Active  |
 |-------|----------|---------------------------|--------------------|
 |   0   |  Active  |          7 / 12           |         ✅          |
@@ -15,6 +19,10 @@ GP:
 |  10   |  Active  |          1 / 12           |         ✅          |
 |  11   |  Active  |          3 / 12           |         ✅          |
 
+--- Statistics ---
+Attention Heads: 40 / 144
+MLP Blocks:      12 / 12
+Sparsity:        66.67%
 
 
 [i] Node Sparsity: 0.08917194604873657
@@ -25,3 +33,118 @@ Acc: 0.988, LD: 3.983: 100%|█████████████████�
 [i]     Logit difference: 3.9825679779052736
 [i]     KL Divergence: 0.07019915596152154
 [i]     Exact Match: 0.9384615384615385
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+IOI:
+
+[i] 972 examples left after filtering.
+[i] Searching for threshold...
+[i] Edge Threshold found: 7.62939453125e-06
+[i] Edge Sparsity: 0.9477167725563049
+[i] Searching for threshold...
+[i] Node Threshold found: 7.62939453125e-06
+[i] Node Sparsity: 0.08280253410339355
+[i] Overall Edge Sparsity: 0.9477167725563049
+[i] Producing outputs...
+Acc: 0.953, LD: 3.619, KL: 0.170, EM: 0.828, ACC: 0.953: 100%|█████████████████████████████████████| 61/61 [00:12<00:00,  4.91it/s]
+[i]     Accuracy: 0.9526748971193416
+[i]     Logit difference: 3.6186068931234225
+[i]     KL Divergence: 0.1696528993458813
+[i]     Exact Match: 0.8281893004115226
+
+
+[Step 2] Final Active Nodes after pruning blind spots: 96
+--- Edge Circuit Summary (Strict Value Flow) ---
+| Layer |  Status  |  Attention Heads Active   |  MLP Block Active  |
+|-------|----------|---------------------------|--------------------|
+|   0   |  Active  |          12 / 12          |         ✅          |
+|   1   |  Active  |          5 / 12           |         ✅          |
+|   2   |  Active  |          8 / 12           |         ✅          |
+|   3   |  Active  |          6 / 12           |         ✅          |
+|   4   |  Active  |          4 / 12           |         ✅          |
+|   5   |  Active  |          5 / 12           |         ✅          |
+|   6   |  Active  |          6 / 12           |         ✅          |
+|   7   |  Active  |          5 / 12           |         ✅          |
+|   8   |  Active  |          5 / 12           |         ✅          |
+|   9   |  Active  |          6 / 12           |         ✅          |
+|  10   |  Active  |          9 / 12           |         ✅          |
+|  11   |  Active  |          11 / 12          |         ✅          |
+
+--- Statistics ---
+Attention Heads: 82 / 144
+MLP Blocks:      12 / 12
+Sparsity:        39.74%
+
+
+
+
+
+
+GT:
+
+[i] 973 examples left after filtering.
+[i] Searching for threshold...
+[i] Edge Threshold found: 7.62939453125e-06
+[i] Edge Sparsity: 0.9875819683074951
+[i] Searching for threshold...
+[i] Node Threshold found: 7.62939453125e-06
+[i] Node Sparsity: 0.12101912498474121
+[i] Overall Edge Sparsity: 0.9875819683074951
+[i]     Producing outputs...
+PD=0.7689 PD10=0.3958 KT=0.8875 KL=0.0444 Acc=0.9877: 100%|████████████████████████████████████████| 31/31 [00:07<00:00,  4.25it/s]
+[i]     Probability difference: 0.7688883083881112
+[i]     Probability difference (10): 0.39584736362624173
+[i]     Kendall's Tau: 0.8874739729434823
+[i]     KL Divergence: 0.04435118741881321
+[i]     Accuracy: 0.987667009249743
+
+
+
+
+[Step 1] Nodes reachable from output (Value/MLP paths only): 56
+[Step 2] Final Active Nodes after pruning blind spots: 50
+--- Edge Circuit Summary (Strict Value Flow) ---
+| Layer |  Status  |  Attention Heads Active   |  MLP Block Active  |
+|-------|----------|---------------------------|--------------------|
+|   0   |  Active  |          8 / 12           |         ✅          |
+|   1   |  Active  |          2 / 12           |         ✅          |
+|   2   |  Active  |          4 / 12           |         ✅          |
+|   3   |  Active  |          3 / 12           |         ✅          |
+|   4   |  Active  |          1 / 12           |         ✅          |
+|   5   |  Active  |          1 / 12           |         ✅          |
+|   6   |  Active  |          3 / 12           |         ✅          |
+|   7   |  Active  |          2 / 12           |         ✅          |
+|   8   |  Active  |          5 / 12           |         ✅          |
+|   9   |  Active  |          3 / 12           |         ✅          |
+|  10   |  Active  |          3 / 12           |         ✅          |
+|  11   |  Active  |          1 / 12           |         ✅          |
+
+--- Statistics ---
+Attention Heads: 36 / 144
+MLP Blocks:      12 / 12
+Sparsity:        69.23%
