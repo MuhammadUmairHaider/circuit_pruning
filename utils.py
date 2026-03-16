@@ -243,41 +243,93 @@ import torch.nn as nn
 import torch
 import torch.nn as nn
 
+
+def _get_model_info(model):
+    """
+    Extract model-type-agnostic information from either GPT-2 or Llama models.
+    Returns a dict with normalized keys regardless of architecture.
+    """
+    config = model.config
+    model_type = getattr(config, 'model_type', 'gpt2')
+    
+    if model_type == 'llama':
+        return {
+            'model_type': 'llama',
+            'hidden_size': config.hidden_size,
+            'num_heads': config.num_attention_heads,
+            'head_dim': config.hidden_size // config.num_attention_heads,
+            'num_layers': config.num_hidden_layers,
+            'intermediate_size': config.intermediate_size,
+            'num_kv_heads': config.num_key_value_heads,
+            'layers': model.model.layers,
+            # Llama uses separate q/k/v/o projections (no bias)
+            'attn_has_bias': False,
+            'mlp_has_bias': False,
+            # Llama SwiGLU has gate_proj + up_proj -> down_proj
+            'num_mlp_projections': 3,
+        }
+    else:  # GPT-2
+        return {
+            'model_type': 'gpt2',
+            'hidden_size': config.hidden_size,
+            'num_heads': config.n_head,
+            'head_dim': config.hidden_size // config.n_head,
+            'num_layers': config.n_layer,
+            'intermediate_size': config.n_inner if config.n_inner is not None else 4 * config.hidden_size,
+            'num_kv_heads': config.n_head,  # GPT-2 has MHA (no GQA)
+            'layers': model.transformer.h,
+            'attn_has_bias': True,
+            'mlp_has_bias': True,
+            'num_mlp_projections': 2,
+        }
+
+
 def analyze_prunable_compression(model, layer_report_data, config, verbose=True):
     """
     Calculate compression based ONLY on prunable parameters:
     - Exclude: embeddings, positional embeddings, layer norms, LM head
     - Include: Only attention and MLP weight matrices that can be pruned
+    Supports both GPT-2 and Llama models.
     """
     
-    hidden_size = config.hidden_size  # 768
-    num_heads = config.n_head  # 12
-    head_dim = hidden_size // num_heads  # 64
-    intermediate_size = config.n_inner if config.n_inner is not None else 4 * hidden_size  # 3072
-    num_layers = config.n_layer
+    info = _get_model_info(model)
+    hidden_size = info['hidden_size']
+    num_heads = info['num_heads']
+    head_dim = info['head_dim']
+    intermediate_size = info['intermediate_size']
+    num_layers = info['num_layers']
+    num_kv_heads = info['num_kv_heads']
     
     # --- CALCULATE TOTAL PRUNABLE PARAMETERS ---
     total_prunable_params = 0
+    bias_size = lambda n: n if info['attn_has_bias'] else 0
+    mlp_bias = lambda n: n if info['mlp_has_bias'] else 0
     
     # Per layer prunable parameters
     for layer_idx in range(num_layers):
-        # Attention prunable parameters
-        # c_attn: hidden_size → 3 * hidden_size (Q, K, V projections)
-        attention_qkv_params = hidden_size * 3 * hidden_size + 3 * hidden_size  # weights + bias
-        
-        # c_proj: hidden_size → hidden_size (output projection)  
-        attention_proj_params = hidden_size * hidden_size + hidden_size  # weights + bias
-        
-        total_attention_params = attention_qkv_params + attention_proj_params
-        
-        # MLP prunable parameters
-        # c_fc: hidden_size → intermediate_size
-        mlp_fc_params = hidden_size * intermediate_size + intermediate_size  # weights + bias
-        
-        # c_proj: intermediate_size → hidden_size
-        mlp_proj_params = intermediate_size * hidden_size + hidden_size  # weights + bias
-        
-        total_mlp_params = mlp_fc_params + mlp_proj_params
+        if info['model_type'] == 'llama':
+            # Llama: separate q_proj, k_proj, v_proj, o_proj (no bias)
+            q_params = hidden_size * (num_heads * head_dim)
+            k_params = hidden_size * (num_kv_heads * head_dim)
+            v_params = hidden_size * (num_kv_heads * head_dim)
+            o_params = (num_heads * head_dim) * hidden_size
+            total_attention_params = q_params + k_params + v_params + o_params
+            
+            # Llama SwiGLU: gate_proj, up_proj, down_proj (no bias)
+            gate_params = hidden_size * intermediate_size
+            up_params = hidden_size * intermediate_size
+            down_params = intermediate_size * hidden_size
+            total_mlp_params = gate_params + up_params + down_params
+        else:
+            # GPT-2: c_attn (combined QKV), c_proj
+            attention_qkv_params = hidden_size * 3 * hidden_size + bias_size(3 * hidden_size)
+            attention_proj_params = hidden_size * hidden_size + bias_size(hidden_size)
+            total_attention_params = attention_qkv_params + attention_proj_params
+            
+            # GPT-2: c_fc, c_proj
+            mlp_fc_params = hidden_size * intermediate_size + mlp_bias(intermediate_size)
+            mlp_proj_params = intermediate_size * hidden_size + mlp_bias(hidden_size)
+            total_mlp_params = mlp_fc_params + mlp_proj_params
         
         total_prunable_params += total_attention_params + total_mlp_params
     
@@ -296,7 +348,7 @@ def analyze_prunable_compression(model, layer_report_data, config, verbose=True)
         if not report['layer_active']:
             continue  # Skip entirely pruned layers
             
-        block = model.transformer.h[i]
+        block = info['layers'][i]
         layer_active_params = 0
         
         # Active attention parameters
@@ -405,13 +457,15 @@ def analyze_and_finalize_circuit(model: nn.Module, verbose: bool = True):
     # Set to final mode to read and enforce deterministic 0/1 gate values
     model.set_final_circuit_mode(True)
 
-    # --- 1. INITIALIZATION ---
+    # --- 1. INITIALIZATION (model-agnostic) ---
+    info = _get_model_info(model)
     config = model.config
-    hidden_size = config.hidden_size
-    num_heads = config.n_head
-    head_dim = hidden_size // num_heads if num_heads > 0 else 0
-    num_layers = config.n_layer
-    intermediate_size = config.n_inner if config.n_inner is not None else 4 * hidden_size
+    hidden_size = info['hidden_size']
+    num_heads = info['num_heads']
+    head_dim = info['head_dim']
+    num_layers = info['num_layers']
+    intermediate_size = info['intermediate_size']
+    layers = info['layers']
 
     granularity_stats = {
         'embedding': {'total': 1, 'active': 0},
@@ -435,7 +489,7 @@ def analyze_and_finalize_circuit(model: nn.Module, verbose: bool = True):
                 if layer_gate is not None and (layer_gate() < 0.5).item():
                     layer_gates_status[i] = False
 
-        for i, block in enumerate(model.transformer.h):
+        for i, block in enumerate(layers):
             if not layer_gates_status[i]:
                 # If layer is pruned, force everything inside it to be pruned
                 if hasattr(block, 'attention_block_gate') and block.attention_block_gate is not None:
@@ -497,7 +551,7 @@ def analyze_and_finalize_circuit(model: nn.Module, verbose: bool = True):
         # --- 2.5. LAYER-LEVEL BOTTOM-UP CONSISTENCY ---
         # Check if both attention and MLP blocks are pruned, then prune the entire layer
         if hasattr(model, 'layer_gates') and model.layer_gates is not None:
-            for i, block in enumerate(model.transformer.h):
+            for i, block in enumerate(layers):
                 if i >= len(model.layer_gates) or model.layer_gates[i] is None:
                     continue
                     
@@ -533,7 +587,7 @@ def analyze_and_finalize_circuit(model: nn.Module, verbose: bool = True):
         
         granularity_stats['layer_level']['active'] = int(sum(layer_gates_status))
 
-        for i, block in enumerate(model.transformer.h):
+        for i, block in enumerate(layers):
             layer_stats = {'layer': i, 'layer_active': layer_gates_status[i]}
             
             if hasattr(block, 'attention_block_gate') and block.attention_block_gate is not None:

@@ -8,8 +8,8 @@ from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
 import time
-from models.gpt2_test_copy import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
-from dataset.ioi_t import IOIDataset, load_or_generate_ioi_data, run_evaluation, filter_dataset_by_model_correctness
+from models.gpt2_circuit import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
+from dataset.ioi import IOIDataset, load_or_generate_ioi_data, run_evaluation, filter_dataset_by_model_correctness
 from utils import disable_dropout, analyze_and_finalize_circuit
 
 # ==============================================================================

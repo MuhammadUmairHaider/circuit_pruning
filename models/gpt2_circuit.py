@@ -705,70 +705,193 @@ class PruningConfig:
     init_value: float = 1.0
     sparsity_warmup_steps: int = 1000
 
-    # --- Control Panel for Pruning Granularity ---
-    
-    # Attention Head Pruning (what we already have)
+    # --- Fine-grained pruning (existing) ---
+    # Attention Head Pruning
     prune_attention_heads: bool = True
     lambda_attention_heads: float = 0.01 * PRUNING_FACTOR
 
-    # --- NEW: Separate controls for each MLP layer ---
-    prune_mlp_hidden: bool = True       # Prune the intermediate "fat" layer of the MLP
-    lambda_mlp_hidden: float = 0.005 * PRUNING_FACTOR     # The penalty for the hidden layer gates
-
-    prune_mlp_output: bool = True      # Prune the final output of the entire MLP sub-block
-    lambda_mlp_output: float = 0.005 * PRUNING_FACTOR    # The penalty for the output gates
+    # MLP neuron pruning
+    prune_mlp_hidden: bool = True
+    lambda_mlp_hidden: float = 0.005 * PRUNING_FACTOR
+    prune_mlp_output: bool = True
+    lambda_mlp_output: float = 0.005 * PRUNING_FACTOR
     
     prune_embedding: bool = True
-    lambda_embedding: float = 1 * PRUNING_FACTOR# This is a crucial hyperparameter to tune
+    lambda_embedding: float = 1 * PRUNING_FACTOR
+    
+    prune_attention_neurons: bool = True
+    lambda_attention_neurons: float = 0.002 * PRUNING_FACTOR
+    
+    # --- NEW: Block-level pruning ---
+    # Prune entire attention blocks
+    prune_attention_blocks: bool = True
+    lambda_attention_blocks: float = 0.02 * PRUNING_FACTOR
+    
+    # Prune entire MLP blocks
+    prune_mlp_blocks: bool = True
+    lambda_mlp_blocks: float = 0.02 * PRUNING_FACTOR
+    
+    # Prune entire transformer layers
+    prune_full_layers: bool = True
+    lambda_full_layers: float = 0.05 * PRUNING_FACTOR
+    
+    
+
     
 class PrunableAttention(nn.Module):
     def __init__(self, original_attention, gpt_config: GPT2Config, pruning_config: PruningConfig):
         super().__init__()
         self.original_attention = original_attention
+        self.config = gpt_config
         self.num_heads = gpt_config.n_head
         self.head_dim = gpt_config.hidden_size // self.num_heads
+        self.split_size = gpt_config.hidden_size
+        
+        # --- Head-level gates (Level 2) ---
         if pruning_config.prune_attention_heads:
             self.head_gates = HardConcreteGate(self.num_heads)
         else:
             self.head_gates = None
-
-        
-    def forward(self, clean_states, corrupted_states, **kwargs):
-        # The clean pass runs as normal, using and updating the cache if enabled.
-        clean_attn_outputs = self.original_attention(clean_states, **kwargs)
-        clean_outputs = clean_attn_outputs[0]
-
-        # ==================================================================
-        # THE ROBUST FIX: Explicitly remove the cache for the corrupted pass
-        # ==================================================================
-        corrupted_kwargs = kwargs.copy()
-        
-        # 1. Explicitly disable caching logic
-        corrupted_kwargs['use_cache'] = False
-        
-        # 2. Forcefully remove the past_key_value object so it cannot be used
-        if 'past_key_value' in corrupted_kwargs:
-            corrupted_kwargs['past_key_value'] = None
-        # ==================================================================
-
-        # You can add this print statement for debugging to see the arguments
-        # print("Corrupted kwargs:", corrupted_kwargs.keys())
-
-        # Run the corrupted pass with a guaranteed clean slate (no cache)
-        corrupted_attn_outputs = self.original_attention(corrupted_states, **corrupted_kwargs)
-        corrupted_outputs = corrupted_attn_outputs[0]
-
-        if self.head_gates:
-            b, s, d = clean_outputs.shape
-            clean_reshaped = clean_outputs.view(b, s, self.num_heads, self.head_dim)
-            corrupted_reshaped = corrupted_outputs.view(b, s, self.num_heads, self.head_dim)
             
-            gate = self.head_gates().view(1, 1, self.num_heads, 1)
-            gated_output = gate * clean_reshaped + (1 - gate) * corrupted_reshaped
-            
-            return (gated_output.view(b, s, d),) + clean_attn_outputs[1:], corrupted_outputs
+        # --- Neuron-level gates (Level 3) ---
+        if pruning_config.prune_attention_neurons:
+            # One gate for each dimension within each head
+            self.neuron_gates = HardConcreteGate(self.num_heads * self.head_dim)
         else:
-            return clean_attn_outputs, corrupted_outputs
+            self.neuron_gates = None
+
+    def forward_internal(
+        self,
+        hidden_states: Optional[Tuple[torch.FloatTensor]],
+        past_key_value: Optional[Cache] = None,
+        cache_position: Optional[torch.LongTensor] = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        head_mask: Optional[torch.FloatTensor] = None,
+        encoder_hidden_states: Optional[torch.Tensor] = None,
+        encoder_attention_mask: Optional[torch.FloatTensor] = None,
+        output_attentions: Optional[bool] = False,
+        **kwargs,
+    ):
+        """
+        Replicates the logic of GPT2Attention.forward UP UNTIL the final projection.
+        This allows us to intercept the output while it is still split by heads.
+        """
+        # Access the original module for weights and config
+        module = self.original_attention
+
+        # 1. Prepare Q, K, V
+        # Logic copied from your GPT2Attention.forward
+        is_cross_attention = encoder_hidden_states is not None
+        if is_cross_attention:
+            query_states = module.q_attn(hidden_states)
+            key_states, value_states = module.c_attn(encoder_hidden_states).split(self.split_size, dim=2)
+            attention_mask = encoder_attention_mask
+        else:
+            query_states, key_states, value_states = module.c_attn(hidden_states).split(self.split_size, dim=2)
+
+        # 2. Reshape / Split Heads (Manual implementation since _split_heads is missing)
+        shape_q = (*query_states.shape[:-1], -1, self.head_dim)
+        shape_kv = (*key_states.shape[:-1], -1, self.head_dim)
+
+        query_states = query_states.view(shape_q).transpose(1, 2)
+        key_states = key_states.view(shape_kv).transpose(1, 2)
+        value_states = value_states.view(shape_kv).transpose(1, 2)
+
+        # 3. KV Cache Updates
+        if past_key_value is not None:
+             # Logic to handle cache updates
+             if is_cross_attention:
+                  # For cross attention, we don't usually cache in the same way for generation per step
+                  pass 
+             else:
+                  # Depending on cache implementation, this might vary, but standard:
+                  cache_kwargs = {"cache_position": cache_position}
+                  key_states, value_states = past_key_value.update(
+                      key_states, value_states, module.layer_idx, cache_kwargs=cache_kwargs
+                  )
+
+        # 4. Attention Calculation
+        # We delegate to the 'eager_attention_forward' function or similar interface
+        # We pass 'module' (the original attention) as the first arg so it finds attributes like dropout
+        
+        is_causal = attention_mask is None and query_states.shape[-2] > 1 and not is_cross_attention
+        
+        # Select the attention function (mimicking your original forward)
+        using_eager = module.config._attn_implementation == "eager"
+        attention_interface = eager_attention_forward
+        if module.config._attn_implementation != "eager":
+             if module.config._attn_implementation == "sdpa" and (output_attentions or head_mask is not None):
+                 using_eager = True
+             else:
+                 attention_interface = ALL_ATTENTION_FUNCTIONS[module.config._attn_implementation]
+
+        if using_eager and module.reorder_and_upcast_attn:
+            attn_output, attn_weights = module._upcast_and_reordered_attn(
+                query_states, key_states, value_states, attention_mask, head_mask
+            )
+        else:
+            attn_output, attn_weights = attention_interface(
+                module,  # Pass the ORIGINAL module instance here
+                query_states,
+                key_states,
+                value_states,
+                attention_mask,
+                head_mask=head_mask,
+                dropout=module.attn_dropout.p if module.training else 0.0,
+                is_causal=is_causal,
+                **kwargs,
+            )
+
+        # attn_output shape is now [Batch, Seq_Len, Num_Heads, Head_Dim] 
+        # (because eager_attention_forward does the transpose(1,2) at the end)
+        
+        return attn_output, attn_weights
+
+    def forward(self, clean_states, corrupted_states, **kwargs):
+        # 1. Run internal forward for both streams
+        # Note: We disable cache for the corrupted stream to avoid state conflicts
+        clean_attn_out, clean_weights = self.forward_internal(clean_states, **kwargs)
+        
+        corrupted_kwargs = kwargs.copy()
+        corrupted_kwargs['use_cache'] = False 
+        corrupted_kwargs['past_key_value'] = None
+        corr_attn_out, _ = self.forward_internal(corrupted_states, **corrupted_kwargs)
+
+        # 2. Gating
+        # clean_attn_out shape: [Batch, Seq_Len, Num_Heads, Head_Dim]
+        gated_output = clean_attn_out
+        
+        if self.head_gates or self.neuron_gates:
+            # --- Head Gates ---
+            if self.head_gates:
+                # Reshape gate to [1, 1, Num_Heads, 1] to broadcast over Batch and Seq_Len
+                head_gate = self.head_gates().view(1, 1, self.num_heads, 1)
+                gated_output = head_gate * gated_output + (1 - head_gate) * corr_attn_out
+            
+            # --- Neuron Gates ---
+            if self.neuron_gates:
+                # Reshape gate to [1, 1, Num_Heads, Head_Dim]
+                neuron_gate = self.neuron_gates().view(1, 1, self.num_heads, self.head_dim)
+                # Apply as a filter (binary mask behavior usually, or mixing if you prefer)
+                # Assuming simple filtering (set to 0 if pruned):
+                gated_output = gated_output * neuron_gate
+                # If you wanted to mix with corrupted for neurons too:
+                # gated_output = neuron_gate * gated_output + (1 - neuron_gate) * corr_attn_out
+
+        # 3. Merge Heads (Flatten)
+        # Flatten last two dims: [Batch, Seq_Len, Hidden_Size]
+        gated_output = gated_output.reshape(*gated_output.shape[:-2], -1).contiguous()
+        corr_attn_out = corr_attn_out.reshape(*corr_attn_out.shape[:-2], -1).contiguous()
+
+        # 4. Final Projection (W_O)
+        # This mixes the heads together
+        gated_output = self.original_attention.c_proj(gated_output)
+        gated_output = self.original_attention.resid_dropout(gated_output)
+
+        corr_output = self.original_attention.c_proj(corr_attn_out)
+        corr_output = self.original_attention.resid_dropout(corr_output)
+
+        return (gated_output, clean_weights), corr_output
 
 class PrunableMLP(nn.Module):
     def __init__(self, original_mlp, gpt_config: GPT2Config, pruning_config: PruningConfig):
@@ -820,17 +943,25 @@ class PrunableMLP(nn.Module):
             losses['mlp_output'] = self.output_gates.get_sparsity_loss()
         return losses
 
+from collections import defaultdict
+
 
 class PrunableGPT2Block(nn.Module):
     def __init__(self, original_block, gpt_config: GPT2Config, pruning_config: PruningConfig):
         super().__init__()
-        # Keep references to the original modules
         self.ln_1 = original_block.ln_1
         self.ln_2 = original_block.ln_2
         
-        # Wrap the core components
         self.attn = PrunableAttention(original_block.attn, gpt_config, pruning_config)
         self.mlp = PrunableMLP(original_block.mlp, gpt_config, pruning_config)
+        
+        self.attention_block_gate = None
+        if pruning_config.prune_attention_blocks:
+            self.attention_block_gate = HardConcreteGate(1)
+            
+        self.mlp_block_gate = None
+        if pruning_config.prune_mlp_blocks:
+            self.mlp_block_gate = HardConcreteGate(1)
 
     def forward(
         self,
@@ -845,11 +976,15 @@ class PrunableGPT2Block(nn.Module):
         ln_corrupted_states = self.ln_1(corrupted_states)
         
         # Pass both through the PrunableAttention wrapper
-        # **kwargs will correctly pass attention_mask, head_mask, use_cache, etc.
         attn_outputs, corrupted_attn_output = self.attn(
             ln_clean_states, ln_corrupted_states, **kwargs
         )
-        attn_output = attn_outputs[0] # The main hidden state output
+        attn_output = attn_outputs[0]
+        
+        # NEW: Apply attention block gate if enabled
+        if self.attention_block_gate:
+            gate = self.attention_block_gate()
+            attn_output = gate * attn_output + (1 - gate) * corrupted_attn_output
         
         # Residual connections
         clean_states = clean_states + attn_output
@@ -866,16 +1001,25 @@ class PrunableGPT2Block(nn.Module):
             ln_clean_after_attn, ln_corrupted_after_attn
         )
         
+        # NEW: Apply MLP block gate if enabled
+        if self.mlp_block_gate:
+            gate = self.mlp_block_gate()
+            mlp_output = gate * mlp_output + (1 - gate) * corrupted_mlp_output
+        
         # Final residual connections
         final_clean_states = clean_states + mlp_output
         final_corrupted_states = corrupted_states + corrupted_mlp_output
         
-        # The main PrunableBlock only needs to return the two hidden states.
-        # The caching logic is handled implicitly because `attn_outputs` (which we
-        # don't return here but are computed in PrunableAttention) will be passed
-        # up to the main model's forward pass if needed.
         return final_clean_states, final_corrupted_states, attn_outputs
 
+    def get_sparsity_loss(self) -> Dict[str, torch.Tensor]:
+        """Get sparsity losses for block-level gates."""
+        losses = {}
+        if self.attention_block_gate:
+            losses['attention_blocks'] = self.attention_block_gate.get_sparsity_loss()
+        if self.mlp_block_gate:
+            losses['mlp_blocks'] = self.mlp_block_gate.get_sparsity_loss()
+        return losses
 
 
 
@@ -889,6 +1033,7 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
         # Load the standard pre-trained model
         model = cls.from_pretrained(model_name, **kwargs)
         model.embedding_gate = HardConcreteGate(1)
+        
         # Replace each block in the transformer with our prunable wrapper
         prunable_blocks = nn.ModuleList([
             PrunableGPT2Block(block, model.config, pruning_config)
@@ -896,27 +1041,19 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
         ])
         model.transformer.h = prunable_blocks
         
-        # Store the config for later use (e.g., loss calculation)
+        # NEW: Create layer-level gates if enabled
+        if pruning_config.prune_full_layers:
+            model.layer_gates = nn.ModuleList([
+                HardConcreteGate(1) for _ in range(len(model.transformer.h))
+            ])
+        else:
+            model.layer_gates = None
+        
+        # Store the config for later use
         model.pruning_config = pruning_config
-        print("Model successfully adapted for pruning.")
+        print("Model successfully adapted for pruning with block-level gates.")
         return model
 
-    def set_final_circuit_mode(self, enabled: bool):
-        """
-        Recursively finds all HardConcreteGate modules and sets their final_mode.
-        
-        Args:
-            enabled (bool): If True, gates will output hard 0/1 values. 
-                            If False, they return to normal eval/train behavior.
-        """
-        print(f"\n--- Setting final circuit mode to: {enabled} ---")
-        for module in self.modules():
-            if isinstance(module, HardConcreteGate):
-                module.final_mode = enabled
-
-    
-    
-    @auto_docstring
     def forward(
         self,
         input_ids: Optional[torch.LongTensor] = None,
@@ -951,7 +1088,7 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
             )
 
         # All the logic below is for the dual-stream pruning run
-        transformer = self.transformer # Get a reference for convenience
+        transformer = self.transformer
 
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
@@ -991,9 +1128,9 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
                 use_cache = False
 
         if inputs_embeds is None:
-            inputs_embeds = transformer.wte(input_ids) # FIX: Use transformer.wte
+            inputs_embeds = transformer.wte(input_ids)
         if corrupted_inputs_embeds is None:
-            corrupted_inputs_embeds = transformer.wte(corrupted_input_ids) # FIX: Use transformer.wte
+            corrupted_inputs_embeds = transformer.wte(corrupted_input_ids)
 
         if cache_position is None:
             past_seen_tokens = past_key_values.get_seq_length() if past_key_values is not None else 0
@@ -1003,46 +1140,41 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
         if position_ids is None:
             position_ids = cache_position.unsqueeze(0)
 
-        position_embeds = transformer.wpe(position_ids) # FIX: Use transformer.wpe
+        position_embeds = transformer.wpe(position_ids)
         hidden_states_clean = inputs_embeds + position_embeds
         hidden_states_corrupted = corrupted_inputs_embeds + position_embeds
         
-        # 2. Apply your gating logic to the initial clean stream
+        # Apply embedding gate
         gate = self.embedding_gate()
         hidden_states_clean = gate * hidden_states_clean + (1 - gate) * hidden_states_corrupted
-        # hidden_states_clean = hidden_states_corrupted
-        
-        # --- End of Change ---
 
         if token_type_ids is not None:
             token_type_ids = token_type_ids.view(-1, input_shape[-1])
-            token_type_embeds = transformer.wte(token_type_ids) # FIX: Use transformer.wte
+            token_type_embeds = transformer.wte(token_type_ids)
             hidden_states_clean = hidden_states_clean + token_type_embeds
             hidden_states_corrupted = hidden_states_corrupted + token_type_embeds
 
-        hidden_states_clean = transformer.drop(hidden_states_clean) # FIX: Use transformer.drop
-        hidden_states_corrupted = transformer.drop(hidden_states_corrupted) # FIX: Use transformer.drop
+        hidden_states_clean = transformer.drop(hidden_states_clean)
+        hidden_states_corrupted = transformer.drop(hidden_states_corrupted)
 
         output_shape = (-1,) + input_shape[1:] + (hidden_states_clean.size(-1),)
 
         if attention_mask is not None and attention_mask.ndim < 4:
             attention_mask = attention_mask.view(batch_size, -1)
         
-        # _update_causal_mask is a method on GPT2Model, not GPT2LMHeadModel
-        causal_mask = transformer._update_causal_mask( # FIX: Use transformer._update_causal_mask
+        causal_mask = transformer._update_causal_mask(
             attention_mask, inputs_embeds, cache_position, past_key_values, output_attentions
         )
         
         encoder_attention_mask = None
-        # get_head_mask is inherited, so `self.` is correct here
         head_mask = self.get_head_mask(head_mask, self.config.n_layer)
 
         all_self_attentions = () if output_attentions else None
         all_cross_attentions = () if output_attentions and self.config.add_cross_attention else None
         all_hidden_states = () if output_hidden_states else None
 
-        for i, block in enumerate(transformer.h): # FIX: Access h through transformer
-            if transformer.model_parallel: # FIX: Use transformer.model_parallel
+        for i, block in enumerate(transformer.h):
+            if transformer.model_parallel:
                 torch.cuda.set_device(hidden_states_clean.device)
                 if causal_mask is not None:
                     causal_mask = causal_mask.to(hidden_states_clean.device)
@@ -1084,44 +1216,41 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
                     use_cache=use_cache, output_attentions=output_attentions,
                 )
 
+            # NEW: Apply layer-level gate if enabled
+            if self.layer_gates is not None:
+                layer_gate = self.layer_gates[i]()
+                # Mix the clean and corrupted states based on the layer gate
+                hidden_states_clean = layer_gate * hidden_states_clean + (1 - layer_gate) * hidden_states_corrupted
+
             if output_attentions:
                 all_self_attentions = all_self_attentions + (outputs[1],)
                 if self.config.add_cross_attention and len(outputs) > 2:
                     all_cross_attentions = all_cross_attentions + (outputs[2],)
 
-            if transformer.model_parallel: # FIX: Use transformer.model_parallel
-                for k, v in transformer.device_map.items(): # FIX: Use transformer.device_map
-                    if i == v[-1] and "cuda:" + str(k) != transformer.last_device: # FIX
+            if transformer.model_parallel:
+                for k, v in transformer.device_map.items():
+                    if i == v[-1] and "cuda:" + str(k) != transformer.last_device:
                         next_device = "cuda:" + str(k + 1)
                         hidden_states_clean = hidden_states_clean.to(next_device)
                         hidden_states_corrupted = hidden_states_corrupted.to(next_device)
 
-        hidden_states_clean = transformer.ln_f(hidden_states_clean) # FIX: Use transformer.ln_f
+        hidden_states_clean = transformer.ln_f(hidden_states_clean)
         hidden_states_clean = hidden_states_clean.view(output_shape)
         
         if output_hidden_states:
             all_hidden_states = all_hidden_states + (hidden_states_clean,)
 
-        # The final logits and loss calculation will use the modified hidden_states_clean
-        # and the lm_head from the top-level model (`self.lm_head`).
-        # This logic should typically be handled in the PrunableGPT2LMHeadModel's forward pass,
-        # but if you are modifying GPT2Model directly, this is the final output.
-        
         past_key_values = past_key_values if use_cache else None
         if return_legacy_cache and past_key_values is not None:
             past_key_values = past_key_values.to_legacy_cache()
 
-        # Create the CausalLMOutputWithCrossAttentions using the outputs from the clean stream
-        # and the lm_head from the top-level model.
         lm_logits = self.lm_head(hidden_states_clean)
 
         loss = None
         if kwargs.get("labels") is not None:
             labels = kwargs["labels"]
-            # Shift so that tokens < n predict n
             shift_logits = lm_logits[..., :-1, :].contiguous()
             shift_labels = labels[..., 1:].contiguous()
-            # Flatten the tokens
             loss_fct = CrossEntropyLoss()
             loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
 
@@ -1137,48 +1266,219 @@ class PrunableGPT2LMHeadModel(GPT2LMHeadModel):
             attentions=all_self_attentions,
             cross_attentions=all_cross_attentions,
         )
+    def set_pruning_config(self, pruning_config: PruningConfig):
+        self.pruning_config = pruning_config
+        print("Pruning configuration updated.")
+    def set_final_circuit_mode(self, enabled: bool):
+        """
+        Recursively finds all HardConcreteGate modules and sets their final_mode.
+        
+        Args:
+            enabled (bool): If True, gates will output hard 0/1 values. 
+                            If False, they return to normal eval/train behavior.
+        """
+        print(f"\n--- Setting final circuit mode to: {enabled} ---")
+        gate_count = 0
+        
+        # Recursively find all HardConcreteGate modules in the model
+        for name, module in self.named_modules():
+            if isinstance(module, HardConcreteGate):
+                module.final_mode = enabled
+                gate_count += 1
+                
+        print(f"    Updated {gate_count} HardConcreteGate modules.")
+        
+        # Optionally, you can also print which specific gates were found
+        if enabled:
+            print("    Gates are now in hard 0/1 mode for final inference.")
+        else:
+            print("    Gates are back to soft/stochastic mode.")
+    def gate_group_sizes(self) -> Dict[str, int]:
+        sizes = defaultdict(int)
 
+        # Embedding
+        if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
+            sizes['embedding'] += self.embedding_gate.num_gates()
 
+        # Full layers (layer gates)
+        if getattr(self, 'layer_gates', None) is not None:
+            for layer_gate in self.layer_gates:
+                # each layer gate is typically a single scalar gate; adjust if vector
+                sizes['full_layers'] += layer_gate.num_gates()
 
+        # Blocks + fine-grained
+        for block in self.transformer.h:
+            # Block-level gates
+            if hasattr(block, 'get_sparsity_loss') and hasattr(block, 'gate'):  # adapt if your API differs
+                # If block.get_sparsity_loss() returns keys like 'attention_blocks', 'mlp_blocks',
+                # estimate their sizes from the underlying gate modules:
+                if hasattr(block, 'attn_block_gate'):
+                    sizes['attention_blocks'] += block.attn_block_gate.num_gates()
+                if hasattr(block, 'mlp_block_gate'):
+                    sizes['mlp_blocks'] += block.mlp_block_gate.num_gates()
+
+            # Attention heads
+            if hasattr(block.attn, 'head_gates') and block.attn.head_gates is not None:
+                sizes['attention_heads'] += block.attn.head_gates.num_gates()
+
+            # Attention neurons (your custom)
+            if hasattr(block.attn, 'neuron_gates') and block.attn.neuron_gates is not None:
+                sizes['attention_neurons'] += block.attn.neuron_gates.num_gates()
+
+            # MLP (hidden/output)
+            if hasattr(block.mlp, 'hidden_gates'):
+                sizes['mlp_hidden'] += block.mlp.hidden_gates.num_gates()
+            if hasattr(block.mlp, 'output_gates'):
+                sizes['mlp_output'] += block.mlp.output_gates.num_gates()
+
+        return dict(sizes)
     
-    
+    # def get_sparsity_loss(self, step: int = 0) -> Dict[str, torch.Tensor]:
+    #     losses, total_loss = {}, torch.tensor(0.0, device=self.device)
+    #     warmup_mult = min(
+    #         1.0,
+    #         step / self.pruning_config.sparsity_warmup_steps
+    #         if self.pruning_config.sparsity_warmup_steps > 0 else 1.0
+    #     )
 
+    #     # --- build raw expected L0 counts per group (your current code) ---
+    #     if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
+    #         losses.setdefault('embedding', torch.tensor(0.0, device=self.device))
+    #         losses['embedding'] += self.embedding_gate.get_sparsity_loss()
+
+    #     if self.layer_gates is not None:
+    #         losses.setdefault('full_layers', torch.tensor(0.0, device=self.device))
+    #         for layer_gate in self.layer_gates:
+    #             losses['full_layers'] += layer_gate.get_sparsity_loss()
+
+    #     for block in self.transformer.h:
+    #         if hasattr(block, 'get_sparsity_loss'):
+    #             block_losses = block.get_sparsity_loss()
+    #             for key, loss in block_losses.items():
+    #                 losses.setdefault(key, torch.tensor(0.0, device=self.device))
+    #                 losses[key] += loss
+
+    #         if hasattr(block.attn, 'head_gates') and block.attn.head_gates is not None:
+    #             losses.setdefault('attention_heads', torch.tensor(0.0, device=self.device))
+    #             losses['attention_heads'] += block.attn.head_gates.get_sparsity_loss()
+
+    #         if hasattr(block.attn, 'neuron_gates') and block.attn.neuron_gates is not None:
+    #             losses.setdefault('attention_neurons', torch.tensor(0.0, device=self.device))
+    #             losses['attention_neurons'] += block.attn.neuron_gates.get_sparsity_loss()
+
+    #         if hasattr(block.mlp, 'get_sparsity_loss'):
+    #             mlp_losses = block.mlp.get_sparsity_loss()
+    #             for key, loss in mlp_losses.items():
+    #                 losses.setdefault(key, torch.tensor(0.0, device=self.device))
+    #                 losses[key] += loss
+
+    #     # --- NEW: normalize by group sizes before weighting ---
+    #     sizes = self.gate_group_sizes()  # dict of ints
+    #     normalized = {}
+    #     for k, v in losses.items():
+    #         denom = float(max(1, sizes.get(k, 0)))  # safe scalar
+    #         normalized[k] = v / denom
+
+    #     # --- apply lambdas on normalized terms ---
+    #     def add(term_key, lam):
+    #         nonlocal total_loss
+    #         if term_key in normalized:
+    #             total_loss = total_loss + lam * warmup_mult * normalized[term_key]
+
+    #     add('embedding',          self.pruning_config.lambda_embedding)
+    #     add('full_layers',        self.pruning_config.lambda_full_layers)
+    #     add('attention_blocks',   self.pruning_config.lambda_attention_blocks)
+    #     add('mlp_blocks',         self.pruning_config.lambda_mlp_blocks)
+    #     add('attention_heads',    self.pruning_config.lambda_attention_heads)
+    #     add('attention_neurons',  self.pruning_config.lambda_attention_neurons)
+    #     add('mlp_hidden',         self.pruning_config.lambda_mlp_hidden)
+    #     add('mlp_output',         self.pruning_config.lambda_mlp_output)
+
+    #     # Return both raw and normalized for logging/plots
+    #     out = {}
+    #     for k in losses:
+    #         out[f'{k}_raw_E_L0'] = losses[k].detach()
+    #         out[f'{k}_norm']     = normalized[k].detach()
+    #     out['total_sparsity'] = total_loss
+    #     return out
     def get_sparsity_loss(self, step: int = 0) -> Dict[str, torch.Tensor]:
         losses, total_loss = {}, torch.tensor(0.0, device=self.device)
-        warmup_mult = min(1.0, step / self.pruning_config.sparsity_warmup_steps if self.pruning_config.sparsity_warmup_steps > 0 else 1.0)
         
-        
-        
-        if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
-            losses.setdefault('embedding', torch.tensor(0.0, device=self.device))
-            losses['embedding'] += self.embedding_gate.get_sparsity_loss()
-        
-        for block in self.transformer.h:
-            # --- Attention Head Loss (Unchanged) ---
-            if hasattr(block.attn, 'head_gates') and block.attn.head_gates is not None:
-                losses.setdefault('attention_heads', torch.tensor(0.0, device=self.device))
-                losses['attention_heads'] += block.attn.head_gates.get_sparsity_loss()
-                
-            # --- NEW: Get granular MLP losses ---
-            if hasattr(block.mlp, 'get_sparsity_loss'):
-                mlp_losses = block.mlp.get_sparsity_loss()
-                for key, loss in mlp_losses.items():
-                    losses.setdefault(key, torch.tensor(0.0, device=self.device))
-                    losses[key] += loss
+        # Calculate warmup multiplier (0.0 -> 1.0 over time)
+        warmup_mult = min(
+            1.0,
+            step / self.pruning_config.sparsity_warmup_steps
+            if self.pruning_config.sparsity_warmup_steps > 0 else 1.0
+        )
 
-        # --- NEW: Apply separate lambdas for each component ---
-        if 'embedding' in losses:
-            total_loss += self.pruning_config.lambda_embedding * warmup_mult * losses['embedding']
-        if 'attention_heads' in losses: 
-            total_loss += self.pruning_config.lambda_attention_heads * warmup_mult * losses['attention_heads']
-        if 'mlp_hidden' in losses: 
-            total_loss += self.pruning_config.lambda_mlp_hidden * warmup_mult * losses['mlp_hidden']
-        if 'mlp_output' in losses:
-            total_loss += self.pruning_config.lambda_mlp_output * warmup_mult * losses['mlp_output']
+        # Helper to accumulate loss with depth weighting
+        def add_weighted(term_key, raw_loss, lam, layer_idx=None):
+            nonlocal total_loss
+            
+            # 1. Calculate Depth Weight (if layer_idx is provided)
+            # Higher weight for lower layer_idx (early layers)
+            depth_mult = 1.0
+            if layer_idx is not None and self.pruning_config.depth_penalty_scaling > 0:
+                n_layers = len(self.transformer.h)
+                # Fraction goes from 1.0 (at layer 0) to 0.0 (at last layer)
+                fraction = (n_layers - 1 - layer_idx) / (n_layers - 1)
+                depth_mult = 1.0 + self.pruning_config.depth_penalty_scaling * fraction
+            
+            # 2. Apply Warmup, Lambda, and Depth Multiplier
+            term_loss = lam * warmup_mult * depth_mult * raw_loss
+            total_loss = total_loss + term_loss
+            
+            # Store for logging (raw vs weighted)
+            if term_key not in losses:
+                losses[term_key] = 0.0
+            losses[term_key] += term_loss
+
+        # --- 1. Global Components (No depth weighting) ---
+        if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
+            add_weighted('embedding', self.embedding_gate.get_sparsity_loss(), 
+                         self.pruning_config.lambda_embedding)
+
+        if getattr(self, 'layer_gates', None) is not None:
+            for i, gate in enumerate(self.layer_gates):
+                add_weighted('full_layers', gate.get_sparsity_loss(), 
+                             self.pruning_config.lambda_full_layers, layer_idx=i)
+
+        # --- 2. Block Components (Depth weighted) ---
+        # Note: We enumerate to get the layer index 'i'
+        for i, block in enumerate(self.transformer.h):
+            
+            # Block-level gates
+            if hasattr(block, 'attention_block_gate') and block.attention_block_gate:
+                add_weighted('attention_blocks', block.attention_block_gate.get_sparsity_loss(), 
+                             self.pruning_config.lambda_attention_blocks, layer_idx=i)
+                
+            if hasattr(block, 'mlp_block_gate') and block.mlp_block_gate:
+                add_weighted('mlp_blocks', block.mlp_block_gate.get_sparsity_loss(), 
+                             self.pruning_config.lambda_mlp_blocks, layer_idx=i)
+
+            # Attention Heads
+            if hasattr(block.attn, 'head_gates') and block.attn.head_gates:
+                add_weighted('attention_heads', block.attn.head_gates.get_sparsity_loss(), 
+                             self.pruning_config.lambda_attention_heads, layer_idx=i)
+
+            # Attention Neurons
+            if hasattr(block.attn, 'neuron_gates') and block.attn.neuron_gates:
+                add_weighted('attention_neurons', block.attn.neuron_gates.get_sparsity_loss(), 
+                             self.pruning_config.lambda_attention_neurons, layer_idx=i)
+
+            # MLP Hidden Neurons
+            if hasattr(block.mlp, 'hidden_gates') and block.mlp.hidden_gates:
+                add_weighted('mlp_hidden', block.mlp.hidden_gates.get_sparsity_loss(), 
+                             self.pruning_config.lambda_mlp_hidden, layer_idx=i)
+
+            # MLP Output (Residual)
+            if hasattr(block.mlp, 'output_gates') and block.mlp.output_gates:
+                add_weighted('mlp_output', block.mlp.output_gates.get_sparsity_loss(), 
+                             self.pruning_config.lambda_mlp_output, layer_idx=i)
 
         losses['total_sparsity'] = total_loss
         return losses
-    
+
 
     
     def _update_causal_mask(
