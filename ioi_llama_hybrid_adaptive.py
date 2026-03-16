@@ -588,7 +588,13 @@ if __name__ == '__main__':
     # Baseline
     print("\n--- Baseline evaluation ---")
     baseline_results = run_evaluation(
-        full_model, "Baseline", None, test_dataloader, DEVICE, tokenizer
+        model_to_eval=full_model,
+        model_name="Baseline",
+        full_model_for_faithfulness=None,
+        dataloader=test_dataloader,
+        device=DEVICE,
+        verbose=True,
+        tokenizer=tokenizer,
     )
     base_accuracy = baseline_results['accuracy']
     print(f"🎯 Baseline: {base_accuracy:.4f}")
@@ -674,8 +680,13 @@ if __name__ == '__main__':
         if (epoch + 1) % 10 == 0:
             circuit_model.eval()
             val_results = run_evaluation(
-                circuit_model, f"Ep{epoch+1}", full_model,
-                val_dataloader, DEVICE, tokenizer, verbose=False
+                model_to_eval=circuit_model,
+                model_name=f"Ep{epoch+1}",
+                full_model_for_faithfulness=full_model,
+                dataloader=val_dataloader,
+                device=DEVICE,
+                verbose=False,
+                tokenizer=tokenizer,
             )
 
             current_sparsity = compute_overall_sparsity(circuit_model)
@@ -700,7 +711,13 @@ if __name__ == '__main__':
     circuit_model.eval()
     analyze_and_finalize_circuit(circuit_model)
     final_results = run_evaluation(
-        circuit_model, "Final", full_model, test_dataloader, DEVICE, tokenizer
+        model_to_eval=circuit_model,
+        model_name="Final",
+        full_model_for_faithfulness=full_model,
+        dataloader=test_dataloader,
+        device=DEVICE,
+        verbose=True,
+        tokenizer=tokenizer,
     )
 
     summary = scheduler.get_final_summary()
