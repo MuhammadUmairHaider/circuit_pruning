@@ -872,11 +872,8 @@ class PrunableAttention(nn.Module):
             if self.neuron_gates:
                 # Reshape gate to [1, 1, Num_Heads, Head_Dim]
                 neuron_gate = self.neuron_gates().view(1, 1, self.num_heads, self.head_dim)
-                # Apply as a filter (binary mask behavior usually, or mixing if you prefer)
-                # Assuming simple filtering (set to 0 if pruned):
-                gated_output = gated_output * neuron_gate
-                # If you wanted to mix with corrupted for neurons too:
-                # gated_output = neuron_gate * gated_output + (1 - neuron_gate) * corr_attn_out
+                # Mix with corrupted stream (consistent with all other gate types)
+                gated_output = neuron_gate * gated_output + (1 - neuron_gate) * corr_attn_out
 
         # 3. Merge Heads (Flatten)
         # Flatten last two dims: [Batch, Seq_Len, Hidden_Size]

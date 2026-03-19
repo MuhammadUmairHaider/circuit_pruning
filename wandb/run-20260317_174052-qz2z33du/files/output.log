@@ -1,0 +1,525 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/qz2z33du
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Loading weights: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 865.28it/s, Materializing param=model.norm.weight]
+Llama model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 1628.06it/s, Materializing param=model.norm.weight]
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 10.73it/s]
+  -> Retained: 200/200 (100.00%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 17.06it/s]
+  -> Retained: 999/1000 (99.90%)
+Processed 200 valid samples from 200 total
+Processed 200 valid samples from 200 total
+Processed 999 valid samples from 999 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 22.32it/s]
+
+Processed 999 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      5.8797
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 1.2000
+   Tolerance: ±2.0000
+   Acceptable range: [-0.8000, 3.2000]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.95
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   4%|███████████▏                                                                                                                                                                                                                                                                                         | 19/500 [00:38<15:19,  1.91s/it]
+                                                                                                                                                                                                                                                                                                                                                     
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  0.9987 (budget: 1.2000, gap: -0.2013)
+  Accuracy: 1.0000
+  Sparsity: 0.0983 (best: 0.0000)
+  Lambda:   2.285 → 2.346 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  0.8834 (budget: 1.2000, gap: -0.3166)
+  Accuracy: 1.0000
+  Sparsity: 0.0915 (best: 0.0000)
+  Lambda:   2.660 → 2.724 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  0.8441 (budget: 1.2000, gap: -0.3559)
+  Accuracy: 1.0000
+  Sparsity: 0.0898 (best: 0.0000)
+  Lambda:   3.046 → 3.111 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 20 | Phase: warmup
+  KL Loss:  0.8041 (budget: 1.2000, gap: -0.3959)
+  Accuracy: 1.0000
+  Sparsity: 0.0898 (best: 0.0000)
+  Lambda:   3.435 → 3.500 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 25 | Phase: warmup
+  KL Loss:  0.7974 (budget: 1.2000, gap: -0.4026)
+  Accuracy: 1.0000
+  Sparsity: 0.0901 (best: 0.0000)
+  Lambda:   3.825 → 3.890 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 30 | Phase: warmup
+  KL Loss:  0.7826 (budget: 1.2000, gap: -0.4174)
+  Accuracy: 1.0000
+  Sparsity: 0.0901 (best: 0.0000)
+  Lambda:   4.215 → 4.280 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 35 | Phase: warmup
+  KL Loss:  0.7618 (budget: 1.2000, gap: -0.4382)
+  Accuracy: 1.0000
+  Sparsity: 0.0903 (best: 0.0000)
+  Lambda:   4.605 → 4.670 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 40 | Phase: warmup
+  KL Loss:  0.7244 (budget: 1.2000, gap: -0.4756)
+  Accuracy: 1.0000
+  Sparsity: 0.0910 (best: 0.0000)
+  Lambda:   4.995 → 5.060 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 45 | Phase: warmup
+  KL Loss:  0.7221 (budget: 1.2000, gap: -0.4779)
+  Accuracy: 1.0000
+  Sparsity: 0.0916 (best: 0.0000)
+  Lambda:   5.385 → 5.450 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 50 | Phase: warmup
+  KL Loss:  0.7077 (budget: 1.2000, gap: -0.4923)
+  Accuracy: 1.0000
+  Sparsity: 0.0923 (best: 0.0000)
+  Lambda:   5.775 → 5.840 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 60 | Phase: warmup
+  KL Loss:  0.7572 (budget: 1.2000, gap: -0.4428)
+  Accuracy: 1.0000
+  Sparsity: 0.1002 (best: 0.0000)
+  Lambda:   6.490 → 6.555 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 70 | Phase: warmup
+  KL Loss:  0.7147 (budget: 1.2000, gap: -0.4853)
+  Accuracy: 1.0000
+  Sparsity: 0.1038 (best: 0.0000)
+  Lambda:   7.205 → 7.270 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 80 | Phase: warmup
+  KL Loss:  0.6716 (budget: 1.2000, gap: -0.5284)
+  Accuracy: 1.0000
+  Sparsity: 0.1077 (best: 0.0000)
+  Lambda:   7.920 → 7.985 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 90 | Phase: warmup
+  KL Loss:  0.6760 (budget: 1.2000, gap: -0.5240)
+  Accuracy: 1.0000
+  Sparsity: 0.1125 (best: 0.0000)
+  Lambda:   8.635 → 8.700 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 100 | Phase: warmup
+  KL Loss:  0.6061 (budget: 1.2000, gap: -0.5939)
+  Accuracy: 1.0000
+  Sparsity: 0.1193 (best: 0.0000)
+  Lambda:   9.350 → 9.415 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 120 | Phase: warmup
+  KL Loss:  0.6670 (budget: 1.2000, gap: -0.5330)
+  Accuracy: 1.0000
+  Sparsity: 0.1393 (best: 0.0000)
+  Lambda:   10.715 → 10.780 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 140 | Phase: warmup
+  KL Loss:  0.6615 (budget: 1.2000, gap: -0.5385)
+  Accuracy: 1.0000
+  Sparsity: 0.1649 (best: 0.0000)
+  Lambda:   12.080 → 12.145 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 160 | Phase: fine_tuning
+  KL Loss:  0.7101 (budget: 1.2000, gap: -0.4899)
+  Accuracy: 1.0000
+  Sparsity: 0.1985 (best: 0.1985)
+  Lambda:   13.445 → 13.484 (action: maintain_momentum)
+  LR:       9.98e-04
+  ✅ Within budget
+Epoch 175: LR 8.92e-04 → 8.83e-04 | λ 13.78 → 13.79 | maintain_momentum | fine_tuning | KL 1.039
+Epoch 176: LR 8.83e-04 → 8.74e-04 | λ 13.79 → 13.80 | maintain_momentum | fine_tuning | KL 0.989
+Epoch 177: LR 8.74e-04 → 8.65e-04 | λ 13.80 → 13.83 | explore | fine_tuning | KL 0.771
+Epoch 178: LR 8.65e-04 → 8.57e-04 | λ 13.83 → 13.84 | maintain_momentum | fine_tuning | KL 0.924
+Epoch 179: LR 8.57e-04 → 8.48e-04 | λ 13.84 → 13.85 | maintain_momentum | fine_tuning | KL 0.963
+Epoch 180: LR 8.48e-04 → 8.39e-04 | λ 13.85 → 13.85 | maintain_momentum | fine_tuning | KL 0.990
+
+[Scheduler] Epoch 180 | Phase: fine_tuning
+  KL Loss:  0.7694 (budget: 1.2000, gap: -0.4306)
+  Accuracy: 1.0000
+  Sparsity: 0.2396 (best: 0.2865)
+  Lambda:   13.854 → 13.883 (action: explore)
+  LR:       8.30e-04
+  ✅ Within budget
+Epoch 181: LR 8.30e-04 → 8.22e-04 | λ 13.88 → 13.89 | maintain_momentum | fine_tuning | KL 1.000
+Epoch 182: LR 8.22e-04 → 8.13e-04 | λ 13.89 → 13.92 | explore | fine_tuning | KL 1.007
+Epoch 183: LR 8.13e-04 → 8.05e-04 | λ 13.92 → 13.95 | explore | fine_tuning | KL 1.012
+Epoch 184: LR 8.05e-04 → 7.96e-04 | λ 13.95 → 13.96 | maintain_momentum | fine_tuning | KL 1.004
+Epoch 185: LR 7.96e-04 → 7.88e-04 | λ 13.96 → 13.98 | maintain_momentum | fine_tuning | KL 0.968
+Epoch 186: LR 7.88e-04 → 7.80e-04 | λ 13.98 → 13.99 | maintain_momentum | fine_tuning | KL 1.135
+Epoch 187: LR 7.80e-04 → 7.72e-04 | λ 13.99 → 13.99 | maintain_momentum | fine_tuning | KL 1.029
+Epoch 188: LR 7.72e-04 → 7.64e-04 | λ 13.99 → 14.00 | maintain_momentum | fine_tuning | KL 0.971
+Epoch 189: LR 7.64e-04 → 7.56e-04 | λ 14.00 → 14.03 | explore | fine_tuning | KL 0.928
+Epoch 190: LR 7.56e-04 → 7.48e-04 | λ 14.03 → 14.06 | explore | fine_tuning | KL 0.879
+Epoch 191: LR 7.48e-04 → 7.40e-04 | λ 14.06 → 14.07 | maintain_momentum | fine_tuning | KL 1.066
+Epoch 192: LR 7.40e-04 → 7.32e-04 | λ 14.07 → 14.08 | maintain_momentum | fine_tuning | KL 1.127
+Epoch 193: LR 7.32e-04 → 7.25e-04 | λ 14.08 → 14.11 | explore | fine_tuning | KL 1.090
+Epoch 194: LR 7.25e-04 → 7.17e-04 | λ 14.11 → 14.12 | maintain_momentum | fine_tuning | KL 1.024
+Epoch 195: LR 7.17e-04 → 7.10e-04 | λ 14.12 → 14.13 | maintain_momentum | fine_tuning | KL 0.960
+Epoch 196: LR 7.10e-04 → 7.02e-04 | λ 14.13 → 14.16 | explore | fine_tuning | KL 1.012
+Epoch 197: LR 7.02e-04 → 6.95e-04 | λ 14.16 → 14.17 | maintain_momentum | fine_tuning | KL 1.054
+Epoch 198: LR 6.95e-04 → 6.88e-04 | λ 14.17 → 14.18 | maintain_momentum | fine_tuning | KL 1.001
+Epoch 199: LR 6.88e-04 → 6.81e-04 | λ 14.18 → 14.21 | explore | fine_tuning | KL 1.031
+Epoch 200: LR 6.81e-04 → 6.73e-04 | λ 14.21 → 14.23 | maintain_momentum | fine_tuning | KL 1.039
+
+[Scheduler] Epoch 200 | Phase: fine_tuning
+  KL Loss:  0.8344 (budget: 1.2000, gap: -0.3656)
+  Accuracy: 1.0000
+  Sparsity: 0.2808 (best: 0.3226)
+  Lambda:   14.225 → 14.255 (action: explore)
+  LR:       6.66e-04
+  ✅ Within budget
+Epoch 201: LR 6.66e-04 → 6.60e-04 | λ 14.25 → 14.27 | maintain_momentum | fine_tuning | KL 0.987
+Epoch 202: LR 6.60e-04 → 6.53e-04 | λ 14.27 → 14.28 | maintain_momentum | fine_tuning | KL 1.071
+Epoch 203: LR 6.53e-04 → 6.46e-04 | λ 14.28 → 14.29 | maintain_momentum | fine_tuning | KL 0.935
+Epoch 204: LR 6.46e-04 → 6.39e-04 | λ 14.29 → 14.30 | maintain_momentum | fine_tuning | KL 1.004
+Epoch 205: LR 6.39e-04 → 6.32e-04 | λ 14.30 → 14.30 | maintain_momentum | fine_tuning | KL 1.094
+Epoch 206: LR 6.32e-04 → 6.26e-04 | λ 14.30 → 14.31 | maintain | fine_tuning | KL 0.979
+Epoch 207: LR 6.26e-04 → 6.19e-04 | λ 14.31 → 14.31 | maintain | fine_tuning | KL 1.062
+Epoch 208: LR 6.19e-04 → 6.13e-04 | λ 14.31 → 14.31 | maintain | fine_tuning | KL 1.098
+Epoch 209: LR 6.13e-04 → 6.06e-04 | λ 14.31 → 14.31 | maintain | fine_tuning | KL 1.149
+Epoch 210: LR 6.06e-04 → 6.00e-04 | λ 14.31 → 14.34 | explore | fine_tuning | KL 1.009
+Epoch 211: LR 6.00e-04 → 5.94e-04 | λ 14.34 → 14.34 | maintain | fine_tuning | KL 1.108
+Epoch 212: LR 5.94e-04 → 5.88e-04 | λ 14.34 → 14.34 | maintain | fine_tuning | KL 1.064
+Epoch 213: LR 5.88e-04 → 5.81e-04 | λ 14.34 → 14.34 | maintain | fine_tuning | KL 1.067
+Epoch 214: LR 5.81e-04 → 5.75e-04 | λ 14.34 → 14.37 | explore | fine_tuning | KL 1.153
+Epoch 215: LR 5.75e-04 → 5.69e-04 | λ 14.37 → 14.40 | explore | fine_tuning | KL 1.041
+Epoch 216: LR 5.69e-04 → 5.63e-04 | λ 14.40 → 14.43 | explore | fine_tuning | KL 1.140
+Epoch 217: LR 5.63e-04 → 5.58e-04 | λ 14.43 → 14.44 | maintain_momentum | fine_tuning | KL 1.188
+Epoch 218: LR 5.58e-04 → 5.52e-04 | λ 14.44 → 14.45 | maintain_momentum | fine_tuning | KL 1.160
+Epoch 219: LR 5.52e-04 → 5.46e-04 | λ 14.45 → 14.48 | explore | fine_tuning | KL 1.163
+Epoch 220: LR 5.46e-04 → 5.40e-04 | λ 14.48 → 14.49 | maintain_momentum | fine_tuning | KL 1.126
+
+[Scheduler] Epoch 220 | Phase: fine_tuning
+  KL Loss:  0.9224 (budget: 1.2000, gap: -0.2776)
+  Accuracy: 1.0000
+  Sparsity: 0.3176 (best: 0.3547)
+  Lambda:   14.488 → 14.498 (action: maintain_momentum)
+  LR:       5.35e-04
+  ✅ Within budget
+Epoch 221: LR 5.35e-04 → 5.29e-04 | λ 14.50 → 14.53 | explore | fine_tuning | KL 1.055
+Epoch 222: LR 5.29e-04 → 5.24e-04 | λ 14.53 → 14.56 | explore | fine_tuning | KL 1.180
+Epoch 223: LR 5.24e-04 → 5.18e-04 | λ 14.56 → 14.57 | maintain_momentum | fine_tuning | KL 1.054
+Epoch 224: LR 5.18e-04 → 5.13e-04 | λ 14.57 → 14.58 | maintain_momentum | fine_tuning | KL 1.271
+Epoch 225: LR 5.13e-04 → 5.07e-04 | λ 14.58 → 14.59 | maintain_momentum | fine_tuning | KL 1.223
+Epoch 226: LR 5.07e-04 → 5.02e-04 | λ 14.59 → 14.60 | maintain_momentum | fine_tuning | KL 1.071
+
+[Scheduler] Epoch 240 | Phase: fine_tuning
+  KL Loss:  0.9791 (budget: 1.2000, gap: -0.2209)
+  Accuracy: 1.0000
+  Sparsity: 0.3480 (best: 0.3736)
+  Lambda:   14.837 → 14.847 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 260 | Phase: fine_tuning
+  KL Loss:  1.0066 (budget: 1.2000, gap: -0.1934)
+  Accuracy: 0.9980
+  Sparsity: 0.3791 (best: 0.3979)
+  Lambda:   15.096 → 15.123 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 280 | Phase: fine_tuning
+  KL Loss:  1.0494 (budget: 1.2000, gap: -0.1506)
+  Accuracy: 0.9974
+  Sparsity: 0.4094 (best: 0.4212)
+  Lambda:   15.311 → 15.339 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 300 | Phase: fine_tuning
+  KL Loss:  1.1236 (budget: 1.2000, gap: -0.0764)
+  Accuracy: 0.9959
+  Sparsity: 0.4396 (best: 0.4420)
+  Lambda:   15.552 → 15.580 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 320 | Phase: at_budget
+  KL Loss:  1.1878 (budget: 1.2000, gap: -0.0122)
+  Accuracy: 0.9917
+  Sparsity: 0.4702 (best: 0.4654)
+  Lambda:   15.707 → 15.708 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 340 | Phase: fine_tuning
+  KL Loss:  1.2638 (budget: 1.2000, gap: +0.0638)
+  Accuracy: 0.9814
+  Sparsity: 0.5004 (best: 0.5004)
+  Lambda:   16.118 → 16.128 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 360 | Phase: fine_tuning
+  KL Loss:  1.3361 (budget: 1.2000, gap: +0.1361)
+  Accuracy: 0.9671
+  Sparsity: 0.5306 (best: 0.5306)
+  Lambda:   16.318 → 16.328 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 380 | Phase: fine_tuning
+  KL Loss:  1.4411 (budget: 1.2000, gap: +0.2411)
+  Accuracy: 0.9487
+  Sparsity: 0.5586 (best: 0.5586)
+  Lambda:   16.489 → 16.490 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 400 | Phase: fine_tuning
+  KL Loss:  1.4905 (budget: 1.2000, gap: +0.2905)
+  Accuracy: 0.9240
+  Sparsity: 0.5853 (best: 0.5853)
+  Lambda:   16.628 → 16.628 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 420 | Phase: fine_tuning
+  KL Loss:  1.6027 (budget: 1.2000, gap: +0.4027)
+  Accuracy: 0.8942
+  Sparsity: 0.6100 (best: 0.6100)
+  Lambda:   16.913 → 16.915 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 440 | Phase: fine_tuning
+  KL Loss:  1.6289 (budget: 1.2000, gap: +0.4289)
+  Accuracy: 0.8683
+  Sparsity: 0.6346 (best: 0.6346)
+  Lambda:   17.166 → 17.169 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 460 | Phase: fine_tuning
+  KL Loss:  1.6947 (budget: 1.2000, gap: +0.4947)
+  Accuracy: 0.8437
+  Sparsity: 0.6565 (best: 0.6565)
+  Lambda:   17.208 → 17.208 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 480 | Phase: fine_tuning
+  KL Loss:  1.7444 (budget: 1.2000, gap: +0.5444)
+  Accuracy: 0.8219
+  Sparsity: 0.6769 (best: 0.6769)
+  Lambda:   17.448 → 17.449 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 500 | Phase: fine_tuning
+  KL Loss:  1.7593 (budget: 1.2000, gap: +0.5593)
+  Accuracy: 0.8015
+  Sparsity: 0.6967 (best: 0.6967)
+  Lambda:   17.730 → 17.741 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+📊 Dashboard saved: ./results/ioi_kl_budget/training_dashboard.png
+
+--- Final Evaluation ---
+
+================================================================================
+  ANALYZING AND FINALIZING THE DISCOVERED CIRCUIT (PEDANTIC MODE)
+================================================================================
+
+--- Setting final circuit mode to: True ---
+    Updated 64 HardConcreteGate modules.
+
+📍 PRUNABLE PARAMETER BREAKDOWN:
+  - Layers: 16
+  - Attention params per layer: 10,485,760
+  - MLP params per layer: 50,331,648
+  - Total per layer: 60,817,408
+  - TOTAL PRUNABLE: 973,078,528
+
+================================================================================
+  PRUNABLE PARAMETER COMPRESSION ANALYSIS
+================================================================================
+Total prunable parameters: 973,078,528
+Active prunable parameters: 0
+Pruned parameters: 973,078,528
+Compression ratio: infx
+Parameter reduction: 100.0%
+
+📍 MODEL BREAKDOWN:
+  - Total model parameters: 1,236,011,520
+  - Fixed parameters (embeddings, norms, etc.): 262,932,992 (21.3%)
+  - Prunable parameters: 973,078,528 (78.7%)
+  - Active prunable parameters: 0 (0.0%)
+
+🎯 EFFECTIVE MODEL COMPRESSION:
+  - Effective model size: 262,932,992 parameters
+  - Overall compression: 4.70x
+  - Overall reduction: 78.7%
+
+================================================================================
+  HIERARCHICAL PRUNING REPORT (Consistency Enforced)
+================================================================================
+
+📍 GLOBAL COMPONENTS:
+  - Embedding Gate: Pruned
+
+📍 LAYER-LEVEL PRUNING:
+  - Active Layers: 16/16 (100.0%)
+
+📍 DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | N/A         | N/A        | 0/32         | 0/2048          | 3685/8192       | 264/2048
+1      | Active   | N/A         | N/A        | 1/32         | 37/2048         | 1100/8192       | 124/2048
+2      | Active   | N/A         | N/A        | 0/32         | 0/2048          | 1012/8192       | 127/2048
+3      | Active   | N/A         | N/A        | 1/32         | 45/2048         | 1184/8192       | 135/2048
+4      | Active   | N/A         | N/A        | 0/32         | 0/2048          | 1079/8192       | 86/2048
+5      | Active   | N/A         | N/A        | 0/32         | 0/2048          | 803/8192        | 60/2048
+6      | Active   | N/A         | N/A        | 0/32         | 0/2048          | 770/8192        | 24/2048
+7      | Active   | N/A         | N/A        | 0/32         | 0/2048          | 930/8192        | 127/2048
+8      | Active   | N/A         | N/A        | 2/32         | 93/2048         | 1103/8192       | 158/2048
+9      | Active   | N/A         | N/A        | 3/32         | 175/2048        | 1169/8192       | 169/2048
+10     | Active   | N/A         | N/A        | 7/32         | 372/2048        | 1114/8192       | 161/2048
+11     | Active   | N/A         | N/A        | 4/32         | 244/2048        | 526/8192        | 123/2048
+12     | Active   | N/A         | N/A        | 5/32         | 299/2048        | 283/8192        | 71/2048
+13     | Active   | N/A         | N/A        | 4/32         | 212/2048        | 286/8192        | 112/2048
+14     | Active   | N/A         | N/A        | 15/32        | 927/2048        | 292/8192        | 31/2048
+15     | Active   | N/A         | N/A        | 13/32        | 782/2048        | 886/8192        | 37/2048
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 0 / 1  (0.0%)
+  - Pruned: 1 (100.0%)
+
+Layer Level:
+  - Active: 16 / 16  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Heads:
+  - Active: 55 / 512  (10.7%)
+  - Pruned: 457 (89.3%)
+
+Attention Neurons:
+  - Active: 3,186 / 32,768  (9.7%)
+  - Pruned: 29,582 (90.3%)
+
+Mlp Hidden:
+  - Active: 16,222 / 131,072  (12.4%)
+  - Pruned: 114,850 (87.6%)
+
+Mlp Output:
+  - Active: 1,809 / 32,768  (5.5%)
+  - Pruned: 30,959 (94.5%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 0 out of 973,078,528 prunable parameters
+  - Prunable compression: infx
+  - Prunable reduction: 100.0%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+==================================================
+  EVALUATING: Final
+==================================================
+
+Processed 999 valid samples.
+
+==================================================
+Final Evaluation Summary:
+  - Accuracy:              0.6817
+  - Logit Difference:      1.2201
+  - Faithfulness (KL Div): 1.5088
+  - Exact Match Rate:      0.2533
+==================================================
+
+================================================================================
+  SUMMARY
+================================================================================
+KL Budget:     1.2000
+Final KL:      1.7593 ✅ WITHIN
+Final Accuracy: 0.8015
+Final Sparsity: 0.6967
+Best Sparsity:  0.6967 (at KL=1.7593, acc=0.8015)
+Total Epochs:   500
+================================================================================

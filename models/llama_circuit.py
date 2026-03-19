@@ -64,8 +64,8 @@ class PruningConfig:
     prune_mlp_output: bool = True
     lambda_mlp_output: float = 0.005 * PRUNING_FACTOR
 
-    prune_embedding: bool = True
-    lambda_embedding: float = 1 * PRUNING_FACTOR
+    # EMBEDDING GATE COMPLETELY REMOVED - always uses clean embeddings (gate = 1.0)
+    # No prune_embedding or lambda_embedding parameters
 
     prune_attention_neurons: bool = True
     lambda_attention_neurons: float = 0.002 * PRUNING_FACTOR
@@ -192,7 +192,8 @@ class PrunableLlamaAttention(nn.Module):
 
             if self.neuron_gates is not None:
                 neuron_gate = self.neuron_gates().to(gated_output.dtype).view(1, 1, self.num_heads, self.head_dim)
-                gated_output = gated_output * neuron_gate
+                # Mix with corrupted stream (consistent with all other gate types)
+                gated_output = neuron_gate * gated_output + (1 - neuron_gate) * corr_attn_out
 
         # Flatten heads: [batch, seq_len, hidden_size]
         gated_output = gated_output.reshape(bsz, seq_len, -1).contiguous()
@@ -426,8 +427,8 @@ class PrunableLlamaForCausalLM(LlamaForCausalLM):
         """Load a pretrained Llama model and wrap it with pruning gates."""
         model = cls.from_pretrained(model_name, **kwargs)
 
-        # Embedding gate (controls mixing of clean/corrupted token embeddings)
-        model.embedding_gate = HardConcreteGate(1)
+        # NO EMBEDDING GATE - completely removed to avoid training interference
+        # Always uses clean embeddings (equivalent to gate = 1.0)
 
         # Replace each decoder layer with our prunable wrapper
         prunable_layers = nn.ModuleList([
@@ -508,10 +509,8 @@ class PrunableLlamaForCausalLM(LlamaForCausalLM):
         # Detach corrupted stream — only gates need gradients, not the corrupted path
         corrupted_inputs_embeds = corrupted_inputs_embeds.detach()
 
-        # Apply embedding gate (mix clean and corrupted embeddings)
-        model_dtype = inputs_embeds.dtype
-        gate = self.embedding_gate().to(model_dtype)
-        hidden_states_clean = gate * inputs_embeds + (1 - gate) * corrupted_inputs_embeds
+        # NO EMBEDDING GATE - always use clean embeddings (gate = 1.0)
+        hidden_states_clean = inputs_embeds
         hidden_states_corrupted = corrupted_inputs_embeds.clone()
 
         # Handle cache
@@ -531,9 +530,39 @@ class PrunableLlamaForCausalLM(LlamaForCausalLM):
             position_ids = cache_position.unsqueeze(0)
 
         # Create causal mask
-        causal_mask = self.model._update_causal_mask(
-            attention_mask, inputs_embeds, cache_position, past_key_values, output_attentions
-        )
+        # Note: Using manual causal mask creation for compatibility across transformers versions
+        if hasattr(self.model, '_update_causal_mask'):
+            causal_mask = self.model._update_causal_mask(
+                attention_mask, inputs_embeds, cache_position, past_key_values, output_attentions
+            )
+        else:
+            # Manual causal mask creation for older transformers versions
+            if attention_mask is None:
+                causal_mask = None
+            else:
+                # Convert 2D attention mask to 4D causal mask
+                # Shape: (batch_size, 1, seq_length, seq_length)
+                if attention_mask.dim() == 2:
+                    # Create causal mask
+                    causal_mask = torch.triu(
+                        torch.ones(seq_length, seq_length, dtype=torch.bool, device=device),
+                        diagonal=1
+                    )
+                    # Invert it (1 where we attend, 0 where we mask)
+                    causal_mask = ~causal_mask
+                    # Expand to batch
+                    causal_mask = causal_mask.unsqueeze(0).unsqueeze(0).expand(batch_size, 1, seq_length, seq_length)
+                    # Apply the attention_mask (typically all 1s for padding)
+                    if attention_mask is not None:
+                        # Expand attention_mask to match causal_mask shape
+                        expanded_mask = attention_mask.unsqueeze(1).unsqueeze(2).expand(batch_size, 1, seq_length, seq_length)
+                        causal_mask = causal_mask & expanded_mask.bool()
+                    # Convert to float mask for scaled_dot_product_attention
+                    # 0.0 for positions we attend to, -inf for masked positions
+                    causal_mask = torch.where(causal_mask, 0.0, float('-inf'))
+                    causal_mask = causal_mask.to(inputs_embeds.dtype)
+                else:
+                    causal_mask = attention_mask
 
         # Compute rotary embeddings once
         position_embeddings = self.model.rotary_emb(hidden_states_clean, position_ids)
@@ -611,8 +640,7 @@ class PrunableLlamaForCausalLM(LlamaForCausalLM):
     def gate_group_sizes(self) -> Dict[str, int]:
         sizes = defaultdict(int)
 
-        if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
-            sizes['embedding'] += self.embedding_gate.num_gates()
+        # NO EMBEDDING GATE - completely removed
 
         if getattr(self, 'layer_gates', None) is not None:
             for layer_gate in self.layer_gates:
@@ -662,9 +690,7 @@ class PrunableLlamaForCausalLM(LlamaForCausalLM):
             losses[term_key] += term_loss
 
         # Global components
-        if self.pruning_config.prune_embedding and hasattr(self, 'embedding_gate'):
-            add_weighted('embedding', self.embedding_gate.get_sparsity_loss(),
-                         self.pruning_config.lambda_embedding)
+        # NO EMBEDDING GATE - completely removed
 
         if getattr(self, 'layer_gates', None) is not None:
             for i, gate in enumerate(self.layer_gates):

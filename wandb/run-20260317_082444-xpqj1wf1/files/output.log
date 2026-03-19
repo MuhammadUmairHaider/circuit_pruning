@@ -1,0 +1,738 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/xpqj1wf1
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Disabled
+W&B Logging: Enabled
+
+--- Loading models ---
+Loading weights: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 880.96it/s, Materializing param=model.norm.weight]
+Llama model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 1643.44it/s, Materializing param=model.norm.weight]
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00,  6.09it/s]
+  -> Retained: 200/200 (100.00%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 16/16 [00:01<00:00,  8.36it/s]
+  -> Retained: 996/1000 (99.60%)
+Processed 200 valid samples from 200 total
+Processed 200 valid samples from 200 total
+Processed 996 valid samples from 996 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 11.87it/s]
+
+Processed 996 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      5.8047
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 1.5000
+   Tolerance: ±3.5000
+   Acceptable range: [-2.0000, 5.0000]
+   Task Loss: Disabled
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.95
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   0%|█                                                                                                                                                                                                                                                                                                 | 19/5000 [00:51<3:34:30,  2.58s/it]
+                                                                                                                                                                                                                                                                                                                                                     
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  1.7061 (budget: 1.5000, gap: +0.2061)
+  Accuracy: 1.0000
+  Sparsity: 0.0986 (best: 0.0000)
+  Lambda:   2.285 → 2.346 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  1.3917 (budget: 1.5000, gap: -0.1083)
+  Accuracy: 1.0000
+  Sparsity: 0.0920 (best: 0.0000)
+  Lambda:   2.660 → 2.724 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  1.5325 (budget: 1.5000, gap: +0.0325)
+  Accuracy: 1.0000
+  Sparsity: 0.0902 (best: 0.0000)
+  Lambda:   3.046 → 3.111 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 20 | Phase: warmup
+  KL Loss:  1.6618 (budget: 1.5000, gap: +0.1618)
+  Accuracy: 1.0000
+  Sparsity: 0.0897 (best: 0.0000)
+  Lambda:   3.435 → 3.500 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 25 | Phase: warmup
+  KL Loss:  1.4997 (budget: 1.5000, gap: -0.0003)
+  Accuracy: 1.0000
+  Sparsity: 0.0892 (best: 0.0000)
+  Lambda:   3.825 → 3.890 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 30 | Phase: warmup
+  KL Loss:  1.5487 (budget: 1.5000, gap: +0.0487)
+  Accuracy: 1.0000
+  Sparsity: 0.0895 (best: 0.0000)
+  Lambda:   4.215 → 4.280 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 35 | Phase: warmup
+  KL Loss:  1.3716 (budget: 1.5000, gap: -0.1284)
+  Accuracy: 1.0000
+  Sparsity: 0.0900 (best: 0.0000)
+  Lambda:   4.605 → 4.670 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 40 | Phase: warmup
+  KL Loss:  1.2747 (budget: 1.5000, gap: -0.2253)
+  Accuracy: 1.0000
+  Sparsity: 0.0906 (best: 0.0000)
+  Lambda:   4.995 → 5.060 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 45 | Phase: warmup
+  KL Loss:  1.4083 (budget: 1.5000, gap: -0.0917)
+  Accuracy: 1.0000
+  Sparsity: 0.0906 (best: 0.0000)
+  Lambda:   5.385 → 5.450 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 50 | Phase: warmup
+  KL Loss:  1.5238 (budget: 1.5000, gap: +0.0238)
+  Accuracy: 1.0000
+  Sparsity: 0.0906 (best: 0.0000)
+  Lambda:   5.775 → 5.840 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 60 | Phase: warmup
+  KL Loss:  1.4579 (budget: 1.5000, gap: -0.0421)
+  Accuracy: 1.0000
+  Sparsity: 0.0974 (best: 0.0000)
+  Lambda:   6.490 → 6.555 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 70 | Phase: warmup
+  KL Loss:  1.5559 (budget: 1.5000, gap: +0.0559)
+  Accuracy: 1.0000
+  Sparsity: 0.0994 (best: 0.0000)
+  Lambda:   7.205 → 7.270 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 80 | Phase: warmup
+  KL Loss:  1.7129 (budget: 1.5000, gap: +0.2129)
+  Accuracy: 1.0000
+  Sparsity: 0.1013 (best: 0.0000)
+  Lambda:   7.920 → 7.985 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 90 | Phase: warmup
+  KL Loss:  1.5915 (budget: 1.5000, gap: +0.0915)
+  Accuracy: 1.0000
+  Sparsity: 0.1028 (best: 0.0000)
+  Lambda:   8.635 → 8.700 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 100 | Phase: warmup
+  KL Loss:  1.4739 (budget: 1.5000, gap: -0.0261)
+  Accuracy: 1.0000
+  Sparsity: 0.1053 (best: 0.0000)
+  Lambda:   9.350 → 9.415 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 120 | Phase: warmup
+  KL Loss:  1.6131 (budget: 1.5000, gap: +0.1131)
+  Accuracy: 1.0000
+  Sparsity: 0.1138 (best: 0.0000)
+  Lambda:   10.715 → 10.780 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 140 | Phase: warmup
+  KL Loss:  1.5979 (budget: 1.5000, gap: +0.0979)
+  Accuracy: 1.0000
+  Sparsity: 0.1224 (best: 0.0000)
+  Lambda:   12.080 → 12.145 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 160 | Phase: warmup
+  KL Loss:  1.7275 (budget: 1.5000, gap: +0.2275)
+  Accuracy: 1.0000
+  Sparsity: 0.1324 (best: 0.0000)
+  Lambda:   13.445 → 13.510 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 180 | Phase: warmup
+  KL Loss:  1.7992 (budget: 1.5000, gap: +0.2992)
+  Accuracy: 1.0000
+  Sparsity: 0.1454 (best: 0.0000)
+  Lambda:   14.810 → 14.875 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 200 | Phase: warmup
+  KL Loss:  1.8316 (budget: 1.5000, gap: +0.3316)
+  Accuracy: 1.0000
+  Sparsity: 0.1615 (best: 0.0000)
+  Lambda:   16.175 → 16.240 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 220 | Phase: warmup
+  KL Loss:  1.9756 (budget: 1.5000, gap: +0.4756)
+  Accuracy: 0.9990
+  Sparsity: 0.1812 (best: 0.0000)
+  Lambda:   17.540 → 17.605 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 240 | Phase: warmup
+  KL Loss:  2.2243 (budget: 1.5000, gap: +0.7243)
+  Accuracy: 0.9992
+  Sparsity: 0.2051 (best: 0.0000)
+  Lambda:   18.905 → 18.970 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 260 | Phase: fine_tuning
+  KL Loss:  2.4201 (budget: 1.5000, gap: +0.9201)
+  Accuracy: 0.9974
+  Sparsity: 0.2338 (best: 0.2338)
+  Lambda:   20.270 → 20.309 (action: explore)
+  LR:       9.98e-04
+  ✅ Within budget
+Epoch 275: LR 8.92e-04 → 8.83e-04 | λ 20.63 → 20.64 | maintain_momentum | fine_tuning | KL 2.853
+Epoch 276: LR 8.83e-04 → 8.74e-04 | λ 20.64 → 20.66 | maintain_momentum | fine_tuning | KL 2.505
+Epoch 277: LR 8.74e-04 → 8.65e-04 | λ 20.66 → 20.66 | maintain_momentum | fine_tuning | KL 2.944
+Epoch 278: LR 8.65e-04 → 8.57e-04 | λ 20.66 → 20.67 | maintain_momentum | fine_tuning | KL 2.755
+Epoch 279: LR 8.57e-04 → 8.48e-04 | λ 20.67 → 20.67 | maintain | fine_tuning | KL 2.671
+Epoch 280: LR 8.48e-04 → 8.39e-04 | λ 20.67 → 20.68 | maintain | fine_tuning | KL 3.493
+
+[Scheduler] Epoch 280 | Phase: fine_tuning
+  KL Loss:  2.4822 (budget: 1.5000, gap: +0.9822)
+  Accuracy: 0.9949
+  Sparsity: 0.2650 (best: 0.3095)
+  Lambda:   20.677 → 20.705 (action: explore)
+  LR:       8.30e-04
+  ✅ Within budget
+Epoch 281: LR 8.30e-04 → 8.22e-04 | λ 20.70 → 20.71 | maintain | fine_tuning | KL 3.060
+Epoch 282: LR 8.22e-04 → 8.13e-04 | λ 20.71 → 20.74 | explore | fine_tuning | KL 3.003
+Epoch 283: LR 8.13e-04 → 8.05e-04 | λ 20.74 → 20.74 | maintain_momentum | fine_tuning | KL 3.275
+Epoch 284: LR 8.05e-04 → 7.96e-04 | λ 20.74 → 20.75 | maintain_momentum | fine_tuning | KL 3.341
+Epoch 285: LR 7.96e-04 → 7.88e-04 | λ 20.75 → 20.78 | explore | fine_tuning | KL 3.037
+Epoch 286: LR 7.88e-04 → 7.80e-04 | λ 20.78 → 20.79 | maintain_momentum | fine_tuning | KL 3.190
+Epoch 287: LR 7.80e-04 → 7.72e-04 | λ 20.79 → 20.80 | maintain_momentum | fine_tuning | KL 3.379
+Epoch 288: LR 7.72e-04 → 7.64e-04 | λ 20.80 → 20.83 | explore | fine_tuning | KL 2.819
+Epoch 289: LR 7.64e-04 → 7.56e-04 | λ 20.83 → 20.84 | maintain_momentum | fine_tuning | KL 3.097
+Epoch 290: LR 7.56e-04 → 7.48e-04 | λ 20.84 → 20.85 | maintain_momentum | fine_tuning | KL 3.171
+Epoch 291: LR 7.48e-04 → 7.40e-04 | λ 20.85 → 20.86 | maintain_momentum | fine_tuning | KL 3.008
+Epoch 292: LR 7.40e-04 → 7.32e-04 | λ 20.86 → 20.86 | maintain | fine_tuning | KL 3.200
+Epoch 293: LR 7.32e-04 → 7.25e-04 | λ 20.86 → 20.86 | maintain | fine_tuning | KL 3.181
+Epoch 294: LR 7.25e-04 → 7.17e-04 | λ 20.86 → 20.86 | maintain | fine_tuning | KL 3.320
+Epoch 295: LR 7.17e-04 → 7.10e-04 | λ 20.86 → 20.86 | maintain | fine_tuning | KL 2.918
+Epoch 296: LR 7.10e-04 → 7.02e-04 | λ 20.86 → 20.86 | maintain | fine_tuning | KL 2.944
+Epoch 297: LR 7.02e-04 → 6.95e-04 | λ 20.86 → 20.89 | explore | fine_tuning | KL 3.133
+Epoch 298: LR 6.95e-04 → 6.88e-04 | λ 20.89 → 20.89 | maintain | fine_tuning | KL 3.346
+Epoch 299: LR 6.88e-04 → 6.81e-04 | λ 20.89 → 20.92 | explore | fine_tuning | KL 3.159
+Epoch 300: LR 6.81e-04 → 6.73e-04 | λ 20.92 → 20.92 | maintain | fine_tuning | KL 3.078
+
+[Scheduler] Epoch 300 | Phase: fine_tuning
+  KL Loss:  2.6614 (budget: 1.5000, gap: +1.1614)
+  Accuracy: 0.9809
+  Sparsity: 0.2928 (best: 0.3352)
+  Lambda:   20.922 → 20.924 (action: maintain)
+  LR:       6.66e-04
+  ✅ Within budget
+Epoch 301: LR 6.66e-04 → 6.60e-04 | λ 20.92 → 20.95 | explore | fine_tuning | KL 2.989
+Epoch 302: LR 6.60e-04 → 6.53e-04 | λ 20.95 → 20.96 | maintain_momentum | fine_tuning | KL 3.249
+Epoch 303: LR 6.53e-04 → 6.46e-04 | λ 20.96 → 20.96 | maintain | fine_tuning | KL 2.827
+Epoch 304: LR 6.46e-04 → 6.39e-04 | λ 20.96 → 20.96 | maintain | fine_tuning | KL 2.848
+Epoch 305: LR 6.39e-04 → 6.32e-04 | λ 20.96 → 20.99 | explore | fine_tuning | KL 2.792
+Epoch 306: LR 6.32e-04 → 6.26e-04 | λ 20.99 → 21.02 | explore | fine_tuning | KL 3.481
+Epoch 307: LR 6.26e-04 → 6.19e-04 | λ 21.02 → 21.03 | maintain_momentum | fine_tuning | KL 3.534
+Epoch 308: LR 6.19e-04 → 6.13e-04 | λ 21.03 → 21.04 | maintain_momentum | fine_tuning | KL 3.337
+Epoch 309: LR 6.13e-04 → 6.06e-04 | λ 21.04 → 21.05 | maintain_momentum | fine_tuning | KL 3.239
+Epoch 310: LR 6.06e-04 → 6.00e-04 | λ 21.05 → 21.08 | explore | fine_tuning | KL 3.382
+Epoch 311: LR 6.00e-04 → 5.94e-04 | λ 21.08 → 21.10 | explore | fine_tuning | KL 3.072
+Epoch 312: LR 5.94e-04 → 5.88e-04 | λ 21.10 → 21.12 | maintain_momentum | fine_tuning | KL 3.009
+Epoch 313: LR 5.88e-04 → 5.81e-04 | λ 21.12 → 21.13 | maintain_momentum | fine_tuning | KL 2.809
+Epoch 314: LR 5.81e-04 → 5.75e-04 | λ 21.13 → 21.14 | maintain_momentum | fine_tuning | KL 3.197
+Epoch 315: LR 5.75e-04 → 5.69e-04 | λ 21.14 → 21.14 | maintain_momentum | fine_tuning | KL 2.867
+Epoch 316: LR 5.69e-04 → 5.63e-04 | λ 21.14 → 21.17 | explore | fine_tuning | KL 3.102
+Epoch 317: LR 5.63e-04 → 5.58e-04 | λ 21.17 → 21.18 | maintain_momentum | fine_tuning | KL 3.122
+Epoch 318: LR 5.58e-04 → 5.52e-04 | λ 21.18 → 21.21 | explore | fine_tuning | KL 3.022
+Epoch 319: LR 5.52e-04 → 5.46e-04 | λ 21.21 → 21.22 | maintain_momentum | fine_tuning | KL 3.604
+Epoch 320: LR 5.46e-04 → 5.40e-04 | λ 21.22 → 21.25 | explore | fine_tuning | KL 3.101
+
+[Scheduler] Epoch 320 | Phase: fine_tuning
+  KL Loss:  2.8124 (budget: 1.5000, gap: +1.3124)
+  Accuracy: 0.9217
+  Sparsity: 0.3166 (best: 0.3568)
+  Lambda:   21.253 → 21.265 (action: maintain_momentum)
+  LR:       5.35e-04
+  ✅ Within budget
+Epoch 321: LR 5.35e-04 → 5.29e-04 | λ 21.26 → 21.28 | maintain_momentum | fine_tuning | KL 2.864
+Epoch 322: LR 5.29e-04 → 5.24e-04 | λ 21.28 → 21.28 | maintain_momentum | fine_tuning | KL 3.236
+Epoch 323: LR 5.24e-04 → 5.18e-04 | λ 21.28 → 21.29 | maintain_momentum | fine_tuning | KL 3.028
+Epoch 324: LR 5.18e-04 → 5.13e-04 | λ 21.29 → 21.32 | explore | fine_tuning | KL 3.223
+Epoch 325: LR 5.13e-04 → 5.07e-04 | λ 21.32 → 21.35 | explore | fine_tuning | KL 3.613
+Epoch 326: LR 5.07e-04 → 5.02e-04 | λ 21.35 → 21.36 | maintain_momentum | fine_tuning | KL 2.999
+Epoch 327: LR 5.02e-04 → 4.97e-04 | λ 21.36 → 21.39 | explore | fine_tuning | KL 3.320
+Epoch 328: LR 4.97e-04 → 4.92e-04 | λ 21.39 → 21.42 | explore | fine_tuning | KL 3.205
+Epoch 329: LR 4.92e-04 → 4.86e-04 | λ 21.42 → 21.45 | explore | fine_tuning | KL 3.189
+Epoch 330: LR 4.86e-04 → 4.81e-04 | λ 21.45 → 21.47 | maintain_momentum | fine_tuning | KL 3.038
+Epoch 331: LR 4.81e-04 → 4.76e-04 | λ 21.47 → 21.48 | maintain_momentum | fine_tuning | KL 3.490
+Epoch 332: LR 4.76e-04 → 4.71e-04 | λ 21.48 → 21.50 | maintain_momentum | fine_tuning | KL 3.165
+Epoch 333: LR 4.71e-04 → 4.66e-04 | λ 21.50 → 21.52 | explore | fine_tuning | KL 2.999
+Epoch 334: LR 4.66e-04 → 4.62e-04 | λ 21.52 → 21.54 | maintain_momentum | fine_tuning | KL 3.571
+Epoch 335: LR 4.62e-04 → 4.57e-04 | λ 21.54 → 21.55 | maintain_momentum | fine_tuning | KL 3.460
+Epoch 336: LR 4.57e-04 → 4.52e-04 | λ 21.55 → 21.56 | maintain_momentum | fine_tuning | KL 3.235
+Epoch 337: LR 4.52e-04 → 4.47e-04 | λ 21.56 → 21.59 | explore | fine_tuning | KL 3.409
+Epoch 338: LR 4.47e-04 → 4.43e-04 | λ 21.59 → 21.60 | maintain_momentum | fine_tuning | KL 3.228
+Epoch 339: LR 4.43e-04 → 4.38e-04 | λ 21.60 → 21.61 | maintain_momentum | fine_tuning | KL 3.472
+Epoch 340: LR 4.38e-04 → 4.33e-04 | λ 21.61 → 21.64 | explore | fine_tuning | KL 3.484
+
+[Scheduler] Epoch 340 | Phase: fine_tuning
+  KL Loss:  3.0609 (budget: 1.5000, gap: +1.5609)
+  Accuracy: 0.8344
+  Sparsity: 0.3358 (best: 0.3736)
+  Lambda:   21.639 → 21.650 (action: maintain_momentum)
+  LR:       4.29e-04
+  ✅ Within budget
+Epoch 341: LR 4.29e-04 → 4.24e-04 | λ 21.65 → 21.68 | explore | fine_tuning | KL 3.331
+Epoch 342: LR 4.24e-04 → 4.20e-04 | λ 21.68 → 21.69 | maintain_momentum | fine_tuning | KL 3.098
+Epoch 343: LR 4.20e-04 → 4.16e-04 | λ 21.69 → 21.70 | maintain_momentum | fine_tuning | KL 3.200
+Epoch 344: LR 4.16e-04 → 4.11e-04 | λ 21.70 → 21.73 | explore | fine_tuning | KL 3.438
+Epoch 345: LR 4.11e-04 → 4.07e-04 | λ 21.73 → 21.74 | maintain_momentum | fine_tuning | KL 3.110
+Epoch 346: LR 4.07e-04 → 4.03e-04 | λ 21.74 → 21.77 | explore | fine_tuning | KL 3.009
+Epoch 347: LR 4.03e-04 → 3.99e-04 | λ 21.77 → 21.78 | maintain_momentum | fine_tuning | KL 3.578
+Epoch 348: LR 3.99e-04 → 3.94e-04 | λ 21.78 → 21.80 | maintain_momentum | fine_tuning | KL 3.388
+Epoch 349: LR 3.94e-04 → 3.90e-04 | λ 21.80 → 21.81 | maintain_momentum | fine_tuning | KL 3.327
+Epoch 350: LR 3.90e-04 → 3.86e-04 | λ 21.81 → 21.83 | explore | fine_tuning | KL 3.290
+Epoch 351: LR 3.86e-04 → 3.82e-04 | λ 21.83 → 21.85 | maintain_momentum | fine_tuning | KL 3.378
+Epoch 352: LR 3.82e-04 → 3.78e-04 | λ 21.85 → 21.88 | explore | fine_tuning | KL 3.401
+Epoch 353: LR 3.78e-04 → 3.74e-04 | λ 21.88 → 21.89 | maintain_momentum | fine_tuning | KL 3.527
+Epoch 354: LR 3.74e-04 → 3.70e-04 | λ 21.89 → 21.92 | explore | fine_tuning | KL 3.279
+Epoch 355: LR 3.70e-04 → 3.66e-04 | λ 21.92 → 21.93 | maintain_momentum | fine_tuning | KL 3.346
+Epoch 356: LR 3.66e-04 → 3.63e-04 | λ 21.93 → 21.94 | maintain_momentum | fine_tuning | KL 3.042
+Epoch 357: LR 3.63e-04 → 3.59e-04 | λ 21.94 → 21.95 | maintain_momentum | fine_tuning | KL 3.468
+Epoch 358: LR 3.59e-04 → 3.55e-04 | λ 21.95 → 21.96 | maintain_momentum | fine_tuning | KL 3.329
+Epoch 359: LR 3.55e-04 → 3.51e-04 | λ 21.96 → 21.99 | explore | fine_tuning | KL 3.478
+Epoch 360: LR 3.51e-04 → 3.48e-04 | λ 21.99 → 22.00 | maintain_momentum | fine_tuning | KL 3.464
+
+[Scheduler] Epoch 360 | Phase: fine_tuning
+  KL Loss:  3.0807 (budget: 1.5000, gap: +1.5807)
+  Accuracy: 0.7625
+  Sparsity: 0.3511 (best: 0.3847)
+  Lambda:   21.998 → 22.008 (action: maintain_momentum)
+  LR:       3.44e-04
+  ✅ Within budget
+Epoch 361: LR 3.44e-04 → 3.40e-04 | λ 22.01 → 22.02 | maintain_momentum | fine_tuning | KL 3.276
+Epoch 362: LR 3.40e-04 → 3.37e-04 | λ 22.02 → 22.02 | maintain | fine_tuning | KL 3.395
+Epoch 363: LR 3.37e-04 → 3.33e-04 | λ 22.02 → 22.05 | explore | fine_tuning | KL 3.185
+Epoch 364: LR 3.33e-04 → 3.30e-04 | λ 22.05 → 22.06 | maintain_momentum | fine_tuning | KL 3.352
+Epoch 365: LR 3.30e-04 → 3.26e-04 | λ 22.06 → 22.08 | explore | fine_tuning | KL 3.074
+Epoch 366: LR 3.26e-04 → 3.23e-04 | λ 22.08 → 22.11 | explore | fine_tuning | KL 3.139
+Epoch 367: LR 3.23e-04 → 3.20e-04 | λ 22.11 → 22.14 | explore | fine_tuning | KL 3.340
+Epoch 368: LR 3.20e-04 → 3.16e-04 | λ 22.14 → 22.16 | maintain_momentum | fine_tuning | KL 3.259
+Epoch 369: LR 3.16e-04 → 3.13e-04 | λ 22.16 → 22.19 | explore | fine_tuning | KL 3.490
+Epoch 370: LR 3.13e-04 → 3.10e-04 | λ 22.19 → 22.20 | maintain_momentum | fine_tuning | KL 3.165
+Epoch 371: LR 3.10e-04 → 3.07e-04 | λ 22.20 → 22.21 | maintain_momentum | fine_tuning | KL 3.213
+Epoch 372: LR 3.07e-04 → 3.03e-04 | λ 22.21 → 22.22 | maintain_momentum | fine_tuning | KL 3.254
+Epoch 373: LR 3.03e-04 → 3.00e-04 | λ 22.22 → 22.23 | maintain_momentum | fine_tuning | KL 3.223
+Epoch 374: LR 3.00e-04 → 2.97e-04 | λ 22.23 → 22.24 | maintain_momentum | fine_tuning | KL 3.223
+Epoch 375: LR 2.97e-04 → 2.94e-04 | λ 22.24 → 22.27 | explore | fine_tuning | KL 3.257
+Epoch 376: LR 2.94e-04 → 2.91e-04 | λ 22.27 → 22.28 | maintain_momentum | fine_tuning | KL 3.485
+Epoch 377: LR 2.91e-04 → 2.88e-04 | λ 22.28 → 22.29 | maintain_momentum | fine_tuning | KL 3.041
+Epoch 378: LR 2.88e-04 → 2.85e-04 | λ 22.29 → 22.32 | explore | fine_tuning | KL 3.088
+Epoch 379: LR 2.85e-04 → 2.82e-04 | λ 22.32 → 22.33 | maintain_momentum | fine_tuning | KL 2.872
+Epoch 380: LR 2.82e-04 → 2.79e-04 | λ 22.33 → 22.34 | maintain_momentum | fine_tuning | KL 2.953
+
+[Scheduler] Epoch 380 | Phase: fine_tuning
+  KL Loss:  2.8661 (budget: 1.5000, gap: +1.3661)
+  Accuracy: 0.7020
+  Sparsity: 0.3623 (best: 0.3898)
+  Lambda:   22.340 → 22.349 (action: maintain_momentum)
+  LR:       2.76e-04
+  ✅ Within budget
+Epoch 381: LR 2.76e-04 → 2.73e-04 | λ 22.35 → 22.35 | maintain | fine_tuning | KL 3.369
+Epoch 382: LR 2.73e-04 → 2.70e-04 | λ 22.35 → 22.35 | maintain | fine_tuning | KL 3.384
+Epoch 383: LR 2.70e-04 → 2.67e-04 | λ 22.35 → 22.35 | maintain | fine_tuning | KL 3.156
+Epoch 384: LR 2.67e-04 → 2.65e-04 | λ 22.35 → 22.36 | maintain | fine_tuning | KL 3.202
+Epoch 385: LR 2.65e-04 → 2.62e-04 | λ 22.36 → 22.38 | explore | fine_tuning | KL 3.107
+Epoch 386: LR 2.62e-04 → 2.59e-04 | λ 22.38 → 22.41 | explore | fine_tuning | KL 2.931
+Epoch 387: LR 2.59e-04 → 2.56e-04 | λ 22.41 → 22.42 | maintain_momentum | fine_tuning | KL 3.397
+Epoch 388: LR 2.56e-04 → 2.54e-04 | λ 22.42 → 22.45 | explore | fine_tuning | KL 3.418
+Epoch 389: LR 2.54e-04 → 2.51e-04 | λ 22.45 → 22.46 | maintain_momentum | fine_tuning | KL 3.213
+Epoch 390: LR 2.51e-04 → 2.48e-04 | λ 22.46 → 22.47 | maintain_momentum | fine_tuning | KL 3.219
+Epoch 391: LR 2.48e-04 → 2.46e-04 | λ 22.47 → 22.48 | maintain_momentum | fine_tuning | KL 3.201
+Epoch 392: LR 2.46e-04 → 2.43e-04 | λ 22.48 → 22.48 | maintain | fine_tuning | KL 3.161
+Epoch 393: LR 2.43e-04 → 2.41e-04 | λ 22.48 → 22.51 | explore | fine_tuning | KL 3.312
+Epoch 394: LR 2.41e-04 → 2.38e-04 | λ 22.51 → 22.54 | explore | fine_tuning | KL 3.431
+Epoch 395: LR 2.38e-04 → 2.36e-04 | λ 22.54 → 22.57 | explore | fine_tuning | KL 3.528
+Epoch 396: LR 2.36e-04 → 2.33e-04 | λ 22.57 → 22.58 | maintain_momentum | fine_tuning | KL 3.402
+Epoch 397: LR 2.33e-04 → 2.31e-04 | λ 22.58 → 22.59 | maintain_momentum | fine_tuning | KL 3.146
+Epoch 398: LR 2.31e-04 → 2.28e-04 | λ 22.59 → 22.60 | maintain_momentum | fine_tuning | KL 3.291
+Epoch 399: LR 2.28e-04 → 2.26e-04 | λ 22.60 → 22.61 | maintain_momentum | fine_tuning | KL 3.060
+Epoch 400: LR 2.26e-04 → 2.24e-04 | λ 22.61 → 22.64 | explore | fine_tuning | KL 3.594
+
+[Scheduler] Epoch 400 | Phase: fine_tuning
+  KL Loss:  3.0392 (budget: 1.5000, gap: +1.5392)
+  Accuracy: 0.6506
+  Sparsity: 0.3721 (best: 0.4002)
+  Lambda:   22.639 → 22.669 (action: explore)
+  LR:       2.21e-04
+  ✅ Within budget
+Epoch 401: LR 2.21e-04 → 2.19e-04 | λ 22.67 → 22.68 | maintain_momentum | fine_tuning | KL 3.146
+Epoch 402: LR 2.19e-04 → 2.17e-04 | λ 22.68 → 22.71 | explore | fine_tuning | KL 3.226
+Epoch 403: LR 2.17e-04 → 2.15e-04 | λ 22.71 → 22.72 | maintain_momentum | fine_tuning | KL 3.270
+Epoch 404: LR 2.15e-04 → 2.12e-04 | λ 22.72 → 22.73 | maintain_momentum | fine_tuning | KL 3.298
+Epoch 405: LR 2.12e-04 → 2.10e-04 | λ 22.73 → 22.75 | maintain_momentum | fine_tuning | KL 3.075
+Epoch 406: LR 2.10e-04 → 2.08e-04 | λ 22.75 → 22.75 | maintain_momentum | fine_tuning | KL 3.238
+Epoch 407: LR 2.08e-04 → 2.06e-04 | λ 22.75 → 22.78 | explore | fine_tuning | KL 3.386
+Epoch 408: LR 2.06e-04 → 2.04e-04 | λ 22.78 → 22.79 | maintain_momentum | fine_tuning | KL 3.361
+Epoch 409: LR 2.04e-04 → 2.01e-04 | λ 22.79 → 22.80 | maintain_momentum | fine_tuning | KL 3.267
+Epoch 410: LR 2.01e-04 → 1.99e-04 | λ 22.80 → 22.83 | explore | fine_tuning | KL 3.555
+Epoch 411: LR 1.99e-04 → 1.97e-04 | λ 22.83 → 22.84 | maintain_momentum | fine_tuning | KL 3.090
+Epoch 412: LR 1.97e-04 → 1.95e-04 | λ 22.84 → 22.85 | maintain_momentum | fine_tuning | KL 3.495
+Epoch 413: LR 1.95e-04 → 1.93e-04 | λ 22.85 → 22.86 | maintain_momentum | fine_tuning | KL 3.286
+Epoch 414: LR 1.93e-04 → 1.91e-04 | λ 22.86 → 22.87 | maintain_momentum | fine_tuning | KL 3.254
+Epoch 415: LR 1.91e-04 → 1.89e-04 | λ 22.87 → 22.87 | maintain | fine_tuning | KL 3.319
+Epoch 416: LR 1.89e-04 → 1.87e-04 | λ 22.87 → 22.87 | maintain | fine_tuning | KL 3.301
+Epoch 417: LR 1.87e-04 → 1.85e-04 | λ 22.87 → 22.90 | explore | fine_tuning | KL 3.548
+Epoch 418: LR 1.85e-04 → 1.83e-04 | λ 22.90 → 22.90 | maintain | fine_tuning | KL 3.082
+Epoch 419: LR 1.83e-04 → 1.81e-04 | λ 22.90 → 22.90 | maintain | fine_tuning | KL 3.349
+Epoch 420: LR 1.81e-04 → 1.79e-04 | λ 22.90 → 22.91 | maintain | fine_tuning | KL 3.250
+
+[Scheduler] Epoch 420 | Phase: fine_tuning
+  KL Loss:  3.0921 (budget: 1.5000, gap: +1.5921)
+  Accuracy: 0.5795
+  Sparsity: 0.3793 (best: 0.4053)
+  Lambda:   22.906 → 22.908 (action: maintain)
+  LR:       1.78e-04
+  ✅ Within budget
+Epoch 421: LR 1.78e-04 → 1.76e-04 | λ 22.91 → 22.91 | maintain | fine_tuning | KL 3.644
+Epoch 422: LR 1.76e-04 → 1.74e-04 | λ 22.91 → 22.91 | maintain | fine_tuning | KL 3.435
+Epoch 423: LR 1.74e-04 → 1.72e-04 | λ 22.91 → 22.91 | maintain | fine_tuning | KL 3.455
+Epoch 424: LR 1.72e-04 → 1.70e-04 | λ 22.91 → 22.94 | explore | fine_tuning | KL 3.256
+Epoch 425: LR 1.70e-04 → 1.69e-04 | λ 22.94 → 22.97 | explore | fine_tuning | KL 3.045
+Epoch 426: LR 1.69e-04 → 1.67e-04 | λ 22.97 → 22.99 | explore | fine_tuning | KL 3.244
+Epoch 427: LR 1.67e-04 → 1.65e-04 | λ 22.99 → 23.00 | maintain_momentum | fine_tuning | KL 3.439
+Epoch 428: LR 1.65e-04 → 1.63e-04 | λ 23.00 → 23.01 | maintain_momentum | fine_tuning | KL 3.131
+Epoch 429: LR 1.63e-04 → 1.62e-04 | λ 23.01 → 23.04 | explore | fine_tuning | KL 3.137
+Epoch 430: LR 1.62e-04 → 1.60e-04 | λ 23.04 → 23.07 | explore | fine_tuning | KL 3.361
+Epoch 431: LR 1.60e-04 → 1.58e-04 | λ 23.07 → 23.08 | maintain_momentum | fine_tuning | KL 3.391
+Epoch 432: LR 1.58e-04 → 1.57e-04 | λ 23.08 → 23.11 | explore | fine_tuning | KL 3.100
+Epoch 433: LR 1.57e-04 → 1.55e-04 | λ 23.11 → 23.13 | maintain_momentum | fine_tuning | KL 3.203
+Epoch 434: LR 1.55e-04 → 1.53e-04 | λ 23.13 → 23.14 | maintain_momentum | fine_tuning | KL 3.489
+Epoch 435: LR 1.53e-04 → 1.52e-04 | λ 23.14 → 23.15 | maintain_momentum | fine_tuning | KL 3.337
+Epoch 436: LR 1.52e-04 → 1.50e-04 | λ 23.15 → 23.18 | explore | fine_tuning | KL 3.289
+Epoch 437: LR 1.50e-04 → 1.49e-04 | λ 23.18 → 23.21 | explore | fine_tuning | KL 3.428
+Epoch 438: LR 1.49e-04 → 1.47e-04 | λ 23.21 → 23.22 | maintain_momentum | fine_tuning | KL 3.400
+Epoch 439: LR 1.47e-04 → 1.45e-04 | λ 23.22 → 23.23 | maintain_momentum | fine_tuning | KL 3.296
+Epoch 440: LR 1.45e-04 → 1.44e-04 | λ 23.23 → 23.24 | maintain_momentum | fine_tuning | KL 3.343
+
+[Scheduler] Epoch 440 | Phase: fine_tuning
+  KL Loss:  3.1234 (budget: 1.5000, gap: +1.6234)
+  Accuracy: 0.5186
+  Sparsity: 0.3851 (best: 0.4105)
+  Lambda:   23.243 → 23.252 (action: maintain_momentum)
+  LR:       1.42e-04
+  ✅ Within budget
+Epoch 441: LR 1.42e-04 → 1.41e-04 | λ 23.25 → 23.26 | maintain_momentum | fine_tuning | KL 3.188
+Epoch 442: LR 1.41e-04 → 1.40e-04 | λ 23.26 → 23.29 | explore | fine_tuning | KL 3.508
+Epoch 443: LR 1.40e-04 → 1.38e-04 | λ 23.29 → 23.32 | explore | fine_tuning | KL 3.352
+Epoch 444: LR 1.38e-04 → 1.37e-04 | λ 23.32 → 23.35 | explore | fine_tuning | KL 3.167
+Epoch 445: LR 1.37e-04 → 1.35e-04 | λ 23.35 → 23.36 | maintain_momentum | fine_tuning | KL 3.572
+Epoch 446: LR 1.35e-04 → 1.34e-04 | λ 23.36 → 23.39 | explore | fine_tuning | KL 3.528
+Epoch 447: LR 1.34e-04 → 1.32e-04 | λ 23.39 → 23.41 | maintain_momentum | fine_tuning | KL 3.362
+Epoch 448: LR 1.32e-04 → 1.31e-04 | λ 23.41 → 23.42 | maintain_momentum | fine_tuning | KL 3.413
+Epoch 449: LR 1.31e-04 → 1.30e-04 | λ 23.42 → 23.43 | maintain_momentum | fine_tuning | KL 3.523
+Epoch 450: LR 1.30e-04 → 1.28e-04 | λ 23.43 → 23.44 | maintain_momentum | fine_tuning | KL 3.026
+Epoch 451: LR 1.28e-04 → 1.27e-04 | λ 23.44 → 23.45 | maintain_momentum | fine_tuning | KL 3.315
+Epoch 452: LR 1.27e-04 → 1.26e-04 | λ 23.45 → 23.46 | maintain_momentum | fine_tuning | KL 2.928
+Epoch 453: LR 1.26e-04 → 1.24e-04 | λ 23.46 → 23.46 | maintain | fine_tuning | KL 3.535
+Epoch 454: LR 1.24e-04 → 1.23e-04 | λ 23.46 → 23.46 | maintain | fine_tuning | KL 3.360
+Epoch 455: LR 1.23e-04 → 1.22e-04 | λ 23.46 → 23.49 | explore | fine_tuning | KL 3.323
+Epoch 456: LR 1.22e-04 → 1.20e-04 | λ 23.49 → 23.52 | explore | fine_tuning | KL 3.254
+Epoch 457: LR 1.20e-04 → 1.19e-04 | λ 23.52 → 23.53 | maintain_momentum | fine_tuning | KL 3.260
+Epoch 458: LR 1.19e-04 → 1.18e-04 | λ 23.53 → 23.53 | maintain_momentum | fine_tuning | KL 3.261
+Epoch 459: LR 1.18e-04 → 1.17e-04 | λ 23.53 → 23.54 | maintain_momentum | fine_tuning | KL 3.385
+Epoch 460: LR 1.17e-04 → 1.15e-04 | λ 23.54 → 23.55 | maintain | fine_tuning | KL 3.132
+
+[Scheduler] Epoch 460 | Phase: fine_tuning
+  KL Loss:  3.1539 (budget: 1.5000, gap: +1.6539)
+  Accuracy: 0.4509
+  Sparsity: 0.3901 (best: 0.4159)
+  Lambda:   23.545 → 23.547 (action: maintain)
+  LR:       1.14e-04
+  ✅ Within budget
+Epoch 461: LR 1.14e-04 → 1.13e-04 | λ 23.55 → 23.57 | explore | fine_tuning | KL 3.529
+Epoch 462: LR 1.13e-04 → 1.12e-04 | λ 23.57 → 23.58 | maintain | fine_tuning | KL 3.411
+Epoch 463: LR 1.12e-04 → 1.11e-04 | λ 23.58 → 23.61 | explore | fine_tuning | KL 3.285
+Epoch 464: LR 1.11e-04 → 1.10e-04 | λ 23.61 → 23.61 | maintain_momentum | fine_tuning | KL 2.919
+Epoch 465: LR 1.10e-04 → 1.08e-04 | λ 23.61 → 23.62 | maintain_momentum | fine_tuning | KL 3.492
+Epoch 466: LR 1.08e-04 → 1.07e-04 | λ 23.62 → 23.62 | maintain | fine_tuning | KL 3.226
+Epoch 467: LR 1.07e-04 → 1.06e-04 | λ 23.62 → 23.65 | explore | fine_tuning | KL 3.274
+Epoch 468: LR 1.06e-04 → 1.05e-04 | λ 23.65 → 23.66 | maintain_momentum | fine_tuning | KL 3.180
+Epoch 469: LR 1.05e-04 → 1.04e-04 | λ 23.66 → 23.69 | explore | fine_tuning | KL 3.125
+Epoch 470: LR 1.04e-04 → 1.03e-04 | λ 23.69 → 23.70 | maintain_momentum | fine_tuning | KL 3.261
+Epoch 471: LR 1.03e-04 → 1.02e-04 | λ 23.70 → 23.71 | maintain_momentum | fine_tuning | KL 3.108
+Epoch 472: LR 1.02e-04 → 1.01e-04 | λ 23.71 → 23.72 | maintain_momentum | fine_tuning | KL 3.642
+Epoch 473: LR 1.01e-04 → 9.97e-05 | λ 23.72 → 23.75 | explore | fine_tuning | KL 3.615
+Epoch 474: LR 9.97e-05 → 9.87e-05 | λ 23.75 → 23.77 | explore | fine_tuning | KL 3.412
+Epoch 475: LR 9.87e-05 → 9.76e-05 | λ 23.77 → 23.80 | explore | fine_tuning | KL 3.422
+Epoch 476: LR 9.76e-05 → 9.66e-05 | λ 23.80 → 23.84 | explore | fine_tuning | KL 3.533
+Epoch 477: LR 9.66e-05 → 9.56e-05 | λ 23.84 → 23.87 | explore | fine_tuning | KL 3.397
+Epoch 478: LR 9.56e-05 → 9.46e-05 | λ 23.87 → 23.88 | maintain_momentum | fine_tuning | KL 3.346
+Epoch 479: LR 9.46e-05 → 9.36e-05 | λ 23.88 → 23.91 | explore | fine_tuning | KL 3.481
+Epoch 480: LR 9.36e-05 → 9.27e-05 | λ 23.91 → 23.93 | maintain_momentum | fine_tuning | KL 3.299
+
+[Scheduler] Epoch 480 | Phase: fine_tuning
+  KL Loss:  3.2497 (budget: 1.5000, gap: +1.7497)
+  Accuracy: 0.3957
+  Sparsity: 0.3936 (best: 0.4159)
+  Lambda:   23.927 → 23.941 (action: maintain_momentum)
+  LR:       9.17e-05
+  ✅ Within budget
+Epoch 481: LR 9.17e-05 → 9.07e-05 | λ 23.94 → 23.95 | maintain_momentum | fine_tuning | KL 3.574
+Epoch 482: LR 9.07e-05 → 8.98e-05 | λ 23.95 → 23.96 | maintain_momentum | fine_tuning | KL 3.404
+Epoch 483: LR 8.98e-05 → 8.88e-05 | λ 23.96 → 23.99 | explore | fine_tuning | KL 3.180
+Epoch 484: LR 8.88e-05 → 8.79e-05 | λ 23.99 → 24.02 | explore | fine_tuning | KL 3.231
+Epoch 485: LR 8.79e-05 → 8.70e-05 | λ 24.02 → 24.05 | explore | fine_tuning | KL 3.362
+Epoch 486: LR 8.70e-05 → 8.61e-05 | λ 24.05 → 24.07 | maintain_momentum | fine_tuning | KL 3.236
+Epoch 487: LR 8.61e-05 → 8.52e-05 | λ 24.07 → 24.08 | maintain_momentum | fine_tuning | KL 3.333
+Epoch 488: LR 8.52e-05 → 8.43e-05 | λ 24.08 → 24.09 | maintain_momentum | fine_tuning | KL 3.338
+Epoch 489: LR 8.43e-05 → 8.34e-05 | λ 24.09 → 24.10 | maintain_momentum | fine_tuning | KL 3.365
+Epoch 490: LR 8.34e-05 → 8.25e-05 | λ 24.10 → 24.11 | maintain_momentum | fine_tuning | KL 3.393
+Epoch 491: LR 8.25e-05 → 8.17e-05 | λ 24.11 → 24.14 | explore | fine_tuning | KL 3.316
+Epoch 492: LR 8.17e-05 → 8.08e-05 | λ 24.14 → 24.15 | maintain_momentum | fine_tuning | KL 3.249
+Epoch 493: LR 8.08e-05 → 8.00e-05 | λ 24.15 → 24.18 | explore | fine_tuning | KL 3.397
+Epoch 494: LR 8.00e-05 → 7.92e-05 | λ 24.18 → 24.21 | explore | fine_tuning | KL 3.205
+Epoch 495: LR 7.92e-05 → 7.83e-05 | λ 24.21 → 24.23 | maintain_momentum | fine_tuning | KL 3.475
+Epoch 496: LR 7.83e-05 → 7.75e-05 | λ 24.23 → 24.24 | maintain_momentum | fine_tuning | KL 3.404
+Epoch 497: LR 7.75e-05 → 7.67e-05 | λ 24.24 → 24.25 | maintain_momentum | fine_tuning | KL 3.610
+Epoch 498: LR 7.67e-05 → 7.59e-05 | λ 24.25 → 24.28 | explore | fine_tuning | KL 3.118
+Epoch 499: LR 7.59e-05 → 7.51e-05 | λ 24.28 → 24.29 | maintain_momentum | fine_tuning | KL 3.061
+Epoch 500: LR 7.51e-05 → 7.43e-05 | λ 24.29 → 24.30 | maintain_momentum | fine_tuning | KL 3.294
+
+[Scheduler] Epoch 500 | Phase: fine_tuning
+  KL Loss:  3.1706 (budget: 1.5000, gap: +1.6706)
+  Accuracy: 0.3516
+  Sparsity: 0.3964 (best: 0.4159)
+  Lambda:   24.299 → 24.308 (action: maintain_momentum)
+  LR:       7.35e-05
+  ✅ Within budget
+Epoch 501: LR 7.35e-05 → 7.28e-05 | λ 24.31 → 24.32 | maintain_momentum | fine_tuning | KL 3.449
+Epoch 502: LR 7.28e-05 → 7.20e-05 | λ 24.32 → 24.32 | maintain | fine_tuning | KL 3.290
+Epoch 503: LR 7.20e-05 → 7.13e-05 | λ 24.32 → 24.32 | maintain | fine_tuning | KL 3.090
+Epoch 504: LR 7.13e-05 → 7.05e-05 | λ 24.32 → 24.32 | maintain | fine_tuning | KL 3.498
+Epoch 505: LR 7.05e-05 → 6.98e-05 | λ 24.32 → 24.32 | maintain | fine_tuning | KL 3.196
+Epoch 506: LR 6.98e-05 → 6.91e-05 | λ 24.32 → 24.35 | explore | fine_tuning | KL 3.579
+Epoch 507: LR 6.91e-05 → 6.83e-05 | λ 24.35 → 24.35 | maintain | fine_tuning | KL 3.284
+Epoch 508: LR 6.83e-05 → 6.76e-05 | λ 24.35 → 24.38 | explore | fine_tuning | KL 3.630
+Epoch 509: LR 6.76e-05 → 6.69e-05 | λ 24.38 → 24.41 | explore | fine_tuning | KL 3.403
+Epoch 510: LR 6.69e-05 → 6.62e-05 | λ 24.41 → 24.42 | maintain_momentum | fine_tuning | KL 3.497
+Epoch 511: LR 6.62e-05 → 6.55e-05 | λ 24.42 → 24.43 | maintain_momentum | fine_tuning | KL 3.201
+Epoch 512: LR 6.55e-05 → 6.48e-05 | λ 24.43 → 24.44 | maintain_momentum | fine_tuning | KL 3.325
+Epoch 513: LR 6.48e-05 → 6.42e-05 | λ 24.44 → 24.44 | maintain | fine_tuning | KL 3.470
+Epoch 514: LR 6.42e-05 → 6.35e-05 | λ 24.44 → 24.44 | maintain | fine_tuning | KL 3.492
+Epoch 515: LR 6.35e-05 → 6.28e-05 | λ 24.44 → 24.44 | maintain | fine_tuning | KL 3.389
+Epoch 516: LR 6.28e-05 → 6.22e-05 | λ 24.44 → 24.44 | maintain | fine_tuning | KL 3.430
+Epoch 517: LR 6.22e-05 → 6.15e-05 | λ 24.44 → 24.44 | maintain | fine_tuning | KL 3.284
+Epoch 518: LR 6.15e-05 → 6.09e-05 | λ 24.44 → 24.45 | maintain | fine_tuning | KL 3.471
+Epoch 519: LR 6.09e-05 → 6.03e-05 | λ 24.45 → 24.47 | explore | fine_tuning | KL 3.441
+Epoch 520: LR 6.03e-05 → 5.96e-05 | λ 24.47 → 24.47 | maintain | fine_tuning | KL 3.222
+
+[Scheduler] Epoch 520 | Phase: fine_tuning
+  KL Loss:  3.2350 (budget: 1.5000, gap: +1.7350)
+  Accuracy: 0.3162
+  Sparsity: 0.3985 (best: 0.4212)
+  Lambda:   24.475 → 24.476 (action: maintain)
+  LR:       5.90e-05
+  ✅ Within budget
+Epoch 521: LR 5.90e-05 → 5.84e-05 | λ 24.48 → 24.48 | maintain | fine_tuning | KL 3.140
+Epoch 522: LR 5.84e-05 → 5.78e-05 | λ 24.48 → 24.48 | maintain | fine_tuning | KL 3.416
+Epoch 523: LR 5.78e-05 → 5.72e-05 | λ 24.48 → 24.48 | maintain | fine_tuning | KL 3.400
+Epoch 524: LR 5.72e-05 → 5.66e-05 | λ 24.48 → 24.48 | maintain | fine_tuning | KL 3.400
+Epoch 525: LR 5.66e-05 → 5.60e-05 | λ 24.48 → 24.48 | maintain | fine_tuning | KL 3.356
+Epoch 526: LR 5.60e-05 → 5.54e-05 | λ 24.48 → 24.48 | maintain | fine_tuning | KL 3.203
+Epoch 527: LR 5.54e-05 → 5.48e-05 | λ 24.48 → 24.48 | maintain | fine_tuning | KL 3.386
+Epoch 528: LR 5.48e-05 → 5.42e-05 | λ 24.48 → 24.51 | explore | fine_tuning | KL 3.481
+Epoch 529: LR 5.42e-05 → 5.37e-05 | λ 24.51 → 24.53 | explore | fine_tuning | KL 3.081
+Epoch 530: LR 5.37e-05 → 5.31e-05 | λ 24.53 → 24.56 | explore | fine_tuning | KL 3.390
+Epoch 531: LR 5.31e-05 → 5.26e-05 | λ 24.56 → 24.57 | maintain_momentum | fine_tuning | KL 3.476
+Epoch 532: LR 5.26e-05 → 5.20e-05 | λ 24.57 → 24.60 | explore | fine_tuning | KL 3.378
+Epoch 533: LR 5.20e-05 → 5.15e-05 | λ 24.60 → 24.63 | explore | fine_tuning | KL 3.355
+Epoch 534: LR 5.15e-05 → 5.09e-05 | λ 24.63 → 24.65 | maintain_momentum | fine_tuning | KL 3.539
+Epoch 535: LR 5.09e-05 → 5.04e-05 | λ 24.65 → 24.68 | explore | fine_tuning | KL 3.388
+Epoch 536: LR 5.04e-05 → 4.99e-05 | λ 24.68 → 24.69 | maintain_momentum | fine_tuning | KL 3.195
+Epoch 537: LR 4.99e-05 → 4.94e-05 | λ 24.69 → 24.70 | maintain_momentum | fine_tuning | KL 3.469
+Epoch 538: LR 4.94e-05 → 4.88e-05 | λ 24.70 → 24.73 | explore | fine_tuning | KL 3.027
+Epoch 539: LR 4.88e-05 → 4.83e-05 | λ 24.73 → 24.76 | explore | fine_tuning | KL 3.333
+Epoch 540: LR 4.83e-05 → 4.78e-05 | λ 24.76 → 24.79 | explore | fine_tuning | KL 3.377
+
+[Scheduler] Epoch 540 | Phase: fine_tuning
+  KL Loss:  3.1983 (budget: 1.5000, gap: +1.6983)
+  Accuracy: 0.2880
+  Sparsity: 0.4001 (best: 0.4212)
+  Lambda:   24.790 → 24.805 (action: maintain_momentum)
+  LR:       4.73e-05
+  ✅ Within budget
+Epoch 541: LR 4.73e-05 → 4.68e-05 | λ 24.81 → 24.84 | explore | fine_tuning | KL 3.546
+Epoch 542: LR 4.68e-05 → 4.63e-05 | λ 24.84 → 24.87 | explore | fine_tuning | KL 3.597
+Epoch 543: LR 4.63e-05 → 4.59e-05 | λ 24.87 → 24.90 | explore | fine_tuning | KL 3.144
+Epoch 544: LR 4.59e-05 → 4.54e-05 | λ 24.90 → 24.91 | maintain_momentum | fine_tuning | KL 3.430
+Epoch 545: LR 4.54e-05 → 4.49e-05 | λ 24.91 → 24.95 | explore | fine_tuning | KL 3.063
+Epoch 546: LR 4.49e-05 → 4.44e-05 | λ 24.95 → 24.96 | maintain_momentum | fine_tuning | KL 3.243
+Epoch 547: LR 4.44e-05 → 4.40e-05 | λ 24.96 → 24.97 | maintain_momentum | fine_tuning | KL 3.107
+Epoch 548: LR 4.40e-05 → 4.35e-05 | λ 24.97 → 25.01 | explore | fine_tuning | KL 3.378
+Epoch 549: LR 4.35e-05 → 4.31e-05 | λ 25.01 → 25.04 | explore | fine_tuning | KL 3.144
+Epoch 550: LR 4.31e-05 → 4.26e-05 | λ 25.04 → 25.07 | explore | fine_tuning | KL 3.412
+Epoch 551: LR 4.26e-05 → 4.22e-05 | λ 25.07 → 25.10 | explore | fine_tuning | KL 3.472
+Epoch 552: LR 4.22e-05 → 4.17e-05 | λ 25.10 → 25.12 | maintain_momentum | fine_tuning | KL 3.418
+Epoch 553: LR 4.17e-05 → 4.13e-05 | λ 25.12 → 25.13 | maintain_momentum | fine_tuning | KL 3.387
+Epoch 554: LR 4.13e-05 → 4.09e-05 | λ 25.13 → 25.14 | maintain_momentum | fine_tuning | KL 3.230
+Epoch 555: LR 4.09e-05 → 4.04e-05 | λ 25.14 → 25.17 | explore | fine_tuning | KL 3.466
+Epoch 556: LR 4.04e-05 → 4.00e-05 | λ 25.17 → 25.19 | maintain_momentum | fine_tuning | KL 2.909
+Epoch 557: LR 4.00e-05 → 3.96e-05 | λ 25.19 → 25.20 | maintain_momentum | fine_tuning | KL 3.581
+Epoch 558: LR 3.96e-05 → 3.92e-05 | λ 25.20 → 25.21 | maintain_momentum | fine_tuning | KL 3.622
+Epoch 559: LR 3.92e-05 → 3.88e-05 | λ 25.21 → 25.22 | maintain_momentum | fine_tuning | KL 3.292
+Epoch 560: LR 3.88e-05 → 3.84e-05 | λ 25.22 → 25.25 | explore | fine_tuning | KL 3.625
+
+[Scheduler] Epoch 560 | Phase: fine_tuning
+  KL Loss:  3.2736 (budget: 1.5000, gap: +1.7736)
+  Accuracy: 0.2664
+  Sparsity: 0.4017 (best: 0.4212)
+  Lambda:   25.249 → 25.260 (action: maintain_momentum)
+  LR:       3.80e-05
+  ✅ Within budget
+Epoch 561: LR 3.80e-05 → 3.76e-05 | λ 25.26 → 25.27 | maintain_momentum | fine_tuning | KL 3.341
+Epoch 562: LR 3.76e-05 → 3.72e-05 | λ 25.27 → 25.28 | maintain_momentum | fine_tuning | KL 3.387
+Epoch 563: LR 3.72e-05 → 3.68e-05 | λ 25.28 → 25.29 | maintain_momentum | fine_tuning | KL 3.264
+Epoch 564: LR 3.68e-05 → 3.64e-05 | λ 25.29 → 25.29 | maintain | fine_tuning | KL 3.184
+Epoch 565: LR 3.64e-05 → 3.60e-05 | λ 25.29 → 25.32 | explore | fine_tuning | KL 3.515
+Epoch 566: LR 3.60e-05 → 3.57e-05 | λ 25.32 → 25.33 | maintain_momentum | fine_tuning | KL 3.316
+Epoch 567: LR 3.57e-05 → 3.53e-05 | λ 25.33 → 25.33 | maintain | fine_tuning | KL 3.385
+Epoch 568: LR 3.53e-05 → 3.49e-05 | λ 25.33 → 25.33 | maintain | fine_tuning | KL 3.283
+Epoch 569: LR 3.49e-05 → 3.45e-05 | λ 25.33 → 25.33 | maintain | fine_tuning | KL 3.332
+Epoch 570: LR 3.45e-05 → 3.42e-05 | λ 25.33 → 25.33 | maintain | fine_tuning | KL 3.474
+Epoch 571: LR 3.42e-05 → 3.38e-05 | λ 25.33 → 25.36 | explore | fine_tuning | KL 3.534
+Epoch 572: LR 3.38e-05 → 3.35e-05 | λ 25.36 → 25.36 | maintain | fine_tuning | KL 3.332
+Epoch 573: LR 3.35e-05 → 3.31e-05 | λ 25.36 → 25.36 | maintain | fine_tuning | KL 3.300
+Epoch 574: LR 3.31e-05 → 3.28e-05 | λ 25.36 → 25.39 | explore | fine_tuning | KL 3.267
+Epoch 575: LR 3.28e-05 → 3.24e-05 | λ 25.39 → 25.39 | maintain | fine_tuning | KL 3.304
+Epoch 576: LR 3.24e-05 → 3.21e-05 | λ 25.39 → 25.42 | explore | fine_tuning | KL 3.304
+Epoch 577: LR 3.21e-05 → 3.18e-05 | λ 25.42 → 25.43 | maintain_momentum | fine_tuning | KL 3.325
+Epoch 578: LR 3.18e-05 → 3.14e-05 | λ 25.43 → 25.46 | explore | fine_tuning | KL 2.990
+Epoch 579: LR 3.14e-05 → 3.11e-05 | λ 25.46 → 25.47 | maintain_momentum | fine_tuning | KL 3.388
+Epoch 580: LR 3.11e-05 → 3.08e-05 | λ 25.47 → 25.48 | maintain_momentum | fine_tuning | KL 3.417
+
+[Scheduler] Epoch 580 | Phase: fine_tuning
+  KL Loss:  3.1890 (budget: 1.5000, gap: +1.6890)
+  Accuracy: 0.2491
+  Sparsity: 0.4022 (best: 0.4212)
+  Lambda:   25.478 → 25.507 (action: explore)
+  LR:       3.05e-05
+  ✅ Within budget
+Epoch 581: LR 3.05e-05 → 3.01e-05 | λ 25.51 → 25.52 | maintain_momentum | fine_tuning | KL 3.365
+Epoch 582: LR 3.01e-05 → 2.98e-05 | λ 25.52 → 25.53 | maintain_momentum | fine_tuning | KL 3.466
+Epoch 583: LR 2.98e-05 → 2.95e-05 | λ 25.53 → 25.53 | maintain_momentum | fine_tuning | KL 3.303
+Epoch 584: LR 2.95e-05 → 2.92e-05 | λ 25.53 → 25.54 | maintain | fine_tuning | KL 3.185
+Epoch 585: LR 2.92e-05 → 2.89e-05 | λ 25.54 → 25.54 | maintain | fine_tuning | KL 3.441
+Epoch 586: LR 2.89e-05 → 2.86e-05 | λ 25.54 → 25.54 | maintain | fine_tuning | KL 3.384
+Epoch 587: LR 2.86e-05 → 2.83e-05 | λ 25.54 → 25.54 | maintain | fine_tuning | KL 3.285
+Epoch 588: LR 2.83e-05 → 2.80e-05 | λ 25.54 → 25.54 | maintain | fine_tuning | KL 3.346
+Epoch 589: LR 2.80e-05 → 2.77e-05 | λ 25.54 → 25.54 | maintain | fine_tuning | KL 3.367
+  File "/gpfs/project/6075961/dogar/circuit_latest/circuit_pruning/ioi_llama_kl_budget.py", line 1330, in <module>
+    outputs = circuit_model(
+              ^^^^^^^^^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gpfs/project/6075961/dogar/circuit_latest/circuit_pruning/models/llama_circuit.py", line 578, in forward
+    hidden_states_clean, hidden_states_corrupted, attn_outputs = layer(
+                                                                 ^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gpfs/project/6075961/dogar/circuit_latest/circuit_pruning/models/llama_circuit.py", line 376, in forward
+    attn_outputs, corrupted_attn_output = self.attn(
+                                          ^^^^^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gpfs/project/6075961/dogar/circuit_latest/circuit_pruning/models/llama_circuit.py", line 190, in forward
+    head_gate = self.head_gates().to(clean_attn_out.dtype).view(1, 1, self.num_heads, 1)
+                ^^^^^^^^^^^^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gpfs/project/6075961/dogar/circuit_latest/circuit_pruning/models/l0.py", line 59, in forward
+    s = torch.sigmoid((torch.log(u) - torch.log(1 - u) + self.log_alpha) / self.beta)
+                                                ~~^~~
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/_tensor.py", line 47, in wrapped
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dogar/project_env/lib/python3.12/site-packages/torch/_tensor.py", line 1116, in __rsub__
+    return _C._VariableFunctions.rsub(self, other)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

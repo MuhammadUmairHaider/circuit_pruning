@@ -50,7 +50,7 @@ from dataclasses import dataclass
 @dataclass
 class HybridAdaptiveConfig:
     """Configuration for hybrid adaptive scheduler."""
-    warmup_steps: int = 1000
+    warmup_steps: int = 10
 
     # Target accuracy (None = fully adaptive)
     target_accuracy: Optional[float] = None  # e.g., 0.95 = 95% of baseline
@@ -369,6 +369,7 @@ class HybridAdaptiveScheduler:
             print(f"  Target:   {self.target_accuracy:.4f} (gap: {gap:+.4f})")
 
         print(f"  Sparsity: {self.ema_sparsity:.4f} (best: {self.best_sparsity:.4f})")
+        print(f"  KL Loss: {self.ema_kl_loss:.4f}")
         print(f"  Lambda:   {old_lambda:.3f} → {self.lambda_multiplier:.3f} (action: {action})")
 
     def plot_training_dynamics(self, save_path: str):
@@ -500,8 +501,8 @@ if __name__ == '__main__':
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--model', type=str, default='meta-llama/Llama-3.2-1B')
     parser.add_argument('--epochs', type=int, default=500)
-    parser.add_argument('--lr', type=float, default=3e-2)
-    parser.add_argument('--batch-size', type=int, default=16)
+    parser.add_argument('--lr', type=float, default=1e-3)  # Lower LR for more stable training
+    parser.add_argument('--batch-size', type=int, default=32)  # Larger batch for more stable gradients
     parser.add_argument('--hf-token', type=str, default=None)
     parser.add_argument('--save-dir', type=str, default='checkpoints_llama_hybrid')
 
@@ -581,7 +582,7 @@ if __name__ == '__main__':
     val_dataset = IOIDatasetLlama(val_data, tokenizer)
     test_dataset = IOIDatasetLlama(test_data, tokenizer)
 
-    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True)  # shuffle=False required for cached logits
     val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, pin_memory=True)
     test_dataloader = DataLoader(test_dataset, batch_size=args.batch_size, pin_memory=True)
 
@@ -646,14 +647,22 @@ if __name__ == '__main__':
             for i in range(outputs.logits.size(0)):
                 t_start = batch['T_Start'][i].item() - 1
                 t_end = batch['T_End'][i].item() - 1
-                if t_start < t_end:
+
+                # Get valid sequence length (before padding)
+                valid_length = batch['attention_mask'][i].sum().item()
+
+                # Don't compute KL on padding positions
+                end_pos = min(t_end, valid_length)
+
+                if t_start < end_pos:
                     kl = F.kl_div(
-                        F.log_softmax(outputs.logits[i, t_start:t_end].float(), dim=-1),
-                        F.log_softmax(cached_train_logits[batch_idx][i, t_start:t_end].float(), dim=-1),
+                        F.log_softmax(outputs.logits[i, t_start:end_pos, :].float(), dim=-1),
+                        F.log_softmax(cached_train_logits[batch_idx][i, t_start:end_pos, :].float(), dim=-1),
                         reduction='sum', log_target=True,
                     )
                     total_kl += kl
             kl_loss = total_kl / outputs.logits.size(0)
+            # print(f"KL Loss: {kl_loss.item():.4f}")
 
             # Task loss
             pos_good = batch['T_Start'] - 1
@@ -670,7 +679,7 @@ if __name__ == '__main__':
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
             sparsity_loss = sparsity_loss * scheduler.lambda_multiplier
 
-            loss = kl_loss * 1.5 + sparsity_loss + task_loss
+            loss = kl_loss * 1.0 + sparsity_loss# + task_loss
             loss.backward()
             optimizer.step()
 

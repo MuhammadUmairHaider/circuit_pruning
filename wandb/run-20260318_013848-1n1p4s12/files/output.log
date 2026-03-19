@@ -1,0 +1,205 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/1n1p4s12
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Loading weights: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 884.46it/s, Materializing param=model.norm.weight]
+Llama model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 1685.99it/s, Materializing param=model.norm.weight]
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 10.75it/s]
+  -> Retained: 200/200 (100.00%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 17.00it/s]
+  -> Retained: 998/1000 (99.80%)
+Processed 200 valid samples from 200 total
+Processed 200 valid samples from 200 total
+Processed 998 valid samples from 998 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 22.15it/s]
+
+Processed 998 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      5.8824
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.7000
+   Tolerance: ±0.0500
+   Acceptable range: [0.6500, 0.7500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   0%|▉                                                                                                                                                                                                                                                         | 19/5000 [00:40<2:46:56,  2.01s/it]
+                                                                                                                                                                                                                                                                                                             
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  1.5531 (budget: 0.7000, gap: +0.8531)
+  Accuracy: 1.0000
+  Sparsity: 0.0983 (best: 0.0000)
+  Lambda:   1.285 → 1.346 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  1.5111 (budget: 0.7000, gap: +0.8111)
+  Accuracy: 1.0000
+  Sparsity: 0.0917 (best: 0.0000)
+  Lambda:   1.660 → 1.724 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  1.6065 (budget: 0.7000, gap: +0.9065)
+  Accuracy: 1.0000
+  Sparsity: 0.0902 (best: 0.0000)
+  Lambda:   2.046 → 2.111 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 20 | Phase: warmup
+  KL Loss:  1.5591 (budget: 0.7000, gap: +0.8591)
+  Accuracy: 1.0000
+  Sparsity: 0.0900 (best: 0.0000)
+  Lambda:   2.435 → 2.500 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 25 | Phase: warmup
+  KL Loss:  1.4337 (budget: 0.7000, gap: +0.7337)
+  Accuracy: 1.0000
+  Sparsity: 0.0898 (best: 0.0000)
+  Lambda:   2.825 → 2.890 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 30 | Phase: warmup
+  KL Loss:  1.5084 (budget: 0.7000, gap: +0.8084)
+  Accuracy: 1.0000
+  Sparsity: 0.0906 (best: 0.0000)
+  Lambda:   3.215 → 3.280 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 35 | Phase: warmup
+  KL Loss:  1.4560 (budget: 0.7000, gap: +0.7560)
+  Accuracy: 1.0000
+  Sparsity: 0.0913 (best: 0.0000)
+  Lambda:   3.605 → 3.670 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 40 | Phase: warmup
+  KL Loss:  1.4043 (budget: 0.7000, gap: +0.7043)
+  Accuracy: 1.0000
+  Sparsity: 0.0926 (best: 0.0000)
+  Lambda:   3.995 → 4.060 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 45 | Phase: warmup
+  KL Loss:  1.3956 (budget: 0.7000, gap: +0.6956)
+  Accuracy: 1.0000
+  Sparsity: 0.0948 (best: 0.0000)
+  Lambda:   4.385 → 4.450 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 50 | Phase: warmup
+  KL Loss:  1.4595 (budget: 0.7000, gap: +0.7595)
+  Accuracy: 1.0000
+  Sparsity: 0.0976 (best: 0.0000)
+  Lambda:   4.775 → 4.840 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 60 | Phase: warmup
+  KL Loss:  1.7824 (budget: 0.7000, gap: +1.0824)
+  Accuracy: 1.0000
+  Sparsity: 0.1117 (best: 0.0000)
+  Lambda:   5.490 → 5.555 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 70 | Phase: warmup
+  KL Loss:  1.8646 (budget: 0.7000, gap: +1.1646)
+  Accuracy: 1.0000
+  Sparsity: 0.1248 (best: 0.0000)
+  Lambda:   6.205 → 6.270 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 80 | Phase: warmup
+  KL Loss:  1.9719 (budget: 0.7000, gap: +1.2719)
+  Accuracy: 1.0000
+  Sparsity: 0.1406 (best: 0.0000)
+  Lambda:   6.920 → 6.985 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 90 | Phase: warmup
+  KL Loss:  2.1991 (budget: 0.7000, gap: +1.4991)
+  Accuracy: 1.0000
+  Sparsity: 0.1605 (best: 0.0000)
+  Lambda:   7.635 → 7.700 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 100 | Phase: warmup
+  KL Loss:  2.2289 (budget: 0.7000, gap: +1.5289)
+  Accuracy: 1.0000
+  Sparsity: 0.1826 (best: 0.0000)
+  Lambda:   8.350 → 8.415 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 120 | Phase: warmup
+  KL Loss:  2.5236 (budget: 0.7000, gap: +1.8236)
+  Accuracy: 1.0000
+  Sparsity: 0.2427 (best: 0.0000)
+  Lambda:   9.715 → 9.780 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 140 | Phase: warmup
+  KL Loss:  3.3514 (budget: 0.7000, gap: +2.6514)
+  Accuracy: 0.8310
+  Sparsity: 0.3310 (best: 0.0000)
+  Lambda:   11.080 → 11.145 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+  File "/gpfs/project/6075961/dogar/circuit_latest/circuit_pruning/ioi_llama_kl_budget.py", line 1393, in <module>
+    t_start = batch['T_Start'][i].item() - 1
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

@@ -1,0 +1,242 @@
+ DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 5981/8192       | 1209/2048      
+1      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2333/8192       | 224/2048       
+2      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 3007/8192       | 493/2048       
+3      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 3046/8192       | 485/2048       
+4      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+5      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+6      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+7      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2067/8192       | 561/2048       
+8      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2198/8192       | 780/2048       
+9      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2584/8192       | 969/2048       
+10     | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2958/8192       | 632/2048       
+11     | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+12     | Active   | Active      | Pruned     | 6/32         | 314/2048        | 0/8192          | 0/2048         
+13     | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+14     | Active   | Active      | Pruned     | 14/32        | 866/2048        | 0/8192          | 0/2048         
+15     | Active   | Active      | Active     | 12/32        | 694/2048        | 1711/8192       | 1102/2048      
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 0 / 1  (0.0%)
+  - Pruned: 1 (100.0%)
+
+Layer Level:
+  - Active: 16 / 16  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Blocks:
+  - Active: 3 / 16  (18.8%)
+  - Pruned: 13 (81.2%)
+
+Mlp Blocks:
+  - Active: 9 / 16  (56.2%)
+  - Pruned: 7 (43.8%)
+
+Attention Heads:
+  - Active: 32 / 512  (6.2%)
+  - Pruned: 480 (93.8%)
+
+Attention Neurons:
+  - Active: 1,874 / 32,768  (5.7%)
+  - Pruned: 30,894 (94.3%)
+
+Mlp Hidden:
+  - Active: 25,885 / 131,072  (19.7%)
+  - Pruned: 105,187 (80.3%)
+
+Mlp Output:
+  - Active: 6,455 / 32,768  (19.7%)
+  - Pruned: 26,313 (80.3%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 88,254,677 out of 973,078,528 prunable parameters
+  - Prunable compression: 11.0x
+  - Prunable reduction: 90.9%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+==================================================
+  EVALUATING: Final
+==================================================
+                                                                                                                                                                                                                                                                                                                                 
+Processed 999 valid samples.
+
+==================================================
+Final Evaluation Summary:
+  - Accuracy:              0.9650
+  - Logit Difference:      4.2501
+  - Faithfulness (KL Div): 0.7431
+  - Exact Match Rate:      0.3844
+==================================================
+
+
+
+
+
+
+
+📍 DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 5897/8192       | 1011/2048      
+1      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2326/8192       | 221/2048       
+2      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1798/8192       | 270/2048       
+3      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2385/8192       | 404/2048       
+4      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+5      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+6      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+7      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1575/8192       | 450/2048       
+8      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2196/8192       | 827/2048       
+9      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2346/8192       | 1009/2048      
+10     | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2451/8192       | 615/2048       
+11     | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2463/8192       | 444/2048       
+12     | Active   | Active      | Pruned     | 6/32         | 332/2048        | 0/8192          | 0/2048         
+13     | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+14     | Active   | Active      | Pruned     | 14/32        | 850/2048        | 0/8192          | 0/2048         
+15     | Active   | Active      | Active     | 13/32        | 707/2048        | 1462/8192       | 991/2048       
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 0 / 1  (0.0%)
+  - Pruned: 1 (100.0%)
+
+Layer Level:
+  - Active: 16 / 16  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Blocks:
+  - Active: 3 / 16  (18.8%)
+  - Pruned: 13 (81.2%)
+
+Mlp Blocks:
+  - Active: 10 / 16  (62.5%)
+  - Pruned: 6 (37.5%)
+
+Attention Heads:
+  - Active: 33 / 512  (6.4%)
+  - Pruned: 479 (93.6%)
+
+Attention Neurons:
+  - Active: 1,889 / 32,768  (5.8%)
+  - Pruned: 30,879 (94.2%)
+
+Mlp Hidden:
+  - Active: 24,899 / 131,072  (19.0%)
+  - Pruned: 106,173 (81.0%)
+
+Mlp Output:
+  - Active: 6,242 / 32,768  (19.0%)
+  - Pruned: 26,526 (81.0%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 83,377,440 out of 973,078,528 prunable parameters
+  - Prunable compression: 11.7x
+  - Prunable reduction: 91.4%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+==================================================
+  EVALUATING: Final
+==================================================
+                                                                                                                                                                                                                                                                                                                                 
+Processed 994 valid samples.
+
+==================================================
+Final Evaluation Summary:
+  - Accuracy:              0.9769
+  - Logit Difference:      4.9805
+  - Faithfulness (KL Div): 0.6307
+  - Exact Match Rate:      0.4990
+==================================================
+
+
+Without task loss
+
+ DETAILED LAYER REPORT:
+Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
+-----------------------------------------------------------------------------------------------------------------
+0      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 4981/8192       | 787/2048       
+1      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1601/8192       | 213/2048       
+2      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1251/8192       | 273/2048       
+3      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 996/8192        | 271/2048       
+4      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+5      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+6      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+7      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1059/8192       | 343/2048       
+8      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1317/8192       | 549/2048       
+9      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1632/8192       | 704/2048       
+10     | Active   | Active      | Active     | 5/32         | 246/2048        | 1736/8192       | 413/2048       
+11     | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1178/8192       | 249/2048       
+12     | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+13     | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+14     | Active   | Active      | Pruned     | 14/32        | 865/2048        | 0/8192          | 0/2048         
+15     | Active   | Active      | Active     | 13/32        | 725/2048        | 1408/8192       | 1042/2048      
+
+================================================================================
+  PRUNING SUMMARY BY GRANULARITY
+================================================================================
+
+Embedding:
+  - Active: 0 / 1  (0.0%)
+  - Pruned: 1 (100.0%)
+
+Layer Level:
+  - Active: 16 / 16  (100.0%)
+  - Pruned: 0 (0.0%)
+
+Attention Blocks:
+  - Active: 3 / 16  (18.8%)
+  - Pruned: 13 (81.2%)
+
+Mlp Blocks:
+  - Active: 10 / 16  (62.5%)
+  - Pruned: 6 (37.5%)
+
+Attention Heads:
+  - Active: 32 / 512  (6.2%)
+  - Pruned: 480 (93.8%)
+
+Attention Neurons:
+  - Active: 1,836 / 32,768  (5.6%)
+  - Pruned: 30,932 (94.4%)
+
+Mlp Hidden:
+  - Active: 17,159 / 131,072  (13.1%)
+  - Pruned: 113,913 (86.9%)
+
+Mlp Output:
+  - Active: 4,844 / 32,768  (14.8%)
+  - Pruned: 27,924 (85.2%)
+
+🎯 PRUNABLE PARAMETER BOTTOM LINE:
+  - Circuit uses 59,800,922 out of 973,078,528 prunable parameters
+  - Prunable compression: 16.3x
+  - Prunable reduction: 93.9%
+================================================================================
+
+✅ Model remains in 'Final Circuit Mode' for evaluation.
+
+==================================================
+  EVALUATING: Final
+==================================================
+                                                                                                                                                                                                                                                                                  
+Processed 1000 valid samples.
+
+==================================================
+Final Evaluation Summary:
+  - Accuracy:              0.9240
+  - Logit Difference:      3.3523
+  - Faithfulness (KL Div): 0.8190
+  - Exact Match Rate:      0.3810
+==================================================

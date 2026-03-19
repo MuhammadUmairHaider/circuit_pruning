@@ -243,6 +243,17 @@ class IOIDatasetLlama(Dataset):
         T_Start = len(self.tokenizer.encode(sentence_prefix, add_special_tokens=True))
         T_End = T_Start + len(item['target_tokens'])
         T_len = T_End - T_Start
+
+        # print(f"T_Start: {T_Start}, T_End: {T_End}, T_len: {T_len}")
+        # print(f"Target tokens: {item['target_tokens']}")
+        # print(f"Distractor tokens: {item['distractor_tokens']}")
+        # print(f"Sentence prefix: {sentence_prefix}")
+        # print(f"Target: {item['target']}")
+        # print(f"Distractor: {item['distractor']}")
+        # print(f"Sentence: {item['sentence']}")
+        # print(f"Corrupted sentence: {item['corrupted_sentence']}")
+        # print(f"Input ids: {inputs['input_ids']}")
+        # print(f"Corrupted input ids: {corrupted_inputs['input_ids']}")
         
         D_Start = T_Start
         D_End = D_Start + len(item['distractor_tokens'])
@@ -250,9 +261,14 @@ class IOIDatasetLlama(Dataset):
         
         # Pad target/distractor tokens to fixed size
         target_tokens = item['target_tokens'][:5]
+        # print(f"Target tokens: {target_tokens}")
         distractor_tokens = item['distractor_tokens'][:5]
+        # print(f"Distractor tokens: {distractor_tokens}")
         target_tokens = target_tokens + [self.tokenizer.pad_token_id] * (5 - len(target_tokens))
         distractor_tokens = distractor_tokens + [self.tokenizer.pad_token_id] * (5 - len(distractor_tokens))
+        # print(f"Target tokens: {target_tokens}")
+        # print(f"Distractor tokens: {distractor_tokens}")
+        # print("------------------------------------------------------------------------------")
         
         return {
             "input_ids": inputs['input_ids'].squeeze(0),
@@ -360,20 +376,23 @@ def run_evaluation(
                     t_start = batch['T_Start'][i].item() - 1
                     t_end = batch['T_End'][i].item() - 1
                     valid_length = batch['attention_mask'][i].sum().item()
-                    
-                    if t_start < valid_length:
-                        model_logits = outputs.logits[i, t_start:t_end, :]
-                        full_logits = full_outputs.logits[i, t_start:t_end, :]
-                        
+
+                    # Don't compute KL on padding positions
+                    end_pos = min(t_end, valid_length)
+
+                    if t_start < end_pos:
+                        model_logits = outputs.logits[i, t_start:end_pos, :]
+                        full_logits = full_outputs.logits[i, t_start:end_pos, :]
+
                         kl = F.kl_div(
                             F.log_softmax(model_logits, dim=-1),
                             F.log_softmax(full_logits, dim=-1),
                             log_target=True,
-                            reduction='sum'
+                            reduction='batchmean'
                         ).item()
                         
-                        num_tokens = t_end - t_start
-                        kl = kl / num_tokens if num_tokens > 0 else kl
+                        # num_tokens = t_end - t_start
+                        # kl = kl / num_tokens if num_tokens > 0 else kl
                         total_kl += kl
                     
                     model_pred = torch.argmax(outputs.logits[i, t_start, :])

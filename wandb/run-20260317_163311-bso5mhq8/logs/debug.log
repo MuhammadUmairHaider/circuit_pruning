@@ -1,0 +1,34 @@
+2026-03-17 16:33:11,048 INFO    MainThread:2615826 [wandb_setup.py:_flush():81] Current SDK version is 0.24.0
+2026-03-17 16:33:11,048 INFO    MainThread:2615826 [wandb_setup.py:_flush():81] Configure stats pid to 2615826
+2026-03-17 16:33:11,049 INFO    MainThread:2615826 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-03-17 16:33:11,049 INFO    MainThread:2615826 [wandb_init.py:setup_run_log_directory():717] Logging user logs to /gpfs/project/6075961/dogar/circuit_latest/circuit_pruning/wandb/run-20260317_163311-bso5mhq8/logs/debug.log
+2026-03-17 16:33:11,049 INFO    MainThread:2615826 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to /gpfs/project/6075961/dogar/circuit_latest/circuit_pruning/wandb/run-20260317_163311-bso5mhq8/logs/debug-internal.log
+2026-03-17 16:33:11,049 INFO    MainThread:2615826 [wandb_init.py:init():844] calling init triggers
+2026-03-17 16:33:11,049 INFO    MainThread:2615826 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'model': 'meta-llama/Llama-3.2-1B', 'kl_budget': 1.2, 'kl_tolerance': 2.0, 'initial_lambda': 2.0, 'lambda_add_inc': 0.05, 'lambda_mult_dec': 0.95, 'use_task_loss': False, 'task_lambda': None, 'base_lr': 0.001, 'batch_size': 32, 'flash_attention': False, 'adaptive_lr': True, 'component_adaptation': True, '_wandb': {}}
+2026-03-17 16:33:11,049 INFO    MainThread:2615826 [wandb_init.py:init():892] starting backend
+2026-03-17 16:33:12,200 INFO    MainThread:2615826 [wandb_init.py:init():895] sending inform_init request
+2026-03-17 16:33:12,215 INFO    MainThread:2615826 [wandb_init.py:init():903] backend started and connected
+2026-03-17 16:33:12,216 INFO    MainThread:2615826 [wandb_init.py:init():973] updated telemetry
+2026-03-17 16:33:12,291 INFO    MainThread:2615826 [wandb_init.py:init():997] communicating run to backend with 90.0 second timeout
+2026-03-17 16:33:13,257 INFO    MainThread:2615826 [wandb_init.py:init():1044] starting run threads in backend
+2026-03-17 16:33:14,694 INFO    MainThread:2615826 [wandb_run.py:_console_start():2529] atexit reg
+2026-03-17 16:33:14,694 INFO    MainThread:2615826 [wandb_run.py:_redirect():2377] redirect: wrap_raw
+2026-03-17 16:33:14,694 INFO    MainThread:2615826 [wandb_run.py:_redirect():2446] Wrapping output streams.
+2026-03-17 16:33:14,694 INFO    MainThread:2615826 [wandb_run.py:_redirect():2469] Redirects installed.
+2026-03-17 16:33:14,699 INFO    MainThread:2615826 [wandb_init.py:init():1084] run started, returning control to user process
+2026-03-17 16:34:10,211 INFO    wandb-AsyncioManager-main:2615826 [service_client.py:_forward_responses():80] Reached EOF.
+2026-03-17 16:34:10,211 INFO    wandb-AsyncioManager-main:2615826 [mailbox.py:close():137] Closing mailbox, abandoning 1 handles.
+2026-03-17 16:34:11,776 ERROR   wandb-AsyncioManager-main:2615826 [asyncio_manager.py:fn_wrap_exceptions():183] Uncaught exception in run_soon callback.
+Traceback (most recent call last):
+  File "/home/dogar/project_env/lib/python3.12/site-packages/wandb/sdk/lib/asyncio_manager.py", line 181, in fn_wrap_exceptions
+    await fn()
+  File "/home/dogar/project_env/lib/python3.12/site-packages/wandb/sdk/lib/service/service_client.py", line 38, in publish
+    await self._send_server_request(request)
+  File "/home/dogar/project_env/lib/python3.12/site-packages/wandb/sdk/lib/service/service_client.py", line 64, in _send_server_request
+    await self._writer.drain()
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/python/3.12.4/lib/python3.12/asyncio/streams.py", line 392, in drain
+    await self._protocol._drain_helper()
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/python/3.12.4/lib/python3.12/asyncio/streams.py", line 166, in _drain_helper
+    raise ConnectionResetError('Connection lost')
+ConnectionResetError: Connection lost

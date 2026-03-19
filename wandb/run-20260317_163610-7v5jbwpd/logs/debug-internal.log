@@ -1,0 +1,12 @@
+{"time":"2026-03-17T16:36:11.788431368Z","level":"INFO","msg":"stream: starting","core version":"0.24.0"}
+{"time":"2026-03-17T16:36:12.11804284Z","level":"INFO","msg":"stream: created new stream","id":"7v5jbwpd"}
+{"time":"2026-03-17T16:36:12.118106836Z","level":"INFO","msg":"handler: started","stream_id":"7v5jbwpd"}
+{"time":"2026-03-17T16:36:12.118623723Z","level":"INFO","msg":"stream: started","id":"7v5jbwpd"}
+{"time":"2026-03-17T16:36:12.118642456Z","level":"INFO","msg":"writer: started","stream_id":"7v5jbwpd"}
+{"time":"2026-03-17T16:36:12.118649068Z","level":"INFO","msg":"sender: started","stream_id":"7v5jbwpd"}
+{"time":"2026-03-17T16:36:24.098169018Z","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":416}
+{"time":"2026-03-17T16:36:24.112745933Z","level":"ERROR","msg":"flowcontrol: failed reading after 0 records: transactionlog: bad header: leveldb/record: reader not in first block","chunk":{"InitialOffset":230276,"InitialNumber":416,"Count":37}}
+{"time":"2026-03-17T16:36:24.235463373Z","level":"ERROR","msg":"flowcontrol: failed reading after 0 records: transactionlog: bad header: leveldb/record: reader not in first block","chunk":{"InitialOffset":250519,"InitialNumber":453,"Count":178}}
+{"time":"2026-03-17T16:36:24.235497631Z","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":215}
+{"time":"2026-03-17T16:59:40.799324699Z","level":"INFO","msg":"stream: closing","id":"7v5jbwpd"}
+{"time":"2026-03-17T16:59:41.506556753Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}

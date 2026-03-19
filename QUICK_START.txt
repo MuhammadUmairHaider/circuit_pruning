@@ -1,0 +1,118 @@
+================================================================================
+  🚀 QUICK START GUIDE - Circuit Pruning Experiment
+================================================================================
+
+STATUS: ✅ Dependencies FIXED (torch 2.10.0 + torchvision 0.25.0)
+
+================================================================================
+  STEP-BY-STEP COMMANDS FOR ALLOCATION
+================================================================================
+
+1. REQUEST GPU ALLOCATION (12 hours)
+   ─────────────────────────────────────────────────────────────────────────
+   salloc --account=def-hsajjad --nodes=1 --gres=gpu:l40:1 --cpus-per-task=12 --mem=128000 --time=12:00:00
+
+
+2. LOAD REQUIRED MODULES
+   ─────────────────────────────────────────────────────────────────────────
+   module load StdEnv/2023 python-build-bundle/2025a gcc arrow
+
+
+3. ACTIVATE ENVIRONMENT & GO TO PROJECT
+   ─────────────────────────────────────────────────────────────────────────
+   source /home/dogar/project_env/bin/activate
+   cd /gpfs/project/6075961/dogar/circuit_latest/circuit_pruning
+
+
+4. VERIFY SETUP (IMPORTANT!)
+   ─────────────────────────────────────────────────────────────────────────
+   python verify_setup.py
+
+
+5. INSTALL FLASH ATTENTION (Optional - for 2-3x speedup)
+   ─────────────────────────────────────────────────────────────────────────
+   pip install flash-attn --no-build-isolation
+
+   ⚠️  This takes ~10-20 minutes to compile
+   ⚠️  If it fails or takes too long, skip it and use Option B below
+
+
+6A. RUN WITH FLASH ATTENTION (Faster ⚡)
+   ─────────────────────────────────────────────────────────────────────────
+   # Quick test first (2 minutes)
+   python ioi_llama_hybrid_adaptive.py --target-accuracy 0.95 --flash-attn --dry-run
+
+   # Full run (6-8 hours)
+   python ioi_llama_hybrid_adaptive.py --target-accuracy 0.95 --flash-attn --epochs 500
+
+
+6B. RUN WITHOUT FLASH ATTENTION (Safer, Slower 🐢)
+   ─────────────────────────────────────────────────────────────────────────
+   # Quick test first (2 minutes)
+   python ioi_llama_hybrid_adaptive.py --target-accuracy 0.95 --dry-run
+
+   # Full run (12-16 hours)
+   python ioi_llama_hybrid_adaptive.py --target-accuracy 0.95 --epochs 500
+
+
+================================================================================
+  WHAT CHANGED
+================================================================================
+
+✅ FIXED: Upgraded to compatible versions
+   - torch 2.10.0 (was 2.9.1)
+   - torchvision 0.25.0 (now compatible)
+   - torchaudio 2.10.0
+   - transformers 5.2.0 (works!)
+
+⚠️  PENDING: flash-attn needs GPU to compile
+   - Will install in allocation (step 5 above)
+   - Or skip it and run without --flash-attn flag
+
+================================================================================
+  FILES CREATED FOR YOU
+================================================================================
+
+1. verify_setup.py              - Quick check if everything works
+2. setup_dependencies.sh        - Automated setup script
+3. RUN_IN_ALLOCATION.md         - Detailed guide with troubleshooting
+4. ALLOCATION_SETUP.md          - Alternative setup instructions
+5. QUICK_START.txt (this file)  - Quick reference
+
+================================================================================
+  KEY POINTS
+================================================================================
+
+✓ Your local environment is NOW FIXED (torch 2.10.0 ecosystem)
+✓ Transformers can import LlamaForCausalLM ✓
+✓ Flash attention needs to be installed in GPU allocation
+✓ Always run --dry-run first to test (only 2 minutes)
+✓ Target accuracy 0.95 = maintain 95% of baseline accuracy
+
+================================================================================
+  TROUBLESHOOTING
+================================================================================
+
+Problem: "CUDA not available"
+Solution: Make sure you're in GPU allocation (nvidia-smi should work)
+
+Problem: "Flash attention failed"
+Solution: Just skip it and run without --flash-attn flag
+
+Problem: "Out of memory"
+Solution: Reduce batch size: --batch-size 8
+
+Problem: "Import error"
+Solution: Run verify_setup.py to diagnose
+
+================================================================================
+  FOR MORE DETAILS
+================================================================================
+
+See RUN_IN_ALLOCATION.md for:
+- Detailed explanations
+- Advanced options
+- Performance expectations
+- Complete troubleshooting guide
+
+================================================================================
