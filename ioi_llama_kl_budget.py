@@ -118,6 +118,10 @@ class KLBudgetConfig:
     use_component_adaptation: bool = True
     component_adaptation_rate: float = 0.15
 
+    # Block-level pruning control (less chaotic)
+    block_pruning_start_epoch: int = 2000  # Start block pruning after this epoch
+    block_adaptation_frequency: int = 20  # Adapt block lambdas every N epochs (vs every epoch for other components)
+
     # Convergence - no rush, find optimal
     convergence_patience: int = 100  # Much more patient
     min_training_epochs: int = 100  # Allow more exploration
