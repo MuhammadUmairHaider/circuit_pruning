@@ -1,0 +1,298 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/7o0lto5e
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Disabled
+W&B Logging: Enabled
+
+--- Loading models ---
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py", line 136, in handle_request
+    raise exc
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py", line 86, in handle_request
+    self._send_request_headers(**kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py", line 144, in _send_request_headers
+    with map_exceptions({h11.LocalProtocolError: LocalProtocolError}):
+  File "/home/exouser/.local/share/uv/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.LocalProtocolError: Illegal header value b'Bearer '
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 629, in _get_config_dict
+    resolved_config_file = cached_file(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 277, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 508, in cached_files
+    raise e
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 420, in cached_files
+    hf_hub_download(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 986, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1061, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, xet_file_data, head_call_error) = _get_metadata_or_catch_error(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1653, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1576, in get_hf_file_metadata
+    response = _httpx_follow_relative_redirects_with_backoff(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 685, in _httpx_follow_relative_redirects_with_backoff
+    response = http_backoff(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 559, in http_backoff
+    return next(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 467, in _http_backoff_base
+    response = client.request(method=method, url=url, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+  File "/home/exouser/.local/share/uv/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.LocalProtocolError: Illegal header value b'Bearer '
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/auto/tokenization_auto.py", line 654, in from_pretrained
+    config = AutoConfig.from_pretrained(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1429, in from_pretrained
+    config_dict, unused_kwargs = PreTrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 574, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 651, in _get_config_dict
+    raise OSError(
+OSError: Can't load the configuration of 'meta-llama/Llama-3.2-3B'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'meta-llama/Llama-3.2-3B' is the correct path to a directory containing a config.json file
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 761, in hf_raise_for_status
+    response.raise_for_status()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 420, in cached_files
+    hf_hub_download(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 986, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1137, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1766, in _raise_on_head_call_error
+    raise head_call_error
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1653, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1576, in get_hf_file_metadata
+    response = _httpx_follow_relative_redirects_with_backoff(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 692, in _httpx_follow_relative_redirects_with_backoff
+    hf_raise_for_status(response)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 796, in hf_raise_for_status
+    raise gated_err from e
+huggingface_hub.errors.GatedRepoError: 401 Client Error. (Request ID: Root=1-69bb7948-1b4aa8d6626670c174efb714;4c5b4ea0-131d-4f18-be3e-134cc5894f54)
+
+Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json.
+Access to model meta-llama/Llama-3.2-3B is restricted. You must have access to it and be authenticated to access it. Please log in.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1265, in <module>
+    tokenizer = AutoTokenizer.from_pretrained(args.model, token=hf_token)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/auto/tokenization_auto.py", line 658, in from_pretrained
+    config = PreTrainedConfig.from_pretrained(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 533, in from_pretrained
+    config_dict, kwargs = cls.get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 574, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 629, in _get_config_dict
+    resolved_config_file = cached_file(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 277, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 484, in cached_files
+    raise OSError(
+OSError: You are trying to access a gated repo.
+Make sure to have access to it at https://huggingface.co/meta-llama/Llama-3.2-3B.
+401 Client Error. (Request ID: Root=1-69bb7948-1b4aa8d6626670c174efb714;4c5b4ea0-131d-4f18-be3e-134cc5894f54)
+
+Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json.
+Access to model meta-llama/Llama-3.2-3B is restricted. You must have access to it and be authenticated to access it. Please log in.
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py", line 136, in handle_request
+    raise exc
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py", line 86, in handle_request
+    self._send_request_headers(**kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py", line 144, in _send_request_headers
+    with map_exceptions({h11.LocalProtocolError: LocalProtocolError}):
+  File "/home/exouser/.local/share/uv/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.LocalProtocolError: Illegal header value b'Bearer '
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 629, in _get_config_dict
+    resolved_config_file = cached_file(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 277, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 508, in cached_files
+    raise e
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 420, in cached_files
+    hf_hub_download(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 986, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1061, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, xet_file_data, head_call_error) = _get_metadata_or_catch_error(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1653, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1576, in get_hf_file_metadata
+    response = _httpx_follow_relative_redirects_with_backoff(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 685, in _httpx_follow_relative_redirects_with_backoff
+    response = http_backoff(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 559, in http_backoff
+    return next(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 467, in _http_backoff_base
+    response = client.request(method=method, url=url, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+  File "/home/exouser/.local/share/uv/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.LocalProtocolError: Illegal header value b'Bearer '
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/auto/tokenization_auto.py", line 654, in from_pretrained
+    config = AutoConfig.from_pretrained(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1429, in from_pretrained
+    config_dict, unused_kwargs = PreTrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 574, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 651, in _get_config_dict
+    raise OSError(
+OSError: Can't load the configuration of 'meta-llama/Llama-3.2-3B'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'meta-llama/Llama-3.2-3B' is the correct path to a directory containing a config.json file
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 761, in hf_raise_for_status
+    response.raise_for_status()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 420, in cached_files
+    hf_hub_download(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 986, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1137, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1766, in _raise_on_head_call_error
+    raise head_call_error
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1653, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1576, in get_hf_file_metadata
+    response = _httpx_follow_relative_redirects_with_backoff(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 692, in _httpx_follow_relative_redirects_with_backoff
+    hf_raise_for_status(response)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 796, in hf_raise_for_status
+    raise gated_err from e
+huggingface_hub.errors.GatedRepoError: 401 Client Error. (Request ID: Root=1-69bb7948-1b4aa8d6626670c174efb714;4c5b4ea0-131d-4f18-be3e-134cc5894f54)
+
+Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json.
+Access to model meta-llama/Llama-3.2-3B is restricted. You must have access to it and be authenticated to access it. Please log in.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1265, in <module>
+    tokenizer = AutoTokenizer.from_pretrained(args.model, token=hf_token)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/auto/tokenization_auto.py", line 658, in from_pretrained
+    config = PreTrainedConfig.from_pretrained(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 533, in from_pretrained
+    config_dict, kwargs = cls.get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 574, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/configuration_utils.py", line 629, in _get_config_dict
+    resolved_config_file = cached_file(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 277, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 484, in cached_files
+    raise OSError(
+OSError: You are trying to access a gated repo.
+Make sure to have access to it at https://huggingface.co/meta-llama/Llama-3.2-3B.
+401 Client Error. (Request ID: Root=1-69bb7948-1b4aa8d6626670c174efb714;4c5b4ea0-131d-4f18-be3e-134cc5894f54)
+
+Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json.
+Access to model meta-llama/Llama-3.2-3B is restricted. You must have access to it and be authenticated to access it. Please log in.

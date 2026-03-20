@@ -1,0 +1,47 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/75j2yoah
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: True
+Task Loss: Disabled
+W&B Logging: Enabled
+
+--- Loading models ---
+Fetching 2 files: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00, 13530.01it/s]
+Download complete: : 0.00B [00:00, ?B/s]              Traceback (most recent call last):                                                                                                                       | 0/2 [00:00<?, ?it/s]
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1278, in <module>
+    circuit_model = PrunableLlamaForCausalLM.from_pretrained_with_pruning(
+  File "/home/exouser/circuit_pruning/models/llama_circuit.py", line 428, in from_pretrained_with_pruning
+    model = cls.from_pretrained(model_name, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4094, in from_pretrained
+    model = cls(config, *model_args, **model_kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 447, in __init__
+    super().__init__(config)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1260, in __init__
+    self.config._attn_implementation_internal = self._check_and_adjust_attn_implementation(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1887, in _check_and_adjust_attn_implementation
+    applicable_attn_implementation = self.get_correct_attn_implementation(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1928, in get_correct_attn_implementation
+    self._flash_attn_2_can_dispatch(is_init_check)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1587, in _flash_attn_2_can_dispatch
+    raise ImportError(f"{preface} the package flash_attn seems to be not installed. {install_message}")
+ImportError: FlashAttention2 has been toggled on, but it cannot be used due to the following error: the package flash_attn seems to be not installed. Please refer to the documentation of https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2 to install Flash Attention 2.
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1278, in <module>
+    circuit_model = PrunableLlamaForCausalLM.from_pretrained_with_pruning(
+  File "/home/exouser/circuit_pruning/models/llama_circuit.py", line 428, in from_pretrained_with_pruning
+    model = cls.from_pretrained(model_name, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4094, in from_pretrained
+    model = cls(config, *model_args, **model_kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 447, in __init__
+    super().__init__(config)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1260, in __init__
+    self.config._attn_implementation_internal = self._check_and_adjust_attn_implementation(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1887, in _check_and_adjust_attn_implementation
+    applicable_attn_implementation = self.get_correct_attn_implementation(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1928, in get_correct_attn_implementation
+    self._flash_attn_2_can_dispatch(is_init_check)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1587, in _flash_attn_2_can_dispatch
+    raise ImportError(f"{preface} the package flash_attn seems to be not installed. {install_message}")
+ImportError: FlashAttention2 has been toggled on, but it cannot be used due to the following error: the package flash_attn seems to be not installed. Please refer to the documentation of https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2 to install Flash Attention 2.

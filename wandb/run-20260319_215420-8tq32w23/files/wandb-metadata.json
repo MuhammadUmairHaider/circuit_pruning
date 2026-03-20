@@ -1,0 +1,61 @@
+{
+  "os": "Linux-6.17.0-19-generic-x86_64-with-glibc2.39",
+  "python": "CPython 3.10.20",
+  "startedAt": "2026-03-19T21:54:20.517970Z",
+  "args": [
+    "--model",
+    "meta-llama/Llama-3.2-3B",
+    "--kl-budget",
+    "0.7",
+    "--min-lr",
+    "1e-3",
+    "--max-lr",
+    "1e-2",
+    "--no-early-stopping",
+    "--epochs",
+    "5000",
+    "--save-dir",
+    "./results/ioi_kl_budget",
+    "--wandb",
+    "--wandb-project",
+    "circuit-discovery",
+    "--wandb-name",
+    "ioi-3B-No-Task-Loss",
+    "--no-early-stopping"
+  ],
+  "program": "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py",
+  "codePath": "ioi_llama_kl_budget.py",
+  "codePathLocal": "ioi_llama_kl_budget.py",
+  "git": {
+    "remote": "https://github.com/MuhammadUmairHaider/circuit_pruning.git",
+    "commit": "07e6c283420b619ef973410c543cb87ad46fdf37"
+  },
+  "email": "muhammadumairhaider@gmail.com",
+  "root": "/home/exouser/circuit_pruning",
+  "host": "circuits",
+  "executable": "/home/exouser/circuit_pruning/.venv/bin/python",
+  "cpu_count": 32,
+  "cpu_count_logical": 32,
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "518933680128",
+      "used": "38293467136"
+    }
+  },
+  "memory": {
+    "total": "123626684416"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA A100-SXM4-40GB",
+      "memoryTotal": "42949672960",
+      "cudaCores": 6912,
+      "architecture": "Ampere",
+      "uuid": "GPU-c60a64bb-a645-a662-87c7-0fa18df0c65f"
+    }
+  ],
+  "cudaVersion": "13.0",
+  "writerId": "3ywul9u3lhzbhgmt85xsj4v9wdxkvnva"
+}

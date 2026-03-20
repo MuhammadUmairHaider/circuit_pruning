@@ -1,0 +1,102 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            ftc7dlapn49o3fkai4fzpsk979rjpsjr:
+                args:
+                    - --model
+                    - meta-llama/Llama-3.2-3B
+                    - --kl-budget
+                    - "0.7"
+                    - --min-lr
+                    - "1e-3"
+                    - --max-lr
+                    - "1e-2"
+                    - --no-early-stopping
+                    - --epochs
+                    - "5000"
+                    - --save-dir
+                    - ./results/ioi_kl_budget
+                    - --wandb
+                    - --wandb-project
+                    - circuit-discovery
+                    - --wandb-name
+                    - ioi-3B-No-Task-Loss
+                    - --no-early-stopping
+                    - --flash-attn
+                codePath: ioi_llama_kl_budget.py
+                codePathLocal: ioi_llama_kl_budget.py
+                cpu_count: 32
+                cpu_count_logical: 32
+                cudaVersion: "13.0"
+                disk:
+                    /:
+                        total: "518933680128"
+                        used: "28817358848"
+                email: muhammadumairhaider@gmail.com
+                executable: /home/exouser/circuit_pruning/.venv/bin/python
+                git:
+                    commit: 07e6c283420b619ef973410c543cb87ad46fdf37
+                    remote: https://github.com/MuhammadUmairHaider/circuit_pruning.git
+                gpu: NVIDIA A100-SXM4-40GB
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-SXM4-40GB
+                      uuid: GPU-c60a64bb-a645-a662-87c7-0fa18df0c65f
+                host: circuits
+                memory:
+                    total: "123626684416"
+                os: Linux-6.17.0-19-generic-x86_64-with-glibc2.39
+                program: /home/exouser/circuit_pruning/ioi_llama_kl_budget.py
+                python: CPython 3.10.20
+                root: /home/exouser/circuit_pruning
+                startedAt: "2026-03-19T08:59:00.449723Z"
+                writerId: ftc7dlapn49o3fkai4fzpsk979rjpsjr
+        m: []
+        python_version: 3.10.20
+        t:
+            "1":
+                - 1
+                - 11
+                - 49
+            "2":
+                - 1
+                - 11
+                - 49
+            "3":
+                - 13
+                - 16
+            "4": 3.10.20
+            "5": 0.25.1
+            "6": 5.3.0
+            "12": 0.25.1
+            "13": linux-x86_64
+adaptive_lr:
+    value: true
+base_lr:
+    value: 0.001
+batch_size:
+    value: 32
+component_adaptation:
+    value: true
+flash_attention:
+    value: true
+initial_lambda:
+    value: 1
+kl_budget:
+    value: 0.7
+kl_tolerance:
+    value: 0.05
+lambda_add_inc:
+    value: 0.05
+lambda_mult_dec:
+    value: 0.75
+model:
+    value: meta-llama/Llama-3.2-3B
+task_lambda:
+    value: null
+use_task_loss:
+    value: false
