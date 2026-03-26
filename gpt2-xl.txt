@@ -109,3 +109,38 @@ Final Pruned Circuit (Optimal Thresholds) Evaluation Summary (Re-Normalized):
   - Performance (Cutoff Sharpness):  0.0479
   - Accuracy:                         0.9907
 Non-Windowed Avg Prob Diff:        0.8595
+
+
+
+
+
+python ioi_llama_kl_budget.py   
+    --model "meta-llama/Llama-3.2-1B"
+    --kl-budget 0.5   
+    --min-lr 1e-3   
+    --max-lr 1e-2   
+    --no-early-stopping 
+    --epochs 5000   
+    --save-dir "./results/ioi_kl_budget_final_1B_with_blocks_0.5kl"   
+    --wandb   
+    --wandb-project "circuit-discovery"   
+    --wandb-name "ioi-1B-With-Blocks"   
+    --no-early-stopping 
+    --use-task-loss
+
+
+python ioi_llama_kl_budget.py \
+    --model "meta-llama/Llama-3.2-1B"
+    --kl-budget 0.7 \
+    --use-task-loss \
+    --task-lambda 1.0 \
+    --target-accuracy-fraction 0.85 \
+    --task-lambda-lr 0.3 \
+    --lambda-update-method dual_ascent \
+    --dual-ascent-lr 0.5 \
+    --wandb \
+    --wandb-project circuit-discovery \
+    --wandb-name llama-dual-ascent
+    --no-early-stopping
+    --epochs 5000
+    --save-dir "./results/ioi_kl_budget_final_1B_with_blocks_0.7kl_dual_ascent"

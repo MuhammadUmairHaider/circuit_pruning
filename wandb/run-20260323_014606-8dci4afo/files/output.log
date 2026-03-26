@@ -1,0 +1,61 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/8dci4afo
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+config.json: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 826/826 [00:00<00:00, 3.14MB/s]
+tokenizer_config.json: 50.5kB [00:00, 76.1MB/s]
+tokenizer.json: 9.09MB [00:00, 25.9MB/s]
+special_tokens_map.json: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 73.0/73.0 [00:00<00:00, 286kB/s]
+model.safetensors.index.json: 23.9kB [00:00, 33.8MB/s]
+Fetching 4 files: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:25<00:00,  6.44s/it]
+Download complete: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 16.1G/16.1G [00:25<00:00, 623MB/s]
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 6394.39it/s]
+generation_config.json: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 185/185 [00:00<00:00, 591kB/s]
+Llama model successfully adapted for pruning with block-level gates.
+Fetching 4 files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 10686.12it/s]
+Download complete: : 0.00B [00:00, ?B/s]                                                                                                                                                                                                                                                                                                                                                                                                                                | 0/4 [00:00<?, ?it/s]
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 4297.93it/s]
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1286, in <module>
+    ).to(DEVICE).eval()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 3587, in to
+    return super().to(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1381, in to
+    return self._apply(convert)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 933, in _apply
+    module._apply(fn)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 933, in _apply
+    module._apply(fn)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 933, in _apply
+    module._apply(fn)
+  [Previous line repeated 2 more times]
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 964, in _apply
+    param_applied = fn(param)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1367, in convert
+    return t.to(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB. GPU 0 has a total capacity of 39.49 GiB of which 104.00 MiB is free. Process 1329706 has 12.57 GiB memory in use. Including non-PyTorch memory, this process has 26.81 GiB memory in use. Of the allocated memory 26.17 GiB is allocated by PyTorch, and 232.02 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1286, in <module>
+    ).to(DEVICE).eval()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 3587, in to
+    return super().to(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1381, in to
+    return self._apply(convert)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 933, in _apply
+    module._apply(fn)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 933, in _apply
+    module._apply(fn)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 933, in _apply
+    module._apply(fn)
+  [Previous line repeated 2 more times]
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 964, in _apply
+    param_applied = fn(param)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1367, in convert
+    return t.to(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB. GPU 0 has a total capacity of 39.49 GiB of which 104.00 MiB is free. Process 1329706 has 12.57 GiB memory in use. Including non-PyTorch memory, this process has 26.81 GiB memory in use. Of the allocated memory 26.17 GiB is allocated by PyTorch, and 232.02 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

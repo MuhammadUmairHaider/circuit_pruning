@@ -1,0 +1,491 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/fsyje1vm
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 3750.95it/s]
+Llama model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 3570.49it/s]
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00,  9.99it/s]
+  -> Retained: 200/200 (100.00%)
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 21.16it/s]
+  -> Retained: 200/200 (100.00%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 19.79it/s]
+  -> Retained: 999/1000 (99.90%)
+Processed 200 valid samples from 200 total
+Processed 200 valid samples from 200 total
+Processed 999 valid samples from 999 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 30.13it/s]
+
+Processed 999 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      5.8769
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.3000
+   Tolerance: ±0.0500
+   Acceptable range: [0.2500, 0.3500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   0%|▌                                                                                                                                                         | 19/5000 [00:41<2:30:40,  1.81s/it]
+                                                                                                                                                                                                                                                                     
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  0.3074 (budget: 0.3000, gap: +0.0074)
+  Accuracy: 1.0000
+  Sparsity: 0.0399 (best: 0.0000)
+  Lambda:   1.285 → 1.346 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  0.3422 (budget: 0.3000, gap: +0.0422)
+  Accuracy: 1.0000
+  Sparsity: 0.0370 (best: 0.0000)
+  Lambda:   1.660 → 1.724 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  0.3303 (budget: 0.3000, gap: +0.0303)
+  Accuracy: 1.0000
+  Sparsity: 0.0362 (best: 0.0000)
+  Lambda:   2.046 → 2.111 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 20 | Phase: warmup
+  KL Loss:  0.3090 (budget: 0.3000, gap: +0.0090)
+  Accuracy: 1.0000
+  Sparsity: 0.0361 (best: 0.0000)
+  Lambda:   2.435 → 2.500 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 25 | Phase: warmup
+  KL Loss:  0.2861 (budget: 0.3000, gap: -0.0139)
+  Accuracy: 1.0000
+  Sparsity: 0.0362 (best: 0.0000)
+  Lambda:   2.825 → 2.890 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 30 | Phase: warmup
+  KL Loss:  0.2700 (budget: 0.3000, gap: -0.0300)
+  Accuracy: 1.0000
+  Sparsity: 0.0362 (best: 0.0000)
+  Lambda:   3.215 → 3.280 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 35 | Phase: warmup
+  KL Loss:  0.2488 (budget: 0.3000, gap: -0.0512)
+  Accuracy: 1.0000
+  Sparsity: 0.0366 (best: 0.0000)
+  Lambda:   3.605 → 3.670 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 40 | Phase: warmup
+  KL Loss:  0.2572 (budget: 0.3000, gap: -0.0428)
+  Accuracy: 1.0000
+  Sparsity: 0.0366 (best: 0.0000)
+  Lambda:   3.995 → 4.060 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 45 | Phase: warmup
+  KL Loss:  0.2913 (budget: 0.3000, gap: -0.0087)
+  Accuracy: 1.0000
+  Sparsity: 0.0371 (best: 0.0000)
+  Lambda:   4.385 → 4.450 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+[Checkpoint] Saved at epoch 50 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 50 | Phase: warmup
+  KL Loss:  0.2583 (budget: 0.3000, gap: -0.0417)
+  Accuracy: 1.0000
+  Sparsity: 0.0378 (best: 0.0000)
+  Lambda:   4.775 → 4.840 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 60 | Phase: warmup
+  KL Loss:  0.3130 (budget: 0.3000, gap: +0.0130)
+  Accuracy: 1.0000
+  Sparsity: 0.0425 (best: 0.0000)
+  Lambda:   5.490 → 5.555 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 70 | Phase: warmup
+  KL Loss:  0.3536 (budget: 0.3000, gap: +0.0536)
+  Accuracy: 1.0000
+  Sparsity: 0.0460 (best: 0.0000)
+  Lambda:   6.205 → 6.270 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 80 | Phase: warmup
+  KL Loss:  0.3408 (budget: 0.3000, gap: +0.0408)
+  Accuracy: 1.0000
+  Sparsity: 0.0508 (best: 0.0000)
+  Lambda:   6.920 → 6.985 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 90 | Phase: warmup
+  KL Loss:  0.3346 (budget: 0.3000, gap: +0.0346)
+  Accuracy: 1.0000
+  Sparsity: 0.0578 (best: 0.0000)
+  Lambda:   7.635 → 7.700 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+[Checkpoint] Saved at epoch 100 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 100 | Phase: warmup
+  KL Loss:  0.4330 (budget: 0.3000, gap: +0.1330)
+  Accuracy: 1.0000
+  Sparsity: 0.0666 (best: 0.0000)
+  Lambda:   8.350 → 8.415 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 120 | Phase: warmup
+  KL Loss:  0.5401 (budget: 0.3000, gap: +0.2401)
+  Accuracy: 1.0000
+  Sparsity: 0.0911 (best: 0.0000)
+  Lambda:   9.715 → 9.780 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 140 | Phase: warmup
+  KL Loss:  0.6402 (budget: 0.3000, gap: +0.3402)
+  Accuracy: 1.0000
+  Sparsity: 0.1232 (best: 0.0000)
+  Lambda:   11.080 → 11.145 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 150 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 160 | Phase: recovery
+  KL Loss:  0.6897 (budget: 0.3000, gap: +0.3897)
+  Accuracy: 1.0000
+  Sparsity: 0.1650 (best: 0.0000)
+  Lambda:   12.445 → 9.159 (action: decrease)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+Epoch 163: LR 1.00e-03 → 9.70e-04 | λ 4.62 → 3.14 | decrease | recovery | KL 0.886
+Epoch 164: LR 9.70e-04 → 9.17e-04 | λ 3.14 → 2.05 | decrease | recovery | KL 0.869
+Epoch 165: LR 9.17e-04 → 8.47e-04 | λ 2.05 → 1.69 | decrease_gentle | recovery | KL 0.887
+Epoch 166: LR 8.47e-04 → 7.66e-04 | λ 1.69 → 1.40 | decrease_gentle | recovery | KL 0.836
+Epoch 167: LR 7.66e-04 → 6.77e-04 | λ 1.40 → 1.16 | decrease_gentle | recovery | KL 0.873
+Epoch 168: LR 6.77e-04 → 5.87e-04 | λ 1.16 → 0.96 | decrease_gentle | recovery | KL 0.857
+Epoch 169: LR 5.87e-04 → 5.00e-04 | λ 0.96 → 0.80 | decrease_gentle | recovery | KL 0.893
+
+[Scheduler] Epoch 180 | Phase: recovery
+  KL Loss:  0.7021 (budget: 0.3000, gap: +0.4021)
+  Accuracy: 1.0000
+  Sparsity: 0.1810 (best: 0.0000)
+  Lambda:   0.123 → 0.106 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 200 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 200 | Phase: recovery
+  KL Loss:  0.6985 (budget: 0.3000, gap: +0.3985)
+  Accuracy: 1.0000
+  Sparsity: 0.1818 (best: 0.0000)
+  Lambda:   0.011 → 0.010 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 220 | Phase: recovery
+  KL Loss:  0.7052 (budget: 0.3000, gap: +0.4052)
+  Accuracy: 1.0000
+  Sparsity: 0.1815 (best: 0.0000)
+  Lambda:   0.002 → 0.002 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 240 | Phase: recovery
+  KL Loss:  0.6982 (budget: 0.3000, gap: +0.3982)
+  Accuracy: 1.0000
+  Sparsity: 0.1818 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 250 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 260 | Phase: recovery
+  KL Loss:  0.6983 (budget: 0.3000, gap: +0.3983)
+  Accuracy: 1.0000
+  Sparsity: 0.1822 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 280 | Phase: recovery
+  KL Loss:  0.7014 (budget: 0.3000, gap: +0.4014)
+  Accuracy: 1.0000
+  Sparsity: 0.1819 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 300 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 300 | Phase: recovery
+  KL Loss:  0.7066 (budget: 0.3000, gap: +0.4066)
+  Accuracy: 1.0000
+  Sparsity: 0.1819 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 320 | Phase: recovery
+  KL Loss:  0.7015 (budget: 0.3000, gap: +0.4015)
+  Accuracy: 1.0000
+  Sparsity: 0.1817 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 340 | Phase: recovery
+  KL Loss:  0.6855 (budget: 0.3000, gap: +0.3855)
+  Accuracy: 1.0000
+  Sparsity: 0.1823 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 350 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 360 | Phase: recovery
+  KL Loss:  0.7001 (budget: 0.3000, gap: +0.4001)
+  Accuracy: 1.0000
+  Sparsity: 0.1823 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 380 | Phase: recovery
+  KL Loss:  0.7121 (budget: 0.3000, gap: +0.4121)
+  Accuracy: 1.0000
+  Sparsity: 0.1824 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 400 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 400 | Phase: recovery
+  KL Loss:  0.6835 (budget: 0.3000, gap: +0.3835)
+  Accuracy: 1.0000
+  Sparsity: 0.1829 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 420 | Phase: recovery
+  KL Loss:  0.7029 (budget: 0.3000, gap: +0.4029)
+  Accuracy: 1.0000
+  Sparsity: 0.1832 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 440 | Phase: recovery
+  KL Loss:  0.6934 (budget: 0.3000, gap: +0.3934)
+  Accuracy: 1.0000
+  Sparsity: 0.1829 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 450 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 460 | Phase: recovery
+  KL Loss:  0.6827 (budget: 0.3000, gap: +0.3827)
+  Accuracy: 1.0000
+  Sparsity: 0.1828 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 480 | Phase: recovery
+  KL Loss:  0.6899 (budget: 0.3000, gap: +0.3899)
+  Accuracy: 1.0000
+  Sparsity: 0.1826 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 500 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 500 | Phase: recovery
+  KL Loss:  0.6920 (budget: 0.3000, gap: +0.3920)
+  Accuracy: 1.0000
+  Sparsity: 0.1830 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 520 | Phase: recovery
+  KL Loss:  0.6908 (budget: 0.3000, gap: +0.3908)
+  Accuracy: 1.0000
+  Sparsity: 0.1827 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 540 | Phase: recovery
+  KL Loss:  0.6940 (budget: 0.3000, gap: +0.3940)
+  Accuracy: 1.0000
+  Sparsity: 0.1832 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 550 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 560 | Phase: recovery
+  KL Loss:  0.6897 (budget: 0.3000, gap: +0.3897)
+  Accuracy: 1.0000
+  Sparsity: 0.1831 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 580 | Phase: recovery
+  KL Loss:  0.6898 (budget: 0.3000, gap: +0.3898)
+  Accuracy: 1.0000
+  Sparsity: 0.1832 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 600 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.3kl/checkpoint.pt
+
+[Scheduler] Epoch 600 | Phase: recovery
+  KL Loss:  0.6832 (budget: 0.3000, gap: +0.3832)
+  Accuracy: 1.0000
+  Sparsity: 0.1829 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 620 | Phase: recovery
+  KL Loss:  0.6742 (budget: 0.3000, gap: +0.3742)
+  Accuracy: 1.0000
+  Sparsity: 0.1836 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1566, in <module>
+    val_results = run_evaluation(
+  File "/home/exouser/circuit_pruning/dataset/ioi_llama.py", line 350, in run_evaluation
+    full_outputs = full_model_for_faithfulness(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 843, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 487, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 917, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/output_capturing.py", line 253, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 422, in forward
+    hidden_states = decoder_layer(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_layers.py", line 93, in __call__
+    return super().__call__(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 318, in forward
+    hidden_states = self.input_layernorm(hidden_states)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 65, in forward
+    variance = hidden_states.pow(2).mean(-1, keepdim=True)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1566, in <module>
+    val_results = run_evaluation(
+  File "/home/exouser/circuit_pruning/dataset/ioi_llama.py", line 350, in run_evaluation
+    full_outputs = full_model_for_faithfulness(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 843, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 487, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 917, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/output_capturing.py", line 253, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 422, in forward
+    hidden_states = decoder_layer(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/modeling_layers.py", line 93, in __call__
+    return super().__call__(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 318, in forward
+    hidden_states = self.input_layernorm(hidden_states)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 65, in forward
+    variance = hidden_states.pow(2).mean(-1, keepdim=True)
+KeyboardInterrupt

@@ -1,0 +1,1351 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/zyhykxcs
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 4012.37it/s]
+Llama model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 4322.04it/s]
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00,  9.90it/s]
+  -> Retained: 198/200 (99.00%)
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 21.18it/s]
+  -> Retained: 199/200 (99.50%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 19.68it/s]
+  -> Retained: 999/1000 (99.90%)
+Processed 198 valid samples from 198 total
+Processed 199 valid samples from 199 total
+Processed 999 valid samples from 999 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 30.06it/s]
+
+Processed 999 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      5.8051
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.7000
+   Tolerance: ±0.0500
+   Acceptable range: [0.6500, 0.7500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   0%|▌                                                                                                                                     | 19/5000 [00:41<2:32:52,  1.84s/it]
+                                                                                                                                                                                         
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  0.3076 (budget: 0.7000, gap: -0.3924)
+  Accuracy: 1.0000
+  Sparsity: 0.0394 (best: 0.0000)
+  Lambda:   1.285 → 1.346 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  0.3048 (budget: 0.7000, gap: -0.3952)
+  Accuracy: 1.0000
+  Sparsity: 0.0368 (best: 0.0000)
+  Lambda:   1.660 → 1.724 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  0.2933 (budget: 0.7000, gap: -0.4067)
+  Accuracy: 1.0000
+  Sparsity: 0.0362 (best: 0.0000)
+  Lambda:   2.046 → 2.111 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 20 | Phase: warmup
+  KL Loss:  0.3082 (budget: 0.7000, gap: -0.3918)
+  Accuracy: 1.0000
+  Sparsity: 0.0359 (best: 0.0000)
+  Lambda:   2.435 → 2.500 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 25 | Phase: warmup
+  KL Loss:  0.2890 (budget: 0.7000, gap: -0.4110)
+  Accuracy: 1.0000
+  Sparsity: 0.0361 (best: 0.0000)
+  Lambda:   2.825 → 2.890 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 30 | Phase: warmup
+  KL Loss:  0.2958 (budget: 0.7000, gap: -0.4042)
+  Accuracy: 1.0000
+  Sparsity: 0.0359 (best: 0.0000)
+  Lambda:   3.215 → 3.280 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 35 | Phase: warmup
+  KL Loss:  0.2853 (budget: 0.7000, gap: -0.4147)
+  Accuracy: 1.0000
+  Sparsity: 0.0363 (best: 0.0000)
+  Lambda:   3.605 → 3.670 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 40 | Phase: warmup
+  KL Loss:  0.2731 (budget: 0.7000, gap: -0.4269)
+  Accuracy: 1.0000
+  Sparsity: 0.0367 (best: 0.0000)
+  Lambda:   3.995 → 4.060 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 45 | Phase: warmup
+  KL Loss:  0.3179 (budget: 0.7000, gap: -0.3821)
+  Accuracy: 1.0000
+  Sparsity: 0.0369 (best: 0.0000)
+  Lambda:   4.385 → 4.450 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+[Checkpoint] Saved at epoch 50 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 50 | Phase: warmup
+  KL Loss:  0.3013 (budget: 0.7000, gap: -0.3987)
+  Accuracy: 1.0000
+  Sparsity: 0.0377 (best: 0.0000)
+  Lambda:   4.775 → 4.840 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 60 | Phase: warmup
+  KL Loss:  0.3335 (budget: 0.7000, gap: -0.3665)
+  Accuracy: 1.0000
+  Sparsity: 0.0425 (best: 0.0000)
+  Lambda:   5.490 → 5.555 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 70 | Phase: warmup
+  KL Loss:  0.3424 (budget: 0.7000, gap: -0.3576)
+  Accuracy: 1.0000
+  Sparsity: 0.0457 (best: 0.0000)
+  Lambda:   6.205 → 6.270 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 80 | Phase: warmup
+  KL Loss:  0.3887 (budget: 0.7000, gap: -0.3113)
+  Accuracy: 1.0000
+  Sparsity: 0.0505 (best: 0.0000)
+  Lambda:   6.920 → 6.985 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 90 | Phase: warmup
+  KL Loss:  0.4170 (budget: 0.7000, gap: -0.2830)
+  Accuracy: 1.0000
+  Sparsity: 0.0570 (best: 0.0000)
+  Lambda:   7.635 → 7.700 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+[Checkpoint] Saved at epoch 100 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 100 | Phase: warmup
+  KL Loss:  0.4902 (budget: 0.7000, gap: -0.2098)
+  Accuracy: 1.0000
+  Sparsity: 0.0654 (best: 0.0000)
+  Lambda:   8.350 → 8.415 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 120 | Phase: warmup
+  KL Loss:  0.5765 (budget: 0.7000, gap: -0.1235)
+  Accuracy: 1.0000
+  Sparsity: 0.0899 (best: 0.0000)
+  Lambda:   9.715 → 9.780 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+
+[Scheduler] Epoch 140 | Phase: warmup
+  KL Loss:  0.6599 (budget: 0.7000, gap: -0.0401)
+  Accuracy: 1.0000
+  Sparsity: 0.1224 (best: 0.0000)
+  Lambda:   11.080 → 11.145 (action: warmup)
+  LR:       1.00e-03
+  ✅ Within budget
+[Checkpoint] Saved at epoch 150 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 160 | Phase: fine_tuning
+  KL Loss:  0.7394 (budget: 0.7000, gap: +0.0394)
+  Accuracy: 1.0000
+  Sparsity: 0.1634 (best: 0.1634)
+  Lambda:   12.445 → 12.484 (action: explore)
+  LR:       9.98e-04
+  ✅ Within budget
+Epoch 164: LR 9.89e-04 → 9.58e-04 | λ 6.61 → 4.64 | decrease | recovery | KL 0.949
+Epoch 165: LR 9.58e-04 → 9.04e-04 | λ 4.64 → 3.15 | decrease | recovery | KL 0.983
+Epoch 166: LR 9.04e-04 → 8.33e-04 | λ 3.15 → 2.72 | decrease_gentle | recovery | KL 0.972
+Epoch 167: LR 8.33e-04 → 7.52e-04 | λ 2.72 → 2.36 | decrease_gentle | recovery | KL 0.929
+Epoch 168: LR 7.52e-04 → 6.65e-04 | λ 2.36 → 2.05 | decrease_gentle | recovery | KL 0.973
+Epoch 169: LR 6.65e-04 → 5.75e-04 | λ 2.05 → 1.79 | decrease_gentle | recovery | KL 0.939
+Epoch 170: LR 5.75e-04 → 5.00e-04 | λ 1.79 → 1.57 | decrease_gentle | recovery | KL 0.942
+
+[Scheduler] Epoch 180 | Phase: fine_tuning
+  KL Loss:  0.7677 (budget: 0.7000, gap: +0.0677)
+  Accuracy: 1.0000
+  Sparsity: 0.1861 (best: 0.1634)
+  Lambda:   0.514 → 0.494 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 200 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 200 | Phase: fine_tuning
+  KL Loss:  0.7587 (budget: 0.7000, gap: +0.0587)
+  Accuracy: 1.0000
+  Sparsity: 0.1871 (best: 0.1634)
+  Lambda:   0.109 → 0.107 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 220 | Phase: fine_tuning
+  KL Loss:  0.7620 (budget: 0.7000, gap: +0.0620)
+  Accuracy: 1.0000
+  Sparsity: 0.1868 (best: 0.1634)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 240 | Phase: fine_tuning
+  KL Loss:  0.7615 (budget: 0.7000, gap: +0.0615)
+  Accuracy: 1.0000
+  Sparsity: 0.1875 (best: 0.1634)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 250 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 260 | Phase: fine_tuning
+  KL Loss:  0.7625 (budget: 0.7000, gap: +0.0625)
+  Accuracy: 1.0000
+  Sparsity: 0.1870 (best: 0.1634)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 280 | Phase: fine_tuning
+  KL Loss:  0.7582 (budget: 0.7000, gap: +0.0582)
+  Accuracy: 1.0000
+  Sparsity: 0.1873 (best: 0.1634)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 300 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 300 | Phase: fine_tuning
+  KL Loss:  0.7458 (budget: 0.7000, gap: +0.0458)
+  Accuracy: 1.0000
+  Sparsity: 0.1877 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 320 | Phase: fine_tuning
+  KL Loss:  0.7733 (budget: 0.7000, gap: +0.0733)
+  Accuracy: 1.0000
+  Sparsity: 0.1872 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 340 | Phase: fine_tuning
+  KL Loss:  0.7491 (budget: 0.7000, gap: +0.0491)
+  Accuracy: 1.0000
+  Sparsity: 0.1878 (best: 0.1877)
+  Lambda:   0.100 → 0.125 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 350 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 360 | Phase: fine_tuning
+  KL Loss:  0.7538 (budget: 0.7000, gap: +0.0538)
+  Accuracy: 1.0000
+  Sparsity: 0.1874 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 380 | Phase: fine_tuning
+  KL Loss:  0.7657 (budget: 0.7000, gap: +0.0657)
+  Accuracy: 1.0000
+  Sparsity: 0.1877 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 400 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 400 | Phase: fine_tuning
+  KL Loss:  0.7555 (budget: 0.7000, gap: +0.0555)
+  Accuracy: 1.0000
+  Sparsity: 0.1877 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 420 | Phase: fine_tuning
+  KL Loss:  0.7645 (budget: 0.7000, gap: +0.0645)
+  Accuracy: 1.0000
+  Sparsity: 0.1880 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 440 | Phase: fine_tuning
+  KL Loss:  0.7410 (budget: 0.7000, gap: +0.0410)
+  Accuracy: 1.0000
+  Sparsity: 0.1881 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 450 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 460 | Phase: fine_tuning
+  KL Loss:  0.7510 (budget: 0.7000, gap: +0.0510)
+  Accuracy: 1.0000
+  Sparsity: 0.1882 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 480 | Phase: fine_tuning
+  KL Loss:  0.7708 (budget: 0.7000, gap: +0.0708)
+  Accuracy: 1.0000
+  Sparsity: 0.1880 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 500 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 500 | Phase: fine_tuning
+  KL Loss:  0.7548 (budget: 0.7000, gap: +0.0548)
+  Accuracy: 1.0000
+  Sparsity: 0.1880 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 520 | Phase: fine_tuning
+  KL Loss:  0.7594 (budget: 0.7000, gap: +0.0594)
+  Accuracy: 1.0000
+  Sparsity: 0.1891 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 540 | Phase: fine_tuning
+  KL Loss:  0.7397 (budget: 0.7000, gap: +0.0397)
+  Accuracy: 1.0000
+  Sparsity: 0.1886 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 550 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 560 | Phase: fine_tuning
+  KL Loss:  0.7566 (budget: 0.7000, gap: +0.0566)
+  Accuracy: 1.0000
+  Sparsity: 0.1885 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 580 | Phase: fine_tuning
+  KL Loss:  0.7567 (budget: 0.7000, gap: +0.0567)
+  Accuracy: 1.0000
+  Sparsity: 0.1887 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 600 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 600 | Phase: fine_tuning
+  KL Loss:  0.7513 (budget: 0.7000, gap: +0.0513)
+  Accuracy: 1.0000
+  Sparsity: 0.1884 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 620 | Phase: fine_tuning
+  KL Loss:  0.7421 (budget: 0.7000, gap: +0.0421)
+  Accuracy: 1.0000
+  Sparsity: 0.1888 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 640 | Phase: fine_tuning
+  KL Loss:  0.7552 (budget: 0.7000, gap: +0.0552)
+  Accuracy: 1.0000
+  Sparsity: 0.1888 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 650 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 660 | Phase: fine_tuning
+  KL Loss:  0.7411 (budget: 0.7000, gap: +0.0411)
+  Accuracy: 1.0000
+  Sparsity: 0.1890 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 680 | Phase: fine_tuning
+  KL Loss:  0.7380 (budget: 0.7000, gap: +0.0380)
+  Accuracy: 1.0000
+  Sparsity: 0.1891 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 700 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 700 | Phase: fine_tuning
+  KL Loss:  0.7340 (budget: 0.7000, gap: +0.0340)
+  Accuracy: 1.0000
+  Sparsity: 0.1890 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 720 | Phase: fine_tuning
+  KL Loss:  0.7441 (budget: 0.7000, gap: +0.0441)
+  Accuracy: 1.0000
+  Sparsity: 0.1896 (best: 0.1877)
+  Lambda:   0.100 → 0.125 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 740 | Phase: fine_tuning
+  KL Loss:  0.7415 (budget: 0.7000, gap: +0.0415)
+  Accuracy: 1.0000
+  Sparsity: 0.1891 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 750 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 760 | Phase: fine_tuning
+  KL Loss:  0.7346 (budget: 0.7000, gap: +0.0346)
+  Accuracy: 1.0000
+  Sparsity: 0.1895 (best: 0.1877)
+  Lambda:   0.100 → 0.125 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 780 | Phase: fine_tuning
+  KL Loss:  0.7399 (budget: 0.7000, gap: +0.0399)
+  Accuracy: 1.0000
+  Sparsity: 0.1899 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 800 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 800 | Phase: fine_tuning
+  KL Loss:  0.7310 (budget: 0.7000, gap: +0.0310)
+  Accuracy: 1.0000
+  Sparsity: 0.1895 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 820 | Phase: fine_tuning
+  KL Loss:  0.7312 (budget: 0.7000, gap: +0.0312)
+  Accuracy: 1.0000
+  Sparsity: 0.1898 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 840 | Phase: fine_tuning
+  KL Loss:  0.7355 (budget: 0.7000, gap: +0.0355)
+  Accuracy: 1.0000
+  Sparsity: 0.1898 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 850 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 860 | Phase: fine_tuning
+  KL Loss:  0.7245 (budget: 0.7000, gap: +0.0245)
+  Accuracy: 1.0000
+  Sparsity: 0.1895 (best: 0.1877)
+  Lambda:   0.100 → 0.125 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 880 | Phase: fine_tuning
+  KL Loss:  0.7260 (budget: 0.7000, gap: +0.0260)
+  Accuracy: 1.0000
+  Sparsity: 0.1900 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 900 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 900 | Phase: at_budget
+  KL Loss:  0.7171 (budget: 0.7000, gap: +0.0171)
+  Accuracy: 1.0000
+  Sparsity: 0.1900 (best: 0.1877)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 920 | Phase: fine_tuning
+  KL Loss:  0.7220 (budget: 0.7000, gap: +0.0220)
+  Accuracy: 1.0000
+  Sparsity: 0.1904 (best: 0.1994)
+  Lambda:   0.100 → 0.125 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 940 | Phase: fine_tuning
+  KL Loss:  0.7313 (budget: 0.7000, gap: +0.0313)
+  Accuracy: 1.0000
+  Sparsity: 0.1901 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 950 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 960 | Phase: fine_tuning
+  KL Loss:  0.7301 (budget: 0.7000, gap: +0.0301)
+  Accuracy: 1.0000
+  Sparsity: 0.1900 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 980 | Phase: fine_tuning
+  KL Loss:  0.7273 (budget: 0.7000, gap: +0.0273)
+  Accuracy: 1.0000
+  Sparsity: 0.1902 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1000 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1000 | Phase: fine_tuning
+  KL Loss:  0.7237 (budget: 0.7000, gap: +0.0237)
+  Accuracy: 1.0000
+  Sparsity: 0.1907 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1020 | Phase: at_budget
+  KL Loss:  0.7030 (budget: 0.7000, gap: +0.0030)
+  Accuracy: 1.0000
+  Sparsity: 0.1908 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1040 | Phase: at_budget
+  KL Loss:  0.7057 (budget: 0.7000, gap: +0.0057)
+  Accuracy: 1.0000
+  Sparsity: 0.1907 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1050 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1060 | Phase: at_budget
+  KL Loss:  0.7065 (budget: 0.7000, gap: +0.0065)
+  Accuracy: 1.0000
+  Sparsity: 0.1910 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1080 | Phase: at_budget
+  KL Loss:  0.7071 (budget: 0.7000, gap: +0.0071)
+  Accuracy: 1.0000
+  Sparsity: 0.1907 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1100 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1100 | Phase: at_budget
+  KL Loss:  0.7190 (budget: 0.7000, gap: +0.0190)
+  Accuracy: 1.0000
+  Sparsity: 0.1908 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1120 | Phase: at_budget
+  KL Loss:  0.6949 (budget: 0.7000, gap: -0.0051)
+  Accuracy: 1.0000
+  Sparsity: 0.1912 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1140 | Phase: at_budget
+  KL Loss:  0.6952 (budget: 0.7000, gap: -0.0048)
+  Accuracy: 1.0000
+  Sparsity: 0.1909 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1150 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1160 | Phase: at_budget
+  KL Loss:  0.6936 (budget: 0.7000, gap: -0.0064)
+  Accuracy: 1.0000
+  Sparsity: 0.1910 (best: 0.1994)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1180 | Phase: at_budget
+  KL Loss:  0.6892 (budget: 0.7000, gap: -0.0108)
+  Accuracy: 1.0000
+  Sparsity: 0.1914 (best: 0.2086)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1200 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1200 | Phase: at_budget
+  KL Loss:  0.6851 (budget: 0.7000, gap: -0.0149)
+  Accuracy: 1.0000
+  Sparsity: 0.1916 (best: 0.2086)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1220 | Phase: fine_tuning
+  KL Loss:  0.6766 (budget: 0.7000, gap: -0.0234)
+  Accuracy: 1.0000
+  Sparsity: 0.1915 (best: 0.2086)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1240 | Phase: fine_tuning
+  KL Loss:  0.6665 (budget: 0.7000, gap: -0.0335)
+  Accuracy: 1.0000
+  Sparsity: 0.1916 (best: 0.2086)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1250 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1260 | Phase: fine_tuning
+  KL Loss:  0.6744 (budget: 0.7000, gap: -0.0256)
+  Accuracy: 1.0000
+  Sparsity: 0.1917 (best: 0.2086)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1280 | Phase: fine_tuning
+  KL Loss:  0.6702 (budget: 0.7000, gap: -0.0298)
+  Accuracy: 1.0000
+  Sparsity: 0.1918 (best: 0.2086)
+  Lambda:   0.100 → 0.125 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1300 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1300 | Phase: fine_tuning
+  KL Loss:  0.6779 (budget: 0.7000, gap: -0.0221)
+  Accuracy: 1.0000
+  Sparsity: 0.1918 (best: 0.2086)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1320 | Phase: fine_tuning
+  KL Loss:  0.6600 (budget: 0.7000, gap: -0.0400)
+  Accuracy: 1.0000
+  Sparsity: 0.1919 (best: 0.2086)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1340 | Phase: exploitation
+  KL Loss:  0.6499 (budget: 0.7000, gap: -0.0501)
+  Accuracy: 1.0000
+  Sparsity: 0.1923 (best: 0.2150)
+  Lambda:   0.100 → 0.152 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1350 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1360 | Phase: fine_tuning
+  KL Loss:  0.6689 (budget: 0.7000, gap: -0.0311)
+  Accuracy: 1.0000
+  Sparsity: 0.1927 (best: 0.2150)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1380 | Phase: exploitation
+  KL Loss:  0.6457 (budget: 0.7000, gap: -0.0543)
+  Accuracy: 1.0000
+  Sparsity: 0.1926 (best: 0.2211)
+  Lambda:   0.100 → 0.152 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1400 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1400 | Phase: fine_tuning
+  KL Loss:  0.6529 (budget: 0.7000, gap: -0.0471)
+  Accuracy: 1.0000
+  Sparsity: 0.1931 (best: 0.2211)
+  Lambda:   0.100 → 0.125 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1420 | Phase: exploitation
+  KL Loss:  0.6248 (budget: 0.7000, gap: -0.0752)
+  Accuracy: 1.0000
+  Sparsity: 0.1929 (best: 0.2348)
+  Lambda:   0.100 → 0.152 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1440 | Phase: fine_tuning
+  KL Loss:  0.6740 (budget: 0.7000, gap: -0.0260)
+  Accuracy: 1.0000
+  Sparsity: 0.1929 (best: 0.2348)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1450 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1460 | Phase: exploitation
+  KL Loss:  0.6243 (budget: 0.7000, gap: -0.0757)
+  Accuracy: 1.0000
+  Sparsity: 0.1934 (best: 0.2410)
+  Lambda:   0.100 → 0.152 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1480 | Phase: fine_tuning
+  KL Loss:  0.6571 (budget: 0.7000, gap: -0.0429)
+  Accuracy: 1.0000
+  Sparsity: 0.1930 (best: 0.2410)
+  Lambda:   0.122 → 0.147 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1500 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1500 | Phase: exploitation
+  KL Loss:  0.6400 (budget: 0.7000, gap: -0.0600)
+  Accuracy: 1.0000
+  Sparsity: 0.1938 (best: 0.2410)
+  Lambda:   0.100 → 0.152 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1520 | Phase: exploitation
+  KL Loss:  0.6394 (budget: 0.7000, gap: -0.0606)
+  Accuracy: 1.0000
+  Sparsity: 0.1944 (best: 0.2410)
+  Lambda:   0.100 → 0.152 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1540 | Phase: exploitation
+  KL Loss:  0.6198 (budget: 0.7000, gap: -0.0802)
+  Accuracy: 1.0000
+  Sparsity: 0.1948 (best: 0.2410)
+  Lambda:   0.187 → 0.239 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1550 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1560 | Phase: exploitation
+  KL Loss:  0.6278 (budget: 0.7000, gap: -0.0722)
+  Accuracy: 1.0000
+  Sparsity: 0.1959 (best: 0.2410)
+  Lambda:   0.639 → 0.695 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1580 | Phase: exploitation
+  KL Loss:  0.6208 (budget: 0.7000, gap: -0.0792)
+  Accuracy: 1.0000
+  Sparsity: 0.2046 (best: 0.2492)
+  Lambda:   1.167 → 1.223 (action: increase)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1600 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1600 | Phase: at_budget
+  KL Loss:  0.6836 (budget: 0.7000, gap: -0.0164)
+  Accuracy: 1.0000
+  Sparsity: 0.2239 (best: 0.2562)
+  Lambda:   0.762 → 0.752 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1620 | Phase: at_budget
+  KL Loss:  0.7126 (budget: 0.7000, gap: +0.0126)
+  Accuracy: 1.0000
+  Sparsity: 0.2320 (best: 0.2562)
+  Lambda:   0.240 → 0.235 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1640 | Phase: fine_tuning
+  KL Loss:  0.7659 (budget: 0.7000, gap: +0.0659)
+  Accuracy: 0.9940
+  Sparsity: 0.2333 (best: 0.2562)
+  Lambda:   0.100 → 0.100 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1650 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1660 | Phase: fine_tuning
+  KL Loss:  0.7550 (budget: 0.7000, gap: +0.0550)
+  Accuracy: 0.9902
+  Sparsity: 0.2338 (best: 0.2562)
+  Lambda:   0.100 → 0.100 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1680 | Phase: fine_tuning
+  KL Loss:  0.7347 (budget: 0.7000, gap: +0.0347)
+  Accuracy: 0.9871
+  Sparsity: 0.2341 (best: 0.2801)
+  Lambda:   0.100 → 0.100 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1700 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1700 | Phase: fine_tuning
+  KL Loss:  0.7241 (budget: 0.7000, gap: +0.0241)
+  Accuracy: 0.9836
+  Sparsity: 0.2340 (best: 0.2801)
+  Lambda:   0.127 → 0.154 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1720 | Phase: fine_tuning
+  KL Loss:  0.7606 (budget: 0.7000, gap: +0.0606)
+  Accuracy: 0.9698
+  Sparsity: 0.2346 (best: 0.2801)
+  Lambda:   0.313 → 0.300 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1740 | Phase: fine_tuning
+  KL Loss:  0.7855 (budget: 0.7000, gap: +0.0855)
+  Accuracy: 0.9598
+  Sparsity: 0.2363 (best: 0.2801)
+  Lambda:   0.279 → 0.262 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1750 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1760 | Phase: fine_tuning
+  KL Loss:  0.7644 (budget: 0.7000, gap: +0.0644)
+  Accuracy: 0.9568
+  Sparsity: 0.2379 (best: 0.2801)
+  Lambda:   0.208 → 0.197 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1780 | Phase: fine_tuning
+  KL Loss:  0.7444 (budget: 0.7000, gap: +0.0444)
+  Accuracy: 0.9544
+  Sparsity: 0.2388 (best: 0.2801)
+  Lambda:   0.289 → 0.318 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1800 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1800 | Phase: fine_tuning
+  KL Loss:  0.7619 (budget: 0.7000, gap: +0.0619)
+  Accuracy: 0.9524
+  Sparsity: 0.2414 (best: 0.2851)
+  Lambda:   0.460 → 0.436 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1820 | Phase: fine_tuning
+  KL Loss:  0.7225 (budget: 0.7000, gap: +0.0225)
+  Accuracy: 0.9499
+  Sparsity: 0.2458 (best: 0.2851)
+  Lambda:   0.410 → 0.410 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1840 | Phase: at_budget
+  KL Loss:  0.7098 (budget: 0.7000, gap: +0.0098)
+  Accuracy: 0.9499
+  Sparsity: 0.2512 (best: 0.2910)
+  Lambda:   0.509 → 0.509 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 1850 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1860 | Phase: recovery
+  KL Loss:  0.8016 (budget: 0.7000, gap: +0.1016)
+  Accuracy: 0.9599
+  Sparsity: 0.2584 (best: 0.2968)
+  Lambda:   0.513 → 0.484 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1880 | Phase: fine_tuning
+  KL Loss:  0.7523 (budget: 0.7000, gap: +0.0523)
+  Accuracy: 0.9679
+  Sparsity: 0.2650 (best: 0.2968)
+  Lambda:   0.443 → 0.420 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1900 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1900 | Phase: fine_tuning
+  KL Loss:  0.7612 (budget: 0.7000, gap: +0.0612)
+  Accuracy: 0.9743
+  Sparsity: 0.2698 (best: 0.3041)
+  Lambda:   0.355 → 0.336 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1920 | Phase: fine_tuning
+  KL Loss:  0.7713 (budget: 0.7000, gap: +0.0713)
+  Accuracy: 0.9795
+  Sparsity: 0.2737 (best: 0.3095)
+  Lambda:   0.474 → 0.450 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1940 | Phase: fine_tuning
+  KL Loss:  0.7633 (budget: 0.7000, gap: +0.0633)
+  Accuracy: 0.9836
+  Sparsity: 0.2793 (best: 0.3095)
+  Lambda:   0.452 → 0.428 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1950 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 1960 | Phase: fine_tuning
+  KL Loss:  0.7332 (budget: 0.7000, gap: +0.0332)
+  Accuracy: 0.9869
+  Sparsity: 0.2851 (best: 0.3095)
+  Lambda:   0.395 → 0.421 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 1980 | Phase: fine_tuning
+  KL Loss:  0.7728 (budget: 0.7000, gap: +0.0728)
+  Accuracy: 0.9895
+  Sparsity: 0.2909 (best: 0.3221)
+  Lambda:   0.518 → 0.492 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2000 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2000 | Phase: fine_tuning
+  KL Loss:  0.7246 (budget: 0.7000, gap: +0.0246)
+  Accuracy: 0.9906
+  Sparsity: 0.2983 (best: 0.3221)
+  Lambda:   0.524 → 0.524 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2020 | Phase: fine_tuning
+  KL Loss:  0.7244 (budget: 0.7000, gap: +0.0244)
+  Accuracy: 0.9915
+  Sparsity: 0.3067 (best: 0.3221)
+  Lambda:   0.526 → 0.526 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2040 | Phase: at_budget
+  KL Loss:  0.7054 (budget: 0.7000, gap: +0.0054)
+  Accuracy: 0.9922
+  Sparsity: 0.3162 (best: 0.3331)
+  Lambda:   0.584 → 0.584 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2050 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2060 | Phase: at_budget
+  KL Loss:  0.7127 (budget: 0.7000, gap: +0.0127)
+  Accuracy: 0.9927
+  Sparsity: 0.3259 (best: 0.3481)
+  Lambda:   0.584 → 0.584 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2080 | Phase: at_budget
+  KL Loss:  0.7059 (budget: 0.7000, gap: +0.0059)
+  Accuracy: 0.9932
+  Sparsity: 0.3351 (best: 0.3552)
+  Lambda:   0.644 → 0.645 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2100 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2100 | Phase: fine_tuning
+  KL Loss:  0.7243 (budget: 0.7000, gap: +0.0243)
+  Accuracy: 0.9935
+  Sparsity: 0.3473 (best: 0.3643)
+  Lambda:   0.712 → 0.712 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2120 | Phase: fine_tuning
+  KL Loss:  0.7370 (budget: 0.7000, gap: +0.0370)
+  Accuracy: 0.9938
+  Sparsity: 0.3608 (best: 0.3767)
+  Lambda:   0.796 → 0.799 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2140 | Phase: fine_tuning
+  KL Loss:  0.7289 (budget: 0.7000, gap: +0.0289)
+  Accuracy: 0.9941
+  Sparsity: 0.3754 (best: 0.3886)
+  Lambda:   0.769 → 0.769 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2150 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2160 | Phase: fine_tuning
+  KL Loss:  0.7472 (budget: 0.7000, gap: +0.0472)
+  Accuracy: 0.9942
+  Sparsity: 0.3885 (best: 0.4007)
+  Lambda:   0.516 → 0.514 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2180 | Phase: at_budget
+  KL Loss:  0.7150 (budget: 0.7000, gap: +0.0150)
+  Accuracy: 0.9944
+  Sparsity: 0.3952 (best: 0.4058)
+  Lambda:   0.570 → 0.570 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2200 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2200 | Phase: fine_tuning
+  KL Loss:  0.7448 (budget: 0.7000, gap: +0.0448)
+  Accuracy: 0.9945
+  Sparsity: 0.4020 (best: 0.4112)
+  Lambda:   0.510 → 0.538 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2220 | Phase: fine_tuning
+  KL Loss:  0.7568 (budget: 0.7000, gap: +0.0568)
+  Accuracy: 0.9946
+  Sparsity: 0.4080 (best: 0.4206)
+  Lambda:   0.242 → 0.226 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2240 | Phase: fine_tuning
+  KL Loss:  0.7465 (budget: 0.7000, gap: +0.0465)
+  Accuracy: 0.9947
+  Sparsity: 0.4104 (best: 0.4206)
+  Lambda:   0.254 → 0.255 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2250 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2260 | Phase: fine_tuning
+  KL Loss:  0.7313 (budget: 0.7000, gap: +0.0313)
+  Accuracy: 0.9947
+  Sparsity: 0.4121 (best: 0.4206)
+  Lambda:   0.328 → 0.328 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2280 | Phase: fine_tuning
+  KL Loss:  0.7436 (budget: 0.7000, gap: +0.0436)
+  Accuracy: 0.9948
+  Sparsity: 0.4150 (best: 0.4256)
+  Lambda:   0.352 → 0.378 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2300 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2300 | Phase: fine_tuning
+  KL Loss:  0.7399 (budget: 0.7000, gap: +0.0399)
+  Accuracy: 0.9948
+  Sparsity: 0.4188 (best: 0.4256)
+  Lambda:   0.453 → 0.462 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2320 | Phase: fine_tuning
+  KL Loss:  0.7529 (budget: 0.7000, gap: +0.0529)
+  Accuracy: 0.9949
+  Sparsity: 0.4250 (best: 0.4312)
+  Lambda:   0.485 → 0.457 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2340 | Phase: fine_tuning
+  KL Loss:  0.7492 (budget: 0.7000, gap: +0.0492)
+  Accuracy: 0.9949
+  Sparsity: 0.4302 (best: 0.4371)
+  Lambda:   0.242 → 0.240 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2350 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2360 | Phase: fine_tuning
+  KL Loss:  0.7242 (budget: 0.7000, gap: +0.0242)
+  Accuracy: 0.9949
+  Sparsity: 0.4330 (best: 0.4422)
+  Lambda:   0.468 → 0.469 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2380 | Phase: at_budget
+  KL Loss:  0.7041 (budget: 0.7000, gap: +0.0041)
+  Accuracy: 0.9949
+  Sparsity: 0.4395 (best: 0.4422)
+  Lambda:   0.575 → 0.575 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2400 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2400 | Phase: fine_tuning
+  KL Loss:  0.7305 (budget: 0.7000, gap: +0.0305)
+  Accuracy: 0.9949
+  Sparsity: 0.4498 (best: 0.4554)
+  Lambda:   0.634 → 0.636 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2420 | Phase: fine_tuning
+  KL Loss:  0.7338 (budget: 0.7000, gap: +0.0338)
+  Accuracy: 0.9949
+  Sparsity: 0.4623 (best: 0.4662)
+  Lambda:   0.675 → 0.699 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2440 | Phase: fine_tuning
+  KL Loss:  0.7239 (budget: 0.7000, gap: +0.0239)
+  Accuracy: 0.9929
+  Sparsity: 0.4766 (best: 0.4767)
+  Lambda:   1.002 → 1.015 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2450 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2460 | Phase: fine_tuning
+  KL Loss:  0.7245 (budget: 0.7000, gap: +0.0245)
+  Accuracy: 0.9853
+  Sparsity: 0.4986 (best: 0.4980)
+  Lambda:   1.063 → 1.054 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2480 | Phase: fine_tuning
+  KL Loss:  0.7657 (budget: 0.7000, gap: +0.0657)
+  Accuracy: 0.9098
+  Sparsity: 0.5198 (best: 0.5145)
+  Lambda:   0.966 → 0.906 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2500 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2500 | Phase: fine_tuning
+  KL Loss:  0.7702 (budget: 0.7000, gap: +0.0702)
+  Accuracy: 0.8485
+  Sparsity: 0.5306 (best: 0.5281)
+  Lambda:   0.280 → 0.262 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2520 | Phase: fine_tuning
+  KL Loss:  0.7650 (budget: 0.7000, gap: +0.0650)
+  Accuracy: 0.8014
+  Sparsity: 0.5325 (best: 0.5281)
+  Lambda:   0.100 → 0.100 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2540 | Phase: fine_tuning
+  KL Loss:  0.7627 (budget: 0.7000, gap: +0.0627)
+  Accuracy: 0.7657
+  Sparsity: 0.5320 (best: 0.5281)
+  Lambda:   0.100 → 0.100 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2550 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2560 | Phase: fine_tuning
+  KL Loss:  0.7550 (budget: 0.7000, gap: +0.0550)
+  Accuracy: 0.7382
+  Sparsity: 0.5320 (best: 0.5281)
+  Lambda:   0.100 → 0.100 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2580 | Phase: fine_tuning
+  KL Loss:  0.7502 (budget: 0.7000, gap: +0.0502)
+  Accuracy: 0.7172
+  Sparsity: 0.5320 (best: 0.5281)
+  Lambda:   0.161 → 0.154 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2600 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2600 | Phase: fine_tuning
+  KL Loss:  0.7475 (budget: 0.7000, gap: +0.0475)
+  Accuracy: 0.7014
+  Sparsity: 0.5324 (best: 0.5281)
+  Lambda:   0.128 → 0.155 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2620 | Phase: fine_tuning
+  KL Loss:  0.7465 (budget: 0.7000, gap: +0.0465)
+  Accuracy: 0.6898
+  Sparsity: 0.5333 (best: 0.5333)
+  Lambda:   0.434 → 0.447 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2640 | Phase: fine_tuning
+  KL Loss:  0.7675 (budget: 0.7000, gap: +0.0675)
+  Accuracy: 0.6805
+  Sparsity: 0.5374 (best: 0.5333)
+  Lambda:   0.395 → 0.370 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2650 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2660 | Phase: fine_tuning
+  KL Loss:  0.7549 (budget: 0.7000, gap: +0.0549)
+  Accuracy: 0.6750
+  Sparsity: 0.5398 (best: 0.5385)
+  Lambda:   0.125 → 0.118 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2680 | Phase: fine_tuning
+  KL Loss:  0.7439 (budget: 0.7000, gap: +0.0439)
+  Accuracy: 0.6707
+  Sparsity: 0.5406 (best: 0.5385)
+  Lambda:   0.247 → 0.256 (action: maintain_momentum)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2700 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2700 | Phase: fine_tuning
+  KL Loss:  0.7396 (budget: 0.7000, gap: +0.0396)
+  Accuracy: 0.6672
+  Sparsity: 0.5412 (best: 0.5385)
+  Lambda:   0.212 → 0.239 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+
+[Scheduler] Epoch 2720 | Phase: fine_tuning
+  KL Loss:  0.7596 (budget: 0.7000, gap: +0.0596)
+  Accuracy: 0.6664
+  Sparsity: 0.5436 (best: 0.5385)
+  Lambda:   0.348 → 0.328 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2740 | Phase: fine_tuning
+  KL Loss:  0.7485 (budget: 0.7000, gap: +0.0485)
+  Accuracy: 0.6668
+  Sparsity: 0.5469 (best: 0.5435)
+  Lambda:   0.486 → 0.487 (action: maintain)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2750 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2760 | Phase: fine_tuning
+  KL Loss:  0.7525 (budget: 0.7000, gap: +0.0525)
+  Accuracy: 0.6621
+  Sparsity: 0.5542 (best: 0.5496)
+  Lambda:   0.793 → 0.754 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2780 | Phase: fine_tuning
+  KL Loss:  0.7357 (budget: 0.7000, gap: +0.0357)
+  Accuracy: 0.6573
+  Sparsity: 0.5676 (best: 0.5676)
+  Lambda:   0.803 → 0.832 (action: explore)
+  LR:       5.00e-04
+  ✅ Within budget
+[Checkpoint] Saved at epoch 2800 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.7kl/checkpoint.pt
+
+[Scheduler] Epoch 2800 | Phase: fine_tuning
+  KL Loss:  0.7588 (budget: 0.7000, gap: +0.0588)
+  Accuracy: 0.6525
+  Sparsity: 0.5847 (best: 0.5732)
+  Lambda:   1.031 → 0.975 (action: decrease_gentle)
+  LR:       5.00e-04
+  ⚠️  Exceeds budget
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1474, in <module>
+    loss.backward()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/_tensor.py", line 630, in backward
+    torch.autograd.backward(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/autograd/__init__.py", line 364, in backward
+    _engine_run_backward(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/autograd/graph.py", line 865, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1474, in <module>
+    loss.backward()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/_tensor.py", line 630, in backward
+    torch.autograd.backward(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/autograd/__init__.py", line 364, in backward
+    _engine_run_backward(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/autograd/graph.py", line 865, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt

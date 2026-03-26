@@ -1,0 +1,83 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/fq133qop
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY - GENDER PRONOUNS
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Fetching 4 files: 100%|████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 29433.71it/s]
+Download complete: : 0.00B [00:00, ?B/s]                                                                          | 0/4 [00:00<?, ?it/s]
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 4918.31it/s]
+Llama model successfully adapted for pruning with block-level gates.
+Fetching 4 files: 100%|████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 30120.68it/s]
+Download complete: : 0.00B [00:00, ?B/s]                                                                          | 0/4 [00:00<?, ?it/s]
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 4441.21it/s]
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded train split with 150 samples
+Loaded 150 samples
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded validation split with 150 samples
+Loaded 150 samples
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded test split with 378 samples
+Loaded 378 samples
+Filtering 150 samples for base model correctness...
+Processed 150 valid samples from 150 total
+Checking model predictions: 100%|█████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00,  6.23it/s]
+  -> Retained: 130/150 (86.67%)
+Filtering 378 samples for base model correctness...
+Processed 378 valid samples from 378 total
+Checking model predictions: 100%|███████████████████████████████████████████████████████████████████████| 12/12 [00:01<00:00,  9.80it/s]
+  -> Retained: 326/378 (86.24%)
+Processed 150 valid samples from 150 total
+Processed 130 valid samples from 130 total
+Processed 326 valid samples from 326 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+Acc: 1.000, LD: 5.166: : 32it [00:00, 170.92it/s]Traceback (most recent call last):                                                     
+  File "/home/exouser/circuit_pruning/gp_llama_kl_budget.py", line 1308, in <module>
+    baseline_results = run_evaluation(
+  File "/home/exouser/circuit_pruning/dataset/gp_llama.py", line 203, in run_evaluation
+    outputs = model_to_eval(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 843, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 501, in forward
+    logits = self.lm_head(hidden_states[:, slice_indices, :])
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 502.00 MiB. GPU 0 has a total capacity of 39.49 GiB of which 294.00 MiB is free. Process 2110806 has 7.67 GiB memory in use. Including non-PyTorch memory, this process has 31.53 GiB memory in use. Of the allocated memory 30.93 GiB is allocated by PyTorch, and 97.73 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/gp_llama_kl_budget.py", line 1308, in <module>
+    baseline_results = run_evaluation(
+  File "/home/exouser/circuit_pruning/dataset/gp_llama.py", line 203, in run_evaluation
+    outputs = model_to_eval(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 843, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 501, in forward
+    logits = self.lm_head(hidden_states[:, slice_indices, :])
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 502.00 MiB. GPU 0 has a total capacity of 39.49 GiB of which 294.00 MiB is free. Process 2110806 has 7.67 GiB memory in use. Including non-PyTorch memory, this process has 31.53 GiB memory in use. Of the allocated memory 30.93 GiB is allocated by PyTorch, and 97.73 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

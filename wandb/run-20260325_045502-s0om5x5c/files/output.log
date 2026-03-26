@@ -1,0 +1,232 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/s0om5x5c
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY - GENDER PRONOUNS
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 4653.96it/s]
+Llama model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 4353.23it/s]
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded train split with 150 samples
+Loaded 150 samples
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded validation split with 150 samples
+Loaded 150 samples
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded test split with 378 samples
+Loaded 378 samples
+Filtering 150 samples for base model correctness...
+Processed 150 valid samples from 150 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00,  9.81it/s]
+  -> Retained: 133/150 (88.67%)
+Filtering 150 samples for base model correctness...
+Processed 150 valid samples from 150 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00, 28.15it/s]
+  -> Retained: 131/150 (87.33%)
+Filtering 378 samples for base model correctness...
+Processed 378 valid samples from 378 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 12/12 [00:00<00:00, 30.72it/s]
+  -> Retained: 338/378 (89.42%)
+Processed 133 valid samples from 133 total
+Processed 131 valid samples from 131 total
+Processed 338 valid samples from 338 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00, 30.67it/s]
+
+Processed 338 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      4.6387
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 5.0000
+   Tolerance: ±0.0500
+   Acceptable range: [4.9500, 5.0500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   4%|█████▏                                                                                                                                   | 19/500 [00:31<10:33,  1.32s/it]
+                                                                                                                                                                                         
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  0.7480 (budget: 5.0000, gap: -4.2520)
+  Accuracy: 0.9924
+  Sparsity: 0.0402 (best: 0.0000)
+  Lambda:   1.285 → 1.346 (action: warmup)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  0.5559 (budget: 5.0000, gap: -4.4441)
+  Accuracy: 0.9924
+  Sparsity: 0.0380 (best: 0.0000)
+  Lambda:   1.660 → 1.724 (action: warmup)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  0.6921 (budget: 5.0000, gap: -4.3079)
+  Accuracy: 0.9924
+  Sparsity: 0.0382 (best: 0.0000)
+  Lambda:   2.046 → 2.111 (action: warmup)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 20 | Phase: exploration
+  KL Loss:  0.6348 (budget: 5.0000, gap: -4.3652)
+  Accuracy: 0.9924
+  Sparsity: 0.0399 (best: 0.0399)
+  Lambda:   2.435 → 2.500 (action: increase)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 25 | Phase: exploration
+  KL Loss:  0.4744 (budget: 5.0000, gap: -4.5256)
+  Accuracy: 0.9924
+  Sparsity: 0.0441 (best: 0.0527)
+  Lambda:   2.974 → 3.092 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 30 | Phase: exploration
+  KL Loss:  0.6881 (budget: 5.0000, gap: -4.3119)
+  Accuracy: 0.9939
+  Sparsity: 0.0525 (best: 0.0616)
+  Lambda:   3.695 → 3.817 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 35 | Phase: exploration
+  KL Loss:  0.5636 (budget: 5.0000, gap: -4.4364)
+  Accuracy: 0.9921
+  Sparsity: 0.0692 (best: 0.0854)
+  Lambda:   4.430 → 4.554 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 40 | Phase: exploration
+  KL Loss:  1.1353 (budget: 5.0000, gap: -3.8647)
+  Accuracy: 0.9906
+  Sparsity: 0.1020 (best: 0.1191)
+  Lambda:   5.170 → 5.293 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 45 | Phase: exploration
+  KL Loss:  1.5221 (budget: 5.0000, gap: -3.4779)
+  Accuracy: 0.9833
+  Sparsity: 0.1637 (best: 0.1754)
+  Lambda:   5.911 → 6.034 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+[Checkpoint] Saved at epoch 50 -> ./results/gp_kl_budget_final_1B_with_blocks_5.0kl/checkpoint.pt
+
+[Scheduler] Epoch 50 | Phase: exploration
+  KL Loss:  2.0882 (budget: 5.0000, gap: -2.9118)
+  Accuracy: 0.8706
+  Sparsity: 0.2609 (best: 0.2598)
+  Lambda:   6.652 → 6.775 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 60 | Phase: exploration
+  KL Loss:  3.2352 (budget: 5.0000, gap: -1.7648)
+  Accuracy: 0.7179
+  Sparsity: 0.5237 (best: 0.5237)
+  Lambda:   8.010 → 8.134 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 70 | Phase: exploration
+  KL Loss:  3.5182 (budget: 5.0000, gap: -1.4818)
+  Accuracy: 0.5957
+  Sparsity: 0.7598 (best: 0.7598)
+  Lambda:   9.369 → 9.492 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+
+[Scheduler] Epoch 80 | Phase: exploration
+  KL Loss:  3.5520 (budget: 5.0000, gap: -1.4480)
+  Accuracy: 0.4979
+  Sparsity: 0.8970 (best: 0.8970)
+  Lambda:   10.727 → 10.851 (action: increase_aggressive)
+  LR:       1.00e-02
+  ✅ Within budget
+  File "/home/exouser/circuit_pruning/gp_llama_kl_budget.py", line 1393, in <module>
+    for batch_idx, batch in enumerate(train_dataloader):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 741, in __next__
+    data = self._next_data()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 801, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 54, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 54, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/exouser/circuit_pruning/dataset/gp_llama.py", line 128, in __getitem__
+    corrupted_inputs = self.tokenizer(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 2490, in __call__
+    encodings = self._encode_plus(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_tokenizers.py", line 962, in _encode_plus
+    batched_output = BatchEncoding(sanitized_tokens, sanitized_encodings, tensor_type=return_tensors)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 240, in __init__
+    self.convert_to_tensors(tensor_type=tensor_type, prepend_batch_axis=prepend_batch_axis)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 731, in convert_to_tensors
+    tensor = as_tensor(value)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 688, in as_tensor
+    if len(flatten(value)) == 0 and dtype is None:
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 87, in flatten
+    res.extend(flatten(sub_arr))
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 86, in flatten
+    if isinstance(arr[0], (list, tuple)):
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/gp_llama_kl_budget.py", line 1393, in <module>
+    for batch_idx, batch in enumerate(train_dataloader):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 741, in __next__
+    data = self._next_data()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 801, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 54, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 54, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/exouser/circuit_pruning/dataset/gp_llama.py", line 128, in __getitem__
+    corrupted_inputs = self.tokenizer(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 2490, in __call__
+    encodings = self._encode_plus(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_tokenizers.py", line 962, in _encode_plus
+    batched_output = BatchEncoding(sanitized_tokens, sanitized_encodings, tensor_type=return_tensors)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 240, in __init__
+    self.convert_to_tensors(tensor_type=tensor_type, prepend_batch_axis=prepend_batch_axis)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 731, in convert_to_tensors
+    tensor = as_tensor(value)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 688, in as_tensor
+    if len(flatten(value)) == 0 and dtype is None:
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 87, in flatten
+    res.extend(flatten(sub_arr))
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 86, in flatten
+    if isinstance(arr[0], (list, tuple)):
+KeyboardInterrupt

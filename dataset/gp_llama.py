@@ -224,7 +224,7 @@ def run_evaluation(
                 if control_logits is not None:
                     logits_ = F.log_softmax(logits[j, pred_pos], dim=-1)
                     control_logits_ = F.log_softmax(control_logits[j, pred_pos], dim=-1)
-                    kld = F.kl_div(logits_, control_logits_, reduction="sum", log_target=True)
+                    kld = F.kl_div(control_logits_, logits_, reduction="sum", log_target=True)
                     kl_divergence += kld.detach().cpu().item()
 
                 # Check accuracy (logit difference)

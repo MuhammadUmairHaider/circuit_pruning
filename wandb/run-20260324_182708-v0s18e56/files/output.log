@@ -1,0 +1,93 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/v0s18e56
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY - GENDER PRONOUNS
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Fetching 4 files: 100%|████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 30120.68it/s]
+Download complete: : 0.00B [00:00, ?B/s]                                                                          | 0/4 [00:00<?, ?it/s]
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 4449.19it/s]
+Llama model successfully adapted for pruning with block-level gates.
+Fetching 4 files: 100%|████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 24001.74it/s]
+Download complete: : 0.00B [00:00, ?B/s]                                                                          | 0/4 [00:00<?, ?it/s]
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 4413.54it/s]
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded train split with 150 samples
+Loaded 150 samples
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded validation split with 150 samples
+Loaded 150 samples
+Attempting to load dataset from: ./data/datasets/gp/
+Successfully loaded test split with 378 samples
+Loaded 378 samples
+Filtering 150 samples for base model correctness...
+Processed 150 valid samples from 150 total
+Checking model predictions: 100%|█████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00,  6.13it/s]
+  -> Retained: 130/150 (86.67%)
+Filtering 378 samples for base model correctness...
+Processed 378 valid samples from 378 total
+Checking model predictions: 100%|███████████████████████████████████████████████████████████████████████| 12/12 [00:01<00:00,  9.76it/s]
+  -> Retained: 326/378 (86.24%)
+Processed 150 valid samples from 150 total
+Processed 130 valid samples from 130 total
+Processed 326 valid samples from 326 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00,  7.17it/s]
+
+Processed 326 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      4.4533
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.7000
+   Tolerance: ±0.0500
+   Acceptable range: [0.6500, 0.7500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+
+[Checkpoint] Resuming from ./results/gp_kl_budget_final_3B_with_blocks_0.7kl/checkpoint.pt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/gp_llama_kl_budget.py", line 1369, in <module>
+    ckpt = torch.load(checkpoint_path, map_location=DEVICE)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/serialization.py", line 1548, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m.
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray.scalar was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray.scalar])` or the `torch.serialization.safe_globals([numpy._core.multiarray.scalar])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/gp_llama_kl_budget.py", line 1369, in <module>
+    ckpt = torch.load(checkpoint_path, map_location=DEVICE)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/serialization.py", line 1548, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m.
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray.scalar was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray.scalar])` or the `torch.serialization.safe_globals([numpy._core.multiarray.scalar])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.

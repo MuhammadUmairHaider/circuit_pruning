@@ -1,0 +1,112 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            lz7p5irqychfrq5aheun0kipfsdlc019:
+                args:
+                    - --model
+                    - meta-llama/Llama-3.1-8B
+                    - --kl-budget
+                    - "0.7"
+                    - --min-lr
+                    - "5e-4"
+                    - --max-lr
+                    - "1e-2"
+                    - --no-early-stopping
+                    - --epochs
+                    - "5000"
+                    - --save-dir
+                    - ./results/gp_kl_budget_final_8B_with_blocks_0.7kl
+                    - --wandb
+                    - --wandb-project
+                    - circuit-discovery
+                    - --wandb-name
+                    - gp-1B-With-Blocks
+                    - --no-early-stopping
+                    - --use-task-loss
+                    - --min-lambda
+                    - "0.1"
+                codePath: gp_llama_kl_budget.py
+                codePathLocal: gp_llama_kl_budget.py
+                cpu_count: 32
+                cpu_count_logical: 32
+                cudaVersion: "13.0"
+                disk:
+                    /:
+                        total: "518933680128"
+                        used: "54643548160"
+                email: muhammadumairhaider@gmail.com
+                executable: /home/exouser/circuit_pruning/.venv/bin/python
+                git:
+                    commit: a96799ac6f80a29beafa7f6c07eb96d6bbbf8b98
+                    remote: https://github.com/MuhammadUmairHaider/circuit_pruning.git
+                gpu: NVIDIA A100-SXM4-40GB
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-SXM4-40GB
+                      uuid: GPU-c60a64bb-a645-a662-87c7-0fa18df0c65f
+                host: circuits
+                memory:
+                    total: "123626684416"
+                os: Linux-6.17.0-19-generic-x86_64-with-glibc2.39
+                program: /home/exouser/circuit_pruning/gp_llama_kl_budget.py
+                python: CPython 3.10.20
+                root: /home/exouser/circuit_pruning
+                startedAt: "2026-03-25T05:09:36.667389Z"
+                writerId: lz7p5irqychfrq5aheun0kipfsdlc019
+        m: []
+        python_version: 3.10.20
+        t:
+            "1":
+                - 1
+                - 11
+                - 49
+                - 51
+            "2":
+                - 1
+                - 11
+                - 49
+                - 51
+            "3":
+                - 2
+                - 13
+                - 16
+                - 61
+            "4": 3.10.20
+            "5": 0.25.1
+            "6": 5.3.0
+            "12": 0.25.1
+            "13": linux-x86_64
+adaptive_lr:
+    value: true
+base_lr:
+    value: 0.001
+batch_size:
+    value: 32
+component_adaptation:
+    value: true
+flash_attention:
+    value: false
+initial_lambda:
+    value: 1
+kl_budget:
+    value: 0.7
+kl_tolerance:
+    value: 0.05
+lambda_add_inc:
+    value: 0.05
+lambda_mult_dec:
+    value: 0.75
+min_lambda:
+    value: 0.1
+model:
+    value: meta-llama/Llama-3.1-8B
+task:
+    value: gender_pronouns
+task_lambda:
+    value: 1
+use_task_loss:
+    value: true

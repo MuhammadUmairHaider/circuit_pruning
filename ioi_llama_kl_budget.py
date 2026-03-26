@@ -122,6 +122,22 @@ class KLBudgetConfig:
     block_pruning_start_epoch: int = 2000  # Start block pruning after this epoch
     block_adaptation_frequency: int = 20  # Adapt block lambdas every N epochs (vs every epoch for other components)
 
+    # Adaptive task loss (dual ascent on accuracy constraint)
+    adaptive_task_lambda: bool = True   # Adapt task_lambda based on accuracy / sparsity / KL
+    task_lambda_lr: float = 0.5        # Step size for task lambda dual-ascent update
+    target_accuracy_fraction: float = 0.9  # Target: this fraction of baseline accuracy
+    task_lambda_min: float = 0.0
+    task_lambda_max: float = 20.0
+    task_lambda_sparsity_scale: float = 0.5  # Extra sensitivity when model is sparse
+    # base_accuracy is set at runtime via scheduler.base_accuracy = <baseline>
+
+    # Lambda update method for the global sparsity multiplier
+    # 'aimd'         - current: additive-increase / multiplicative-decrease
+    # 'dual_ascent'  - principled: lambda += dual_ascent_lr * (KL - budget)
+    #                  (solves the Lagrangian dual; avoids hand-tuned action categories)
+    lambda_update_method: str = 'aimd'
+    dual_ascent_lr: float = 1.0  # Step size for dual ascent lambda update
+
     # Convergence - no rush, find optimal
     convergence_patience: int = 100  # Much more patient
     min_training_epochs: int = 100  # Allow more exploration
@@ -186,6 +202,11 @@ class KLBudgetScheduler:
         self.lr_velocity = 0.0  # Momentum for LR changes
         self.lr_window = deque(maxlen=5)  # Track LR stability
 
+        # Adaptive task lambda (dual ascent on accuracy constraint)
+        self.task_lambda = config.task_lambda  # mutable – adapted each eval
+        self.base_accuracy = None              # set externally: scheduler.base_accuracy = <baseline>
+        self.accuracy_window = deque(maxlen=config.window_size)
+
         # Best tracking (highest sparsity within budget)
         self.best_sparsity = 0.0
         self.best_accuracy = 0.0
@@ -206,6 +227,7 @@ class KLBudgetScheduler:
             'lr': [], 'lambda_velocity': [], 'lr_velocity': [],
             'consecutive_increases': [], 'consecutive_decreases': [],
             'kl_gap': [], 'kl_trend': [], 'sparsity_trend': [],
+            'task_lambda': [],
         }
 
         # Component-level history
@@ -242,17 +264,25 @@ class KLBudgetScheduler:
         # Update windows
         self.kl_window.append(kl_loss)
         self.sparsity_window.append(sparsity_rate)
+        self.accuracy_window.append(accuracy)
 
         # Determine action
         action = self._determine_action()
 
         # Adjust lambda
         old_lambda = self.lambda_multiplier
-        self.lambda_multiplier = self._adjust_lambda(action)
+        if self.config.lambda_update_method == 'dual_ascent':
+            self.lambda_multiplier = self._adjust_lambda_dual_ascent()
+        else:
+            self.lambda_multiplier = self._adjust_lambda(action)
 
         # Adapt per-component lambdas if enabled
         if component_sparsity and model and self.config.use_component_adaptation:
             self.adapt_component_lambdas(model, component_sparsity)
+
+        # Adapt task lambda based on accuracy / sparsity / KL
+        if self.config.use_task_loss and self.config.adaptive_task_lambda:
+            self.adapt_task_lambda(accuracy, sparsity_rate, kl_loss)
 
         # Adapt learning rate
         if self.config.use_adaptive_lr:
@@ -280,6 +310,7 @@ class KLBudgetScheduler:
         self.history['kl_gap'].append(kl_gap)
         self.history['kl_trend'].append(kl_trend)
         self.history['sparsity_trend'].append(sparsity_trend)
+        self.history['task_lambda'].append(self.task_lambda)
 
         # Logging - more frequent early on
         log_freq = 5 if epoch < 50 else 10
@@ -289,6 +320,7 @@ class KLBudgetScheduler:
         return {
             'multiplier': self.lambda_multiplier,
             'lr': self.current_lr,
+            'task_lambda': self.task_lambda,
             'component_lambdas': self.component_lambdas.copy() if self.component_lambdas else {}
         }
 
@@ -448,6 +480,78 @@ class KLBudgetScheduler:
 
         return new_lambda
 
+    def _adjust_lambda_dual_ascent(self) -> float:
+        """
+        Dual-ascent (Lagrangian) update for the global sparsity multiplier.
+
+        Treats lambda as the Lagrange multiplier for the constraint KL <= budget.
+        The dual update is simply: lambda += lr * (KL - budget)
+        - KL > budget  → lambda increases (more sparsity pressure to recover KL)
+        - KL < budget  → lambda decreases (relax sparsity, allow more parameters)
+
+        Compared to AIMD this is:
+          * Theoretically grounded (KKT / subgradient ascent on the dual)
+          * Proportional to the constraint violation (faster recovery when far off-budget)
+          * No need for action categories, deadbands, or momentum heuristics
+        """
+        kl_gap = self.ema_kl_loss - self.kl_budget  # positive = over budget
+        new_lambda = self.lambda_multiplier + self.config.dual_ascent_lr * kl_gap
+        self.lambda_history.append(new_lambda)
+
+        # Update phase for logging consistency
+        if abs(kl_gap) < self.config.kl_tolerance:
+            self.phase = "at_budget"
+        elif kl_gap > 0:
+            self.phase = "recovery"
+            self.consecutive_decreases += 1
+            self.consecutive_increases = 0
+        else:
+            self.phase = "exploration"
+            self.consecutive_increases += 1
+            self.consecutive_decreases = 0
+
+        return float(np.clip(new_lambda, self.config.min_lambda, self.config.max_lambda))
+
+    def adapt_task_lambda(self, accuracy: float, sparsity: float, kl: float):
+        """
+        Adaptive task lambda via dual ascent on the accuracy constraint.
+
+        Treats task_lambda as the Lagrange multiplier for:
+            accuracy >= target_accuracy_fraction * base_accuracy
+
+        Update rule:
+            task_lambda += task_lambda_lr
+                           * (target_acc - ema_accuracy)   ← accuracy deficit
+                           * sparsity_scale                 ← more sensitive when sparse
+                           * kl_scale                       ← more important when KL is saturated
+
+        Intuition:
+        - If accuracy < target: deficit > 0 → task_lambda increases (stronger task signal)
+        - If accuracy > target: deficit < 0 → task_lambda decreases (relax task constraint)
+        - High sparsity amplifies the update (accuracy is harder to maintain when sparse)
+        - High KL utilization amplifies the update (KL budget is saturated; can't relax KL)
+        """
+        if self.base_accuracy is None or self.base_accuracy <= 0:
+            return  # base_accuracy not set yet
+
+        target_acc = self.base_accuracy * self.config.target_accuracy_fraction
+        accuracy_deficit = target_acc - self.ema_accuracy  # positive = below target
+
+        # Sparsity scale: more sparsity → harder to maintain accuracy → higher sensitivity
+        sparsity_scale = 1.0 + self.config.task_lambda_sparsity_scale * self.ema_sparsity
+
+        # KL utilization scale: if we're using ≥80% of KL budget, the model is already
+        # constrained on the KL side; task accuracy is then the binding concern.
+        kl_utilization = min(1.0, self.ema_kl_loss / max(self.kl_budget, 1e-8))
+        kl_scale = 1.0 + kl_utilization  # range [1, 2]
+
+        delta = self.config.task_lambda_lr * accuracy_deficit * sparsity_scale * kl_scale
+        self.task_lambda = float(np.clip(
+            self.task_lambda + delta,
+            self.config.task_lambda_min,
+            self.config.task_lambda_max,
+        ))
+
     def _adapt_learning_rate(self, action: str):
         """
         Adapt learning rate with momentum - smooth exploration, not panic!
@@ -595,6 +699,7 @@ class KLBudgetScheduler:
                 'scheduler/lr': self.current_lr,
                 'scheduler/lambda_velocity': self.lambda_velocity,
                 'scheduler/lr_velocity': self.lr_velocity,
+                'scheduler/task_lambda': self.task_lambda,
                 'metrics/kl_loss': self.ema_kl_loss,
                 'metrics/accuracy': self.ema_accuracy,
                 'metrics/sparsity': self.ema_sparsity,
@@ -710,6 +815,10 @@ class KLBudgetScheduler:
         print(f"  Lambda:   {old_lambda:.3f} → {self.lambda_multiplier:.3f} (action: {action})")
         if self.config.use_adaptive_lr:
             print(f"  LR:       {self.current_lr:.2e}")
+        if self.config.use_task_loss:
+            target = (self.base_accuracy or 0.0) * self.config.target_accuracy_fraction
+            adaptive_str = f" (adaptive, target={target:.3f})" if self.config.adaptive_task_lambda else ""
+            print(f"  TaskLambda: {self.task_lambda:.4f}{adaptive_str}")
 
         if self.ema_kl_loss <= self.kl_budget + self.config.kl_tolerance:
             print(f"  ✅ Within budget")
@@ -1004,10 +1113,9 @@ class KLBudgetLlamaPruningConfig(PruningConfig):
     lambda_attention_neurons: float = 1.0
 
     prune_attention_blocks: bool = True
-    lambda_attention_blocks: float = 0.0001
-
+    lambda_attention_blocks: float = 0.00001
     prune_mlp_blocks: bool = True
-    lambda_mlp_blocks: float = 0.0001
+    lambda_mlp_blocks: float = 0.00001
 
     prune_full_layers: bool = False
     lambda_full_layers: float = 0.0
@@ -1174,15 +1282,32 @@ if __name__ == '__main__':
     parser.add_argument('--use-task-loss', action='store_true',
                         help='Include task loss for additional correctness constraint')
     parser.add_argument('--task-lambda', type=float, default=1.0,
-                        help='Weight for task loss (default: 1.0)')
+                        help='Initial weight for task loss (default: 1.0)')
+    parser.add_argument('--no-adaptive-task-lambda', action='store_true',
+                        help='Disable adaptive task lambda (keep task_lambda fixed)')
+    parser.add_argument('--task-lambda-lr', type=float, default=0.5,
+                        help='Dual-ascent step size for task lambda adaptation (default: 0.5)')
+    parser.add_argument('--target-accuracy-fraction', type=float, default=0.9,
+                        help='Target accuracy as fraction of baseline (default: 0.9)')
+    parser.add_argument('--task-lambda-sparsity-scale', type=float, default=0.5,
+                        help='Amplify task lambda sensitivity when sparsity is high (default: 0.5)')
 
-    # Lambda adaptation (AIMD)
+    # Lambda adaptation
+    parser.add_argument('--lambda-update-method', type=str, default='aimd',
+                        choices=['aimd', 'dual_ascent'],
+                        help='Method to adapt global sparsity lambda: '
+                             '"aimd" (additive-increase/multiplicative-decrease, default) or '
+                             '"dual_ascent" (lambda += lr*(KL-budget), principled Lagrangian update)')
+    parser.add_argument('--dual-ascent-lr', type=float, default=1.0,
+                        help='Step size for dual-ascent lambda update (default: 1.0)')
     parser.add_argument('--lambda-add-inc', type=float, default=0.05,
-                        help='Additive increase for lambda (default: 0.05)')
+                        help='[AIMD] Additive increase for lambda (default: 0.05)')
     parser.add_argument('--lambda-mult-dec', type=float, default=0.75,
-                        help='Multiplicative decrease for lambda (default: 0.75)')
+                        help='[AIMD] Multiplicative decrease for lambda (default: 0.75)')
     parser.add_argument('--initial-lambda', type=float, default=1.0,
                         help='Initial lambda value (default: 1.0)')
+    parser.add_argument('--min-lambda', type=float, default=1e-3,
+                        help='Minimum lambda for sparsity (default: 1e-3)')
 
     # Adaptive features
     parser.add_argument('--no-adaptive-lr', action='store_true',
@@ -1195,6 +1320,10 @@ if __name__ == '__main__':
                         help='Disable per-component sparsity adaptation')
     parser.add_argument('--no-early-stopping', action='store_true',
                         help='Disable early stopping (train for max_epochs)')
+
+    # Checkpointing
+    parser.add_argument('--checkpoint-interval', type=int, default=50,
+                        help='Save checkpoint every N epochs (default: 50)')
 
     # Speedups
     parser.add_argument('--flash-attn', action='store_true')
@@ -1234,6 +1363,7 @@ if __name__ == '__main__':
                 'kl_budget': args.kl_budget,
                 'kl_tolerance': args.kl_tolerance,
                 'initial_lambda': args.initial_lambda,
+                'min_lambda': args.min_lambda,
                 'lambda_add_inc': args.lambda_add_inc,
                 'lambda_mult_dec': args.lambda_mult_dec,
                 'use_task_loss': args.use_task_loss,
@@ -1288,7 +1418,7 @@ if __name__ == '__main__':
     disable_dropout(circuit_model)
 
     # Freeze base, unfreeze gates
-    GATE_PATTERNS = ('_gates.', '_gate.', 'embedding_gate.', 'layer_gates.')
+    GATE_PATTERNS = ('_gates.', '_gate.', 'layer_gates.')
     for name, param in circuit_model.named_parameters():
         is_gate = any(p in name for p in GATE_PATTERNS)
         param.requires_grad = is_gate
@@ -1304,6 +1434,7 @@ if __name__ == '__main__':
     val_data = generate_ioi_data_llama(NUM_VAL, tokenizer, seed=123)
     test_data = generate_ioi_data_llama(NUM_TEST, tokenizer, seed=456)
 
+    train_data = filter_dataset_by_model_correctness(train_data, full_model, tokenizer, DEVICE, args.batch_size)
     val_data = filter_dataset_by_model_correctness(val_data, full_model, tokenizer, DEVICE, args.batch_size)
     test_data = filter_dataset_by_model_correctness(test_data, full_model, tokenizer, DEVICE, args.batch_size)
 
@@ -1336,9 +1467,16 @@ if __name__ == '__main__':
         kl_tolerance=args.kl_tolerance,
         use_task_loss=args.use_task_loss,
         task_lambda=args.task_lambda,
+        adaptive_task_lambda=not args.no_adaptive_task_lambda,
+        task_lambda_lr=args.task_lambda_lr,
+        target_accuracy_fraction=args.target_accuracy_fraction,
+        task_lambda_sparsity_scale=args.task_lambda_sparsity_scale,
+        lambda_update_method=args.lambda_update_method,
+        dual_ascent_lr=args.dual_ascent_lr,
         lambda_additive_increase=args.lambda_add_inc,
         lambda_multiplicative_decrease=args.lambda_mult_dec,
         initial_lambda=args.initial_lambda,
+        min_lambda=args.min_lambda,
         use_adaptive_lr=not args.no_adaptive_lr,
         use_component_adaptation=not args.no_component_adaptation,
         base_lr=args.lr,
@@ -1346,6 +1484,8 @@ if __name__ == '__main__':
         max_lr=args.max_lr,
     )
     scheduler = KLBudgetScheduler(scheduler_config)
+    # Provide baseline accuracy so adaptive task lambda knows the target
+    scheduler.base_accuracy = base_accuracy
 
     # Setup training - adaptive LR will update this
     optimizer = AdamW([p for p in circuit_model.parameters() if p.requires_grad], lr=scheduler.current_lr)
@@ -1359,6 +1499,10 @@ if __name__ == '__main__':
             out = full_model(input_ids=batch['input_ids'], attention_mask=batch['attention_mask'], use_cache=False)
             cached_train_logits[batch_idx] = out.logits.detach()
 
+    # Offload full_model to CPU — no longer needed on GPU until periodic faithfulness eval
+    full_model = full_model.cpu()
+    torch.cuda.empty_cache()
+
     # Training loop
     print(f"\n{'='*80}")
     print("  TRAINING")
@@ -1366,12 +1510,33 @@ if __name__ == '__main__':
 
     total_steps = 0
     NUM_EPOCHS = 2 if args.dry_run else args.epochs
+    start_epoch = 0
+
+    # Resume from checkpoint if available
+    checkpoint_path = os.path.join(args.save_dir, 'checkpoint.pt')
+    if os.path.exists(checkpoint_path):
+        print(f"[Checkpoint] Resuming from {checkpoint_path}")
+        from models.l0 import HardConcreteGate
+        ckpt = torch.load(checkpoint_path, map_location=DEVICE)
+        # Restore gate log_alphas
+        gate_modules = {name: m for name, m in circuit_model.named_modules() if isinstance(m, HardConcreteGate)}
+        for name, log_alpha in ckpt['gate_state'].items():
+            if name in gate_modules:
+                gate_modules[name].log_alpha.data.copy_(log_alpha.to(DEVICE))
+        # Restore optimizer
+        optimizer.load_state_dict(ckpt['optimizer_state'])
+        # Restore scheduler state
+        for key, val in ckpt['scheduler_state'].items():
+            setattr(scheduler, key, val)
+        start_epoch = ckpt['epoch'] + 1
+        total_steps = ckpt.get('total_steps', 0)
+        print(f"[Checkpoint] Resumed at epoch {start_epoch}, lambda={scheduler.lambda_multiplier:.3f}, lr={scheduler.current_lr:.2e}")
 
     # Track metrics per epoch for adaptive LR
     epoch_kl_losses = []
     epoch_sparsities = []
 
-    for epoch in tqdm(range(NUM_EPOCHS), desc="Training"):
+    for epoch in tqdm(range(start_epoch, NUM_EPOCHS), desc="Training"):
         circuit_model.train()
 
         # Reset epoch metrics
@@ -1408,8 +1573,8 @@ if __name__ == '__main__':
                     # This gives per-token KL, independent of sequence length
                     num_tokens = end_pos - t_start
                     kl_per_token = F.kl_div(
-                        F.log_softmax(outputs.logits[i, t_start:end_pos, :].float(), dim=-1),
                         F.log_softmax(cached_train_logits[batch_idx][i, t_start:end_pos, :].float(), dim=-1),
+                        F.log_softmax(outputs.logits[i, t_start:end_pos, :].float(), dim=-1),
                         reduction='batchmean',  # Averages over token dimension
                         log_target=True,
                     )
@@ -1431,13 +1596,13 @@ if __name__ == '__main__':
 
                 logit_good = outputs.logits[batch_indices, pos_good, token_good].float()
                 logit_bad = outputs.logits[batch_indices, pos_bad, token_bad].float()
-                task_loss = F.relu(4.0 - (logit_good - logit_bad)).mean() * scheduler.config.task_lambda
+                task_loss = F.relu(4.0 - (logit_good - logit_bad)).mean() * scheduler.task_lambda
 
             # Sparsity loss with adaptive multiplier
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
             sparsity_loss = sparsity_loss * scheduler.lambda_multiplier
 
-            loss = kl_loss + sparsity_loss# + task_loss
+            loss = kl_loss + sparsity_loss + task_loss
             loss.backward()
             optimizer.step()
 
@@ -1490,6 +1655,33 @@ if __name__ == '__main__':
             layer_sparsity = compute_layer_sparsity(circuit_model)
             scheduler.log_to_wandb(epoch + 1, comp_sparsity, layer_sparsity)
 
+        # Periodic checkpoint save
+        if (epoch + 1) % args.checkpoint_interval == 0:
+            from models.l0 import HardConcreteGate as _HCG
+            _gate_state = {
+                name: m.log_alpha.detach().cpu().clone()
+                for name, m in circuit_model.named_modules()
+                if isinstance(m, _HCG)
+            }
+            _sched_keys = [
+                'lambda_multiplier', 'best_lambda', 'lambda_velocity', 'lambda_history',
+                'component_lambdas', 'current_lr', 'lr_velocity', 'lr_window',
+                'best_sparsity', 'best_accuracy', 'best_kl', 'epochs_since_improvement',
+                'consecutive_increases', 'consecutive_decreases', 'phase',
+                'ema_accuracy', 'ema_sparsity', 'ema_kl_loss',
+                'kl_window', 'sparsity_window', 'accuracy_window', 'step', 'epoch',
+                'task_lambda', 'base_accuracy',
+            ]
+            _sched_state = {k: getattr(scheduler, k) for k in _sched_keys if hasattr(scheduler, k)}
+            torch.save({
+                'epoch': epoch,
+                'total_steps': total_steps,
+                'gate_state': _gate_state,
+                'optimizer_state': optimizer.state_dict(),
+                'scheduler_state': _sched_state,
+            }, checkpoint_path)
+            print(f"[Checkpoint] Saved at epoch {epoch+1} -> {checkpoint_path}")
+
         # Validation - more frequent early on, less frequent later
         # Early epochs (0-50): every 5 epochs
         # Mid epochs (50-100): every 10 epochs
@@ -1503,6 +1695,7 @@ if __name__ == '__main__':
 
         if (epoch + 1) % eval_freq == 0 or epoch == 0:
             circuit_model.eval()
+            full_model = full_model.to(DEVICE)
             val_results = run_evaluation(
                 model_to_eval=circuit_model,
                 model_name=f"Ep{epoch+1}",
@@ -1512,6 +1705,8 @@ if __name__ == '__main__':
                 verbose=False,
                 tokenizer=tokenizer,
             )
+            full_model = full_model.cpu()
+            torch.cuda.empty_cache()
 
             current_sparsity = compute_overall_sparsity(circuit_model)
             comp_sparsity = compute_component_sparsity(circuit_model) if scheduler.config.use_component_adaptation else None
@@ -1559,6 +1754,7 @@ if __name__ == '__main__':
     print("\n--- Final Evaluation ---")
     circuit_model.eval()
     analyze_and_finalize_circuit(circuit_model)
+    full_model = full_model.to(DEVICE)
     final_results = run_evaluation(
         model_to_eval=circuit_model,
         model_name="Final",
@@ -1568,6 +1764,42 @@ if __name__ == '__main__':
         verbose=True,
         tokenizer=tokenizer,
     )
+
+    # Save masks and test dataset for post-hoc analysis
+    print("\n--- Saving masks and test dataset ---")
+    import pickle
+    from models.l0 import HardConcreteGate
+
+    # 1. Save gate log_alpha state dict (allows full model reconstruction)
+    gate_state = {}
+    for name, module in circuit_model.named_modules():
+        if isinstance(module, HardConcreteGate):
+            gate_state[name] = module.log_alpha.detach().cpu().clone()
+    torch.save(gate_state, os.path.join(args.save_dir, 'gate_log_alphas.pt'))
+    print(f"  Saved gate log_alphas: {len(gate_state)} gates -> {args.save_dir}/gate_log_alphas.pt")
+
+    # 2. Save binary masks (log_alpha > 0 gives the hard 0/1 decision)
+    binary_masks = {name: (la > 0).float() for name, la in gate_state.items()}
+    torch.save(binary_masks, os.path.join(args.save_dir, 'binary_masks.pt'))
+    sparsity = 1.0 - sum(m.sum().item() for m in binary_masks.values()) / sum(m.numel() for m in binary_masks.values())
+    print(f"  Saved binary masks: overall sparsity={sparsity:.4f} -> {args.save_dir}/binary_masks.pt")
+
+    # 3. Save raw test data (list of dicts) for notebook reconstruction
+    with open(os.path.join(args.save_dir, 'test_data.pkl'), 'wb') as f:
+        pickle.dump(test_data, f)
+    print(f"  Saved test data: {len(test_data)} samples -> {args.save_dir}/test_data.pkl")
+
+    # 4. Save run config for notebook reference
+    run_config = {
+        'model': args.model,
+        'kl_budget': args.kl_budget,
+        'save_dir': args.save_dir,
+        'num_test': NUM_TEST,
+        'device': DEVICE,
+    }
+    with open(os.path.join(args.save_dir, 'run_config.pkl'), 'wb') as f:
+        pickle.dump(run_config, f)
+    print(f"  Saved run config -> {args.save_dir}/run_config.pkl")
 
     summary = scheduler.get_final_summary()
     print(f"\n{'='*80}")

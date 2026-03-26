@@ -1,0 +1,36 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/bsmohyaz
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY - GENDER PRONOUNS
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Fetching 4 files: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 29537.35it/s]
+Download complete: : 0.00B [00:00, ?B/s]                                                                                                                                                                                              | 0/4 [00:00<?, ?it/s]
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 6151.52it/s]
+Llama model successfully adapted for pruning with block-level gates.
+Fetching 4 files: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:00<00:00, 26379.27it/s]
+Download complete: : 0.00B [00:00, ?B/s]                                                                                                                                                                                              | 0/4 [00:00<?, ?it/s]
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 291/291 [00:00<00:00, 4553.04it/s]
+Attempting to load dataset from: ./data/datasets/gp/
+Failed to load dataset from disk: Directory ./data/datasets/gp/ not found
+Please ensure the GP dataset is available at ./data/datasets/gp/
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/gp_llama_kl_budget.py", line 1285, in <module>
+    train_data = load_or_generate_gp_data(
+  File "/home/exouser/circuit_pruning/dataset/gp_llama.py", line 50, in load_or_generate_gp_data
+    dataset_dict = load_from_disk(dataset_path)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/datasets/load.py", line 1762, in load_from_disk
+    raise FileNotFoundError(f"Directory {dataset_path} not found")
+FileNotFoundError: Directory ./data/datasets/gp/ not found
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/gp_llama_kl_budget.py", line 1285, in <module>
+    train_data = load_or_generate_gp_data(
+  File "/home/exouser/circuit_pruning/dataset/gp_llama.py", line 50, in load_or_generate_gp_data
+    dataset_dict = load_from_disk(dataset_path)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/datasets/load.py", line 1762, in load_from_disk
+    raise FileNotFoundError(f"Directory {dataset_path} not found")
+FileNotFoundError: Directory ./data/datasets/gp/ not found

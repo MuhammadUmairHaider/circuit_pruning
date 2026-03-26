@@ -1,0 +1,66 @@
+{
+  "os": "Linux-6.17.0-19-generic-x86_64-with-glibc2.39",
+  "python": "CPython 3.10.20",
+  "startedAt": "2026-03-26T09:55:46.346573Z",
+  "args": [
+    "--model",
+    "meta-llama/Llama-3.2-1B",
+    "--kl-budget",
+    "0.7",
+    "--use-task-loss",
+    "--task-lambda",
+    "1.0",
+    "--target-accuracy-fraction",
+    "0.85",
+    "--task-lambda-lr",
+    "0.3",
+    "--lambda-update-method",
+    "dual_ascent",
+    "--dual-ascent-lr",
+    "0.5",
+    "--wandb",
+    "--wandb-project",
+    "circuit-discovery",
+    "--wandb-name",
+    "llama-dual-ascent",
+    "--no-early-stopping",
+    "--epochs",
+    "5000",
+    "--save-dir",
+    "./results/ioi_kl_budget_final_1B_with_blocks_0.7kl_dual_ascent"
+  ],
+  "program": "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py",
+  "codePath": "ioi_llama_kl_budget.py",
+  "codePathLocal": "ioi_llama_kl_budget.py",
+  "git": {
+    "remote": "https://github.com/MuhammadUmairHaider/circuit_pruning.git",
+    "commit": "a96799ac6f80a29beafa7f6c07eb96d6bbbf8b98"
+  },
+  "root": "/home/exouser/circuit_pruning",
+  "host": "circuits",
+  "executable": "/home/exouser/circuit_pruning/.venv/bin/python",
+  "cpu_count": 32,
+  "cpu_count_logical": 32,
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "518933680128",
+      "used": "54918434816"
+    }
+  },
+  "memory": {
+    "total": "123626684416"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA A100-SXM4-40GB",
+      "memoryTotal": "42949672960",
+      "cudaCores": 6912,
+      "architecture": "Ampere",
+      "uuid": "GPU-c60a64bb-a645-a662-87c7-0fa18df0c65f"
+    }
+  ],
+  "cudaVersion": "13.0",
+  "writerId": "av6iw2q9v3ldi4q5e6hmwocpy4q9iqmp"
+}
