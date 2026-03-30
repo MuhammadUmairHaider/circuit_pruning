@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
-from models.gpt2_test_copy import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel
+from models.gpt2_circuit import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel
 from dataset.gt_gpt2 import GTDataset, load_or_generate_gt_data, create_two_digit_token_mapping, run_evaluation, filter_dataset_by_model_correctness
 
 
@@ -65,7 +65,7 @@ from datasets import Dataset, DatasetDict
 
 
 
-PRUNING_FACTOR = 0.001  # Keep this at 1.0 to keep math simple
+PRUNING_FACTOR = 0.01  # Keep this at 1.0 to keep math simple
 
 @dataclass
 class PruningConfig:
@@ -80,7 +80,7 @@ class PruningConfig:
     # If a lambda is too high, the gate dies instantly (instability).
     # If too low, it never closes.
     
-    depth_penalty_scaling: float = 0.1
+    depth_penalty_scaling: float = 0.0
     
     # 1. Heads: Moderate cost. We want to remove many, but they are useful.
     prune_attention_heads: bool = True
@@ -97,15 +97,15 @@ class PruningConfig:
     
     # 4. Attention Neurons: 
     prune_attention_neurons: bool = True
-    lambda_attention_neurons: float = 0.15
+    lambda_attention_neurons: float = 1.0   
 
     # Structure pruning (Blocks/Layers)
     # Usually easier to prune fine-grained first, then structure.
     prune_attention_blocks: bool = True
-    lambda_attention_blocks: float = 0.5
+    lambda_attention_blocks: float = 1.0
     
     prune_mlp_blocks: bool = True
-    lambda_mlp_blocks: float = 0.7 
+    lambda_mlp_blocks: float = 1.0 
     
     prune_full_layers: bool = False
     lambda_full_layers: float = 0.0
@@ -122,9 +122,9 @@ if __name__ == '__main__':
     # --- Configuration ---
     # (Same as before)
     MODEL_NAME = 'gpt2-xl'
-    NUM_EPOCHS = 250
+    NUM_EPOCHS = 500
     LEARNING_RATE = 5e-2
-    BATCH_SIZE = 16
+    BATCH_SIZE = 32
     MAX_SEQ_LEN = 32
     PROB_DIFF_BUDGET = 0.2
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -297,7 +297,7 @@ if __name__ == '__main__':
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
             
             # Weighted loss
-            kl_loss_weighted = kl_loss * 10.0
+            kl_loss_weighted = kl_loss * 10
             loss = kl_loss_weighted + sparsity_loss
             loss.backward()
             torch.nn.utils.clip_grad_norm_(gate_params, max_norm=1.0)

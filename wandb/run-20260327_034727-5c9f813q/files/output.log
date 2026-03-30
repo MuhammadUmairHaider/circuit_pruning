@@ -1,0 +1,1361 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/5c9f813q
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY (GPT-2)
+================================================================================
+Device: cuda
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4768.52it/s]
+GPT-2 model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4419.08it/s]
+Generated 200 IOI samples
+Generated 200 IOI samples
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions:   0%|                                                                                      | 0/7 [00:00<?, ?it/s]/home/exouser/circuit_pruning/dataset/ioi.py:326: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  "target_tokens": torch.tensor(target_tokens, dtype=torch.long),
+/home/exouser/circuit_pruning/dataset/ioi.py:327: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  "distractor_tokens": torch.tensor(distractor_tokens, dtype=torch.long),
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 11.78it/s]
+  -> Retained: 191/200 (95.50%)
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 18.74it/s]
+  -> Retained: 194/200 (97.00%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 17.11it/s]
+  -> Retained: 981/1000 (98.10%)
+Processed 191 valid samples from 191 total
+Processed 194 valid samples from 194 total
+Processed 981 valid samples from 981 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 6/6 [00:00<00:00, 28.49it/s]
+
+Processed 981 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      3.2719
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.5000
+   Tolerance: ±0.0500
+   Acceptable range: [0.4500, 0.5500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   0%|▎                                                                                         | 19/5000 [00:28<1:51:38,  1.34s/it]
+                                                                                                                                             
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  1.3343 (budget: 0.5000, gap: +0.8343)
+  Accuracy: 1.0000
+  Sparsity: 0.0397 (best: 0.0000)
+  Lambda:   1.285 → 1.346 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.8480 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  1.4126 (budget: 0.5000, gap: +0.9126)
+  Accuracy: 1.0000
+  Sparsity: 0.0368 (best: 0.0000)
+  Lambda:   1.660 → 1.724 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.7462 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  2.0534 (budget: 0.5000, gap: +1.5534)
+  Accuracy: 1.0000
+  Sparsity: 0.0360 (best: 0.0000)
+  Lambda:   2.046 → 2.111 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.6444 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 20 | Phase: warmup
+  KL Loss:  1.6240 (budget: 0.5000, gap: +1.1240)
+  Accuracy: 1.0000
+  Sparsity: 0.0358 (best: 0.0000)
+  Lambda:   2.435 → 2.500 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.5426 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 25 | Phase: warmup
+  KL Loss:  1.5046 (budget: 0.5000, gap: +1.0046)
+  Accuracy: 1.0000
+  Sparsity: 0.0359 (best: 0.0000)
+  Lambda:   2.825 → 2.890 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.4408 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 30 | Phase: warmup
+  KL Loss:  1.2896 (budget: 0.5000, gap: +0.7896)
+  Accuracy: 1.0000
+  Sparsity: 0.0363 (best: 0.0000)
+  Lambda:   3.215 → 3.280 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.3390 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 35 | Phase: warmup
+  KL Loss:  1.0844 (budget: 0.5000, gap: +0.5844)
+  Accuracy: 1.0000
+  Sparsity: 0.0359 (best: 0.0000)
+  Lambda:   3.605 → 3.670 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.2372 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 40 | Phase: warmup
+  KL Loss:  1.0912 (budget: 0.5000, gap: +0.5912)
+  Accuracy: 1.0000
+  Sparsity: 0.0366 (best: 0.0000)
+  Lambda:   3.995 → 4.060 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.1353 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 45 | Phase: warmup
+  KL Loss:  0.9997 (budget: 0.5000, gap: +0.4997)
+  Accuracy: 1.0000
+  Sparsity: 0.0368 (best: 0.0000)
+  Lambda:   4.385 → 4.450 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0335 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 50 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 50 | Phase: warmup
+  KL Loss:  1.2707 (budget: 0.5000, gap: +0.7707)
+  Accuracy: 1.0000
+  Sparsity: 0.0370 (best: 0.0000)
+  Lambda:   4.775 → 4.840 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 60 | Phase: warmup
+  KL Loss:  1.2915 (budget: 0.5000, gap: +0.7915)
+  Accuracy: 1.0000
+  Sparsity: 0.0406 (best: 0.0000)
+  Lambda:   5.490 → 5.555 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 70 | Phase: warmup
+  KL Loss:  1.3768 (budget: 0.5000, gap: +0.8768)
+  Accuracy: 1.0000
+  Sparsity: 0.0434 (best: 0.0000)
+  Lambda:   6.205 → 6.270 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 80 | Phase: warmup
+  KL Loss:  1.4022 (budget: 0.5000, gap: +0.9022)
+  Accuracy: 1.0000
+  Sparsity: 0.0474 (best: 0.0000)
+  Lambda:   6.920 → 6.985 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 90 | Phase: warmup
+  KL Loss:  2.4015 (budget: 0.5000, gap: +1.9015)
+  Accuracy: 1.0000
+  Sparsity: 0.0517 (best: 0.0000)
+  Lambda:   7.635 → 7.700 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 100 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 100 | Phase: warmup
+  KL Loss:  2.6381 (budget: 0.5000, gap: +2.1381)
+  Accuracy: 1.0000
+  Sparsity: 0.0587 (best: 0.0000)
+  Lambda:   8.350 → 8.415 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 120 | Phase: warmup
+  KL Loss:  3.3761 (budget: 0.5000, gap: +2.8761)
+  Accuracy: 1.0000
+  Sparsity: 0.0771 (best: 0.0000)
+  Lambda:   9.715 → 9.780 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 140 | Phase: warmup
+  KL Loss:  4.4549 (budget: 0.5000, gap: +3.9549)
+  Accuracy: 1.0000
+  Sparsity: 0.1016 (best: 0.0000)
+  Lambda:   11.080 → 11.145 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 150 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 160 | Phase: warmup
+  KL Loss:  5.4101 (budget: 0.5000, gap: +4.9101)
+  Accuracy: 1.0000
+  Sparsity: 0.1309 (best: 0.0000)
+  Lambda:   12.445 → 12.510 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 180 | Phase: recovery
+  KL Loss:  6.2431 (budget: 0.5000, gap: +5.7431)
+  Accuracy: 1.0000
+  Sparsity: 0.1691 (best: 0.0000)
+  Lambda:   13.810 → 10.162 (action: decrease)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+Epoch 183: LR 1.00e-03 → 9.70e-04 | λ 5.13 → 3.48 | decrease | recovery | KL 7.444
+Epoch 184: LR 9.70e-04 → 9.17e-04 | λ 3.48 → 2.27 | decrease | recovery | KL 7.738
+Epoch 185: LR 9.17e-04 → 8.47e-04 | λ 2.27 → 1.88 | decrease_gentle | recovery | KL 7.790
+Epoch 186: LR 8.47e-04 → 7.66e-04 | λ 1.88 → 1.55 | decrease_gentle | recovery | KL 8.045
+Epoch 187: LR 7.66e-04 → 6.77e-04 | λ 1.55 → 1.29 | decrease_gentle | recovery | KL 8.008
+Epoch 188: LR 6.77e-04 → 5.87e-04 | λ 1.29 → 1.07 | decrease_gentle | recovery | KL 7.997
+Epoch 189: LR 5.87e-04 → 4.96e-04 | λ 1.07 → 0.89 | decrease_gentle | recovery | KL 8.489
+Epoch 190: LR 4.96e-04 → 4.09e-04 | λ 0.89 → 0.74 | decrease_gentle | recovery | KL 8.203
+Epoch 191: LR 4.09e-04 → 3.27e-04 | λ 0.74 → 0.62 | decrease_gentle | recovery | KL 7.898
+Epoch 192: LR 3.27e-04 → 2.52e-04 | λ 0.62 → 0.52 | decrease_gentle | recovery | KL 7.944
+Epoch 193: LR 2.52e-04 → 1.84e-04 | λ 0.52 → 0.43 | decrease_gentle | recovery | KL 7.704
+Epoch 194: LR 1.84e-04 → 1.24e-04 | λ 0.43 → 0.36 | decrease_gentle | recovery | KL 7.814
+Epoch 195: LR 1.24e-04 → 1.00e-04 | λ 0.36 → 0.31 | decrease_gentle | recovery | KL 8.003
+[Checkpoint] Saved at epoch 200 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 200 | Phase: recovery
+  KL Loss:  6.3266 (budget: 0.5000, gap: +5.8266)
+  Accuracy: 1.0000
+  Sparsity: 0.1841 (best: 0.0000)
+  Lambda:   0.135 → 0.116 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 220 | Phase: recovery
+  KL Loss:  6.3324 (budget: 0.5000, gap: +5.8324)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.012 → 0.011 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 240 | Phase: recovery
+  KL Loss:  6.3661 (budget: 0.5000, gap: +5.8661)
+  Accuracy: 1.0000
+  Sparsity: 0.1850 (best: 0.0000)
+  Lambda:   0.002 → 0.002 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 250 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 260 | Phase: recovery
+  KL Loss:  6.4159 (budget: 0.5000, gap: +5.9159)
+  Accuracy: 1.0000
+  Sparsity: 0.1847 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 280 | Phase: recovery
+  KL Loss:  6.3260 (budget: 0.5000, gap: +5.8260)
+  Accuracy: 1.0000
+  Sparsity: 0.1831 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 300 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 300 | Phase: recovery
+  KL Loss:  6.3003 (budget: 0.5000, gap: +5.8003)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 320 | Phase: recovery
+  KL Loss:  6.3639 (budget: 0.5000, gap: +5.8639)
+  Accuracy: 1.0000
+  Sparsity: 0.1835 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 340 | Phase: recovery
+  KL Loss:  6.3107 (budget: 0.5000, gap: +5.8107)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 350 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 360 | Phase: recovery
+  KL Loss:  6.3636 (budget: 0.5000, gap: +5.8636)
+  Accuracy: 1.0000
+  Sparsity: 0.1842 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 380 | Phase: recovery
+  KL Loss:  6.4314 (budget: 0.5000, gap: +5.9314)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 400 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 400 | Phase: recovery
+  KL Loss:  6.3851 (budget: 0.5000, gap: +5.8851)
+  Accuracy: 1.0000
+  Sparsity: 0.1838 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 420 | Phase: recovery
+  KL Loss:  6.3444 (budget: 0.5000, gap: +5.8444)
+  Accuracy: 1.0000
+  Sparsity: 0.1837 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 440 | Phase: recovery
+  KL Loss:  6.2960 (budget: 0.5000, gap: +5.7960)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 450 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 460 | Phase: recovery
+  KL Loss:  6.2178 (budget: 0.5000, gap: +5.7178)
+  Accuracy: 1.0000
+  Sparsity: 0.1836 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 480 | Phase: recovery
+  KL Loss:  6.4874 (budget: 0.5000, gap: +5.9874)
+  Accuracy: 1.0000
+  Sparsity: 0.1835 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 500 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 500 | Phase: recovery
+  KL Loss:  6.2227 (budget: 0.5000, gap: +5.7227)
+  Accuracy: 1.0000
+  Sparsity: 0.1837 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 520 | Phase: recovery
+  KL Loss:  6.3395 (budget: 0.5000, gap: +5.8395)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 540 | Phase: recovery
+  KL Loss:  6.2751 (budget: 0.5000, gap: +5.7751)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 550 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 560 | Phase: recovery
+  KL Loss:  6.3554 (budget: 0.5000, gap: +5.8554)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 580 | Phase: recovery
+  KL Loss:  6.2867 (budget: 0.5000, gap: +5.7867)
+  Accuracy: 1.0000
+  Sparsity: 0.1840 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 600 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 600 | Phase: recovery
+  KL Loss:  6.4325 (budget: 0.5000, gap: +5.9325)
+  Accuracy: 1.0000
+  Sparsity: 0.1833 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 620 | Phase: recovery
+  KL Loss:  6.4178 (budget: 0.5000, gap: +5.9178)
+  Accuracy: 1.0000
+  Sparsity: 0.1838 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 640 | Phase: recovery
+  KL Loss:  6.2248 (budget: 0.5000, gap: +5.7248)
+  Accuracy: 1.0000
+  Sparsity: 0.1838 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 650 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 660 | Phase: recovery
+  KL Loss:  6.4268 (budget: 0.5000, gap: +5.9268)
+  Accuracy: 1.0000
+  Sparsity: 0.1851 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 680 | Phase: recovery
+  KL Loss:  6.4251 (budget: 0.5000, gap: +5.9251)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 700 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 700 | Phase: recovery
+  KL Loss:  6.3435 (budget: 0.5000, gap: +5.8435)
+  Accuracy: 1.0000
+  Sparsity: 0.1837 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 720 | Phase: recovery
+  KL Loss:  6.3701 (budget: 0.5000, gap: +5.8701)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 740 | Phase: recovery
+  KL Loss:  6.3430 (budget: 0.5000, gap: +5.8430)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 750 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 760 | Phase: recovery
+  KL Loss:  6.2374 (budget: 0.5000, gap: +5.7374)
+  Accuracy: 1.0000
+  Sparsity: 0.1842 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 780 | Phase: recovery
+  KL Loss:  6.1684 (budget: 0.5000, gap: +5.6684)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 800 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 800 | Phase: recovery
+  KL Loss:  6.3738 (budget: 0.5000, gap: +5.8738)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 820 | Phase: recovery
+  KL Loss:  6.3368 (budget: 0.5000, gap: +5.8368)
+  Accuracy: 1.0000
+  Sparsity: 0.1848 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 840 | Phase: recovery
+  KL Loss:  6.3680 (budget: 0.5000, gap: +5.8680)
+  Accuracy: 1.0000
+  Sparsity: 0.1842 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 850 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 860 | Phase: recovery
+  KL Loss:  6.2609 (budget: 0.5000, gap: +5.7609)
+  Accuracy: 1.0000
+  Sparsity: 0.1838 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 880 | Phase: recovery
+  KL Loss:  6.3021 (budget: 0.5000, gap: +5.8021)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 900 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 900 | Phase: recovery
+  KL Loss:  6.3263 (budget: 0.5000, gap: +5.8263)
+  Accuracy: 1.0000
+  Sparsity: 0.1838 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 920 | Phase: recovery
+  KL Loss:  6.3248 (budget: 0.5000, gap: +5.8248)
+  Accuracy: 1.0000
+  Sparsity: 0.1849 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 940 | Phase: recovery
+  KL Loss:  6.4124 (budget: 0.5000, gap: +5.9124)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 950 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 960 | Phase: recovery
+  KL Loss:  6.2702 (budget: 0.5000, gap: +5.7702)
+  Accuracy: 1.0000
+  Sparsity: 0.1847 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 980 | Phase: recovery
+  KL Loss:  6.4192 (budget: 0.5000, gap: +5.9192)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1000 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1000 | Phase: recovery
+  KL Loss:  6.2120 (budget: 0.5000, gap: +5.7120)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1020 | Phase: recovery
+  KL Loss:  6.3861 (budget: 0.5000, gap: +5.8861)
+  Accuracy: 1.0000
+  Sparsity: 0.1850 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1040 | Phase: recovery
+  KL Loss:  6.2656 (budget: 0.5000, gap: +5.7656)
+  Accuracy: 1.0000
+  Sparsity: 0.1840 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1050 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1060 | Phase: recovery
+  KL Loss:  6.2928 (budget: 0.5000, gap: +5.7928)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1080 | Phase: recovery
+  KL Loss:  6.3184 (budget: 0.5000, gap: +5.8184)
+  Accuracy: 1.0000
+  Sparsity: 0.1840 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1100 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1100 | Phase: recovery
+  KL Loss:  6.2697 (budget: 0.5000, gap: +5.7697)
+  Accuracy: 1.0000
+  Sparsity: 0.1853 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1120 | Phase: recovery
+  KL Loss:  6.2778 (budget: 0.5000, gap: +5.7778)
+  Accuracy: 1.0000
+  Sparsity: 0.1845 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1140 | Phase: recovery
+  KL Loss:  6.3219 (budget: 0.5000, gap: +5.8219)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1150 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1160 | Phase: recovery
+  KL Loss:  6.2851 (budget: 0.5000, gap: +5.7851)
+  Accuracy: 1.0000
+  Sparsity: 0.1841 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1180 | Phase: recovery
+  KL Loss:  6.3791 (budget: 0.5000, gap: +5.8791)
+  Accuracy: 1.0000
+  Sparsity: 0.1842 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1200 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1200 | Phase: recovery
+  KL Loss:  6.1995 (budget: 0.5000, gap: +5.6995)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1220 | Phase: recovery
+  KL Loss:  6.3640 (budget: 0.5000, gap: +5.8640)
+  Accuracy: 1.0000
+  Sparsity: 0.1848 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1240 | Phase: recovery
+  KL Loss:  6.2972 (budget: 0.5000, gap: +5.7972)
+  Accuracy: 1.0000
+  Sparsity: 0.1845 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1250 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1260 | Phase: recovery
+  KL Loss:  6.1876 (budget: 0.5000, gap: +5.6876)
+  Accuracy: 1.0000
+  Sparsity: 0.1849 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1280 | Phase: recovery
+  KL Loss:  6.3180 (budget: 0.5000, gap: +5.8180)
+  Accuracy: 1.0000
+  Sparsity: 0.1848 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1300 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1300 | Phase: recovery
+  KL Loss:  6.2423 (budget: 0.5000, gap: +5.7423)
+  Accuracy: 1.0000
+  Sparsity: 0.1855 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1320 | Phase: recovery
+  KL Loss:  6.2423 (budget: 0.5000, gap: +5.7423)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1340 | Phase: recovery
+  KL Loss:  6.2454 (budget: 0.5000, gap: +5.7454)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1350 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1360 | Phase: recovery
+  KL Loss:  6.1500 (budget: 0.5000, gap: +5.6500)
+  Accuracy: 1.0000
+  Sparsity: 0.1841 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1380 | Phase: recovery
+  KL Loss:  6.2359 (budget: 0.5000, gap: +5.7359)
+  Accuracy: 1.0000
+  Sparsity: 0.1845 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1400 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1400 | Phase: recovery
+  KL Loss:  6.2673 (budget: 0.5000, gap: +5.7673)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1420 | Phase: recovery
+  KL Loss:  6.2517 (budget: 0.5000, gap: +5.7517)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1440 | Phase: recovery
+  KL Loss:  6.2216 (budget: 0.5000, gap: +5.7216)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1450 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1460 | Phase: recovery
+  KL Loss:  6.1659 (budget: 0.5000, gap: +5.6659)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1480 | Phase: recovery
+  KL Loss:  6.2914 (budget: 0.5000, gap: +5.7914)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1500 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1500 | Phase: recovery
+  KL Loss:  6.1136 (budget: 0.5000, gap: +5.6136)
+  Accuracy: 1.0000
+  Sparsity: 0.1854 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1520 | Phase: recovery
+  KL Loss:  6.2635 (budget: 0.5000, gap: +5.7635)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1540 | Phase: recovery
+  KL Loss:  6.2633 (budget: 0.5000, gap: +5.7633)
+  Accuracy: 1.0000
+  Sparsity: 0.1830 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1550 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1560 | Phase: recovery
+  KL Loss:  6.1173 (budget: 0.5000, gap: +5.6173)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1580 | Phase: recovery
+  KL Loss:  6.0121 (budget: 0.5000, gap: +5.5121)
+  Accuracy: 1.0000
+  Sparsity: 0.1849 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1600 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1600 | Phase: recovery
+  KL Loss:  6.2025 (budget: 0.5000, gap: +5.7025)
+  Accuracy: 1.0000
+  Sparsity: 0.1845 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1620 | Phase: recovery
+  KL Loss:  6.3673 (budget: 0.5000, gap: +5.8673)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1640 | Phase: recovery
+  KL Loss:  6.2294 (budget: 0.5000, gap: +5.7294)
+  Accuracy: 1.0000
+  Sparsity: 0.1834 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1650 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1660 | Phase: recovery
+  KL Loss:  6.1401 (budget: 0.5000, gap: +5.6401)
+  Accuracy: 1.0000
+  Sparsity: 0.1848 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1680 | Phase: recovery
+  KL Loss:  6.1437 (budget: 0.5000, gap: +5.6437)
+  Accuracy: 1.0000
+  Sparsity: 0.1834 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1700 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1700 | Phase: recovery
+  KL Loss:  6.0694 (budget: 0.5000, gap: +5.5694)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1720 | Phase: recovery
+  KL Loss:  6.2138 (budget: 0.5000, gap: +5.7138)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1740 | Phase: recovery
+  KL Loss:  6.1501 (budget: 0.5000, gap: +5.6501)
+  Accuracy: 1.0000
+  Sparsity: 0.1848 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1750 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1760 | Phase: recovery
+  KL Loss:  6.1980 (budget: 0.5000, gap: +5.6980)
+  Accuracy: 1.0000
+  Sparsity: 0.1832 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1780 | Phase: recovery
+  KL Loss:  6.1325 (budget: 0.5000, gap: +5.6325)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1800 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1800 | Phase: recovery
+  KL Loss:  6.0736 (budget: 0.5000, gap: +5.5736)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1820 | Phase: recovery
+  KL Loss:  6.0213 (budget: 0.5000, gap: +5.5213)
+  Accuracy: 1.0000
+  Sparsity: 0.1848 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1840 | Phase: recovery
+  KL Loss:  6.1851 (budget: 0.5000, gap: +5.6851)
+  Accuracy: 1.0000
+  Sparsity: 0.1833 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1850 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1860 | Phase: recovery
+  KL Loss:  6.0765 (budget: 0.5000, gap: +5.5765)
+  Accuracy: 1.0000
+  Sparsity: 0.1845 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1880 | Phase: recovery
+  KL Loss:  6.0950 (budget: 0.5000, gap: +5.5950)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1900 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1900 | Phase: recovery
+  KL Loss:  6.0205 (budget: 0.5000, gap: +5.5205)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1920 | Phase: recovery
+  KL Loss:  6.0727 (budget: 0.5000, gap: +5.5727)
+  Accuracy: 1.0000
+  Sparsity: 0.1840 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1940 | Phase: recovery
+  KL Loss:  6.0055 (budget: 0.5000, gap: +5.5055)
+  Accuracy: 1.0000
+  Sparsity: 0.1845 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 1950 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 1960 | Phase: recovery
+  KL Loss:  6.1288 (budget: 0.5000, gap: +5.6288)
+  Accuracy: 1.0000
+  Sparsity: 0.1837 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 1980 | Phase: recovery
+  KL Loss:  6.0710 (budget: 0.5000, gap: +5.5710)
+  Accuracy: 1.0000
+  Sparsity: 0.1841 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2000 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2000 | Phase: recovery
+  KL Loss:  5.9252 (budget: 0.5000, gap: +5.4252)
+  Accuracy: 1.0000
+  Sparsity: 0.1842 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2020 | Phase: recovery
+  KL Loss:  6.0689 (budget: 0.5000, gap: +5.5689)
+  Accuracy: 1.0000
+  Sparsity: 0.1837 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2040 | Phase: recovery
+  KL Loss:  5.9148 (budget: 0.5000, gap: +5.4148)
+  Accuracy: 1.0000
+  Sparsity: 0.1837 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2050 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2060 | Phase: recovery
+  KL Loss:  5.8549 (budget: 0.5000, gap: +5.3549)
+  Accuracy: 1.0000
+  Sparsity: 0.1844 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2080 | Phase: recovery
+  KL Loss:  5.9779 (budget: 0.5000, gap: +5.4779)
+  Accuracy: 1.0000
+  Sparsity: 0.1848 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2100 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2100 | Phase: recovery
+  KL Loss:  5.7826 (budget: 0.5000, gap: +5.2826)
+  Accuracy: 1.0000
+  Sparsity: 0.1837 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2120 | Phase: recovery
+  KL Loss:  5.9149 (budget: 0.5000, gap: +5.4149)
+  Accuracy: 1.0000
+  Sparsity: 0.1834 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2140 | Phase: recovery
+  KL Loss:  6.0769 (budget: 0.5000, gap: +5.5769)
+  Accuracy: 1.0000
+  Sparsity: 0.1828 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2150 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2160 | Phase: recovery
+  KL Loss:  5.9364 (budget: 0.5000, gap: +5.4364)
+  Accuracy: 1.0000
+  Sparsity: 0.1835 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2180 | Phase: recovery
+  KL Loss:  5.8633 (budget: 0.5000, gap: +5.3633)
+  Accuracy: 1.0000
+  Sparsity: 0.1841 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2200 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2200 | Phase: recovery
+  KL Loss:  5.7846 (budget: 0.5000, gap: +5.2846)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2220 | Phase: recovery
+  KL Loss:  5.9809 (budget: 0.5000, gap: +5.4809)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2240 | Phase: recovery
+  KL Loss:  5.8882 (budget: 0.5000, gap: +5.3882)
+  Accuracy: 1.0000
+  Sparsity: 0.1840 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2250 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2260 | Phase: recovery
+  KL Loss:  5.8725 (budget: 0.5000, gap: +5.3725)
+  Accuracy: 1.0000
+  Sparsity: 0.1846 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2280 | Phase: recovery
+  KL Loss:  5.7349 (budget: 0.5000, gap: +5.2349)
+  Accuracy: 1.0000
+  Sparsity: 0.1837 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2300 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2300 | Phase: recovery
+  KL Loss:  5.8161 (budget: 0.5000, gap: +5.3161)
+  Accuracy: 1.0000
+  Sparsity: 0.1832 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2320 | Phase: recovery
+  KL Loss:  5.7657 (budget: 0.5000, gap: +5.2657)
+  Accuracy: 1.0000
+  Sparsity: 0.1833 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2340 | Phase: recovery
+  KL Loss:  5.8541 (budget: 0.5000, gap: +5.3541)
+  Accuracy: 1.0000
+  Sparsity: 0.1838 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2350 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2360 | Phase: recovery
+  KL Loss:  5.8221 (budget: 0.5000, gap: +5.3221)
+  Accuracy: 1.0000
+  Sparsity: 0.1833 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2380 | Phase: recovery
+  KL Loss:  5.7938 (budget: 0.5000, gap: +5.2938)
+  Accuracy: 1.0000
+  Sparsity: 0.1843 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2400 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2400 | Phase: recovery
+  KL Loss:  5.8900 (budget: 0.5000, gap: +5.3900)
+  Accuracy: 1.0000
+  Sparsity: 0.1836 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2420 | Phase: recovery
+  KL Loss:  5.9035 (budget: 0.5000, gap: +5.4035)
+  Accuracy: 1.0000
+  Sparsity: 0.1839 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2440 | Phase: recovery
+  KL Loss:  5.6337 (budget: 0.5000, gap: +5.1337)
+  Accuracy: 1.0000
+  Sparsity: 0.1836 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 2450 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 2460 | Phase: recovery
+  KL Loss:  5.8975 (budget: 0.5000, gap: +5.3975)
+  Accuracy: 1.0000
+  Sparsity: 0.1831 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 2480 | Phase: recovery
+  KL Loss:  5.9101 (budget: 0.5000, gap: +5.4101)
+  Accuracy: 1.0000
+  Sparsity: 0.1825 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1586, in <module>
+    optimizer.step()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 526, in wrapper
+    out = func(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 81, in _use_grad
+    ret = func(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/optim/adam.py", line 238, in step
+    has_complex = self._init_group(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/optim/adam.py", line 152, in _init_group
+    has_complex |= torch.is_complex(p)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1586, in <module>
+    optimizer.step()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 526, in wrapper
+    out = func(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 81, in _use_grad
+    ret = func(*args, **kwargs)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/optim/adam.py", line 238, in step
+    has_complex = self._init_group(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/optim/adam.py", line 152, in _init_group
+    has_complex |= torch.is_complex(p)
+KeyboardInterrupt

@@ -1,0 +1,91 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/4q0607sk
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY (GPT-2)
+================================================================================
+Device: cuda
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 5113.95it/s]
+GPT-2 model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4459.65it/s]
+Generated 200 IOI samples
+Generated 200 IOI samples
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions:   0%|                                                                                      | 0/7 [00:00<?, ?it/s]/home/exouser/circuit_pruning/dataset/ioi.py:326: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  "target_tokens": torch.tensor(target_tokens, dtype=torch.long),
+/home/exouser/circuit_pruning/dataset/ioi.py:327: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  "distractor_tokens": torch.tensor(distractor_tokens, dtype=torch.long),
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 11.71it/s]
+  -> Retained: 196/200 (98.00%)
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 18.76it/s]
+  -> Retained: 196/200 (98.00%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 17.24it/s]
+  -> Retained: 978/1000 (97.80%)
+Processed 196 valid samples from 196 total
+Processed 196 valid samples from 196 total
+Processed 978 valid samples from 978 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 28.11it/s]
+
+Processed 978 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      3.2893
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.5000
+   Tolerance: ±0.0500
+   Acceptable range: [0.4500, 0.5500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+
+[Checkpoint] Resuming from checkpoints_gpt2_kl_budget/checkpoint.pt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1503, in <module>
+    ckpt = torch.load(checkpoint_path, map_location=DEVICE)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/serialization.py", line 1548, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m.
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray.scalar was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray.scalar])` or the `torch.serialization.safe_globals([numpy._core.multiarray.scalar])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1503, in <module>
+    ckpt = torch.load(checkpoint_path, map_location=DEVICE)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/serialization.py", line 1548, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m.
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray.scalar was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray.scalar])` or the `torch.serialization.safe_globals([numpy._core.multiarray.scalar])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.

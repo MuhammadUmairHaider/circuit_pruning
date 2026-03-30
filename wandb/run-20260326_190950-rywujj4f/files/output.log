@@ -1,0 +1,320 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/rywujj4f
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Flash Attention: False
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 4992.40it/s]
+Llama model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 146/146 [00:00<00:00, 4312.54it/s]
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 200 IOI samples
+Filtered 820 single-token names from 1928 total names
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00,  9.94it/s]
+  -> Retained: 200/200 (100.00%)
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 21.20it/s]
+  -> Retained: 200/200 (100.00%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 19.84it/s]
+  -> Retained: 999/1000 (99.90%)
+Processed 200 valid samples from 200 total
+Processed 200 valid samples from 200 total
+Processed 999 valid samples from 999 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 30.20it/s]
+
+Processed 999 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      5.8462
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.6000
+   Tolerance: ±0.0500
+   Acceptable range: [0.5500, 0.6500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   0%|▌                                                                                                                                                                                                             | 14/5000 [00:30<2:31:34,  1.82s/it]
+                                                                                                                                                                                                                                                                 
+
+Epoch 2: LR 1.03e-03 → 1.05e-03 | λ 0.70 → 0.75 | warmup | warmup | KL 0.406
+Epoch 3: LR 1.05e-03 → 1.07e-03 | λ 0.75 → 0.81 | warmup | warmup | KL 0.375
+Epoch 4: LR 1.07e-03 → 1.09e-03 | λ 0.81 → 0.87 | warmup | warmup | KL 0.313
+Epoch 5: LR 1.09e-03 → 1.10e-03 | λ 0.87 → 0.92 | warmup | warmup | KL 0.339
+
+[Scheduler] Epoch 5 | Phase: exploration
+  KL Loss:  0.2990 (budget: 0.6000, gap: -0.3010)
+  Accuracy: 1.0000
+  Sparsity: 0.0394 (best: 0.0000)
+  Lambda:   0.925 → 0.774 (action: warmup)
+  LR:       1.11e-03
+  TaskLambda: 0.9621 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 10 | Phase: exploration
+  KL Loss:  0.2973 (budget: 0.6000, gap: -0.3027)
+  Accuracy: 1.0000
+  Sparsity: 0.0368 (best: 0.0000)
+  Lambda:   1.083 → 0.931 (action: warmup)
+  LR:       1.14e-03
+  TaskLambda: 0.9392 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 15 | Phase: exploration
+  KL Loss:  0.2746 (budget: 0.6000, gap: -0.3254)
+  Accuracy: 1.0000
+  Sparsity: 0.0361 (best: 0.0000)
+  Lambda:   1.251 → 1.088 (action: warmup)
+  LR:       1.15e-03
+  TaskLambda: 0.9170 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 20 | Phase: exploration
+  KL Loss:  0.2749 (budget: 0.6000, gap: -0.3251)
+  Accuracy: 1.0000
+  Sparsity: 0.0359 (best: 0.0000)
+  Lambda:   1.411 → 1.249 (action: warmup)
+  LR:       1.15e-03
+  TaskLambda: 0.8947 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 25 | Phase: exploration
+  KL Loss:  0.2372 (budget: 0.6000, gap: -0.3628)
+  Accuracy: 1.0000
+  Sparsity: 0.0363 (best: 0.0000)
+  Lambda:   1.573 → 1.392 (action: warmup)
+  LR:       1.15e-03
+  TaskLambda: 0.8734 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 30 | Phase: exploration
+  KL Loss:  0.2577 (budget: 0.6000, gap: -0.3423)
+  Accuracy: 1.0000
+  Sparsity: 0.0362 (best: 0.0000)
+  Lambda:   1.717 → 1.545 (action: warmup)
+  LR:       1.15e-03
+  TaskLambda: 0.8516 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 35 | Phase: exploration
+  KL Loss:  0.2732 (budget: 0.6000, gap: -0.3268)
+  Accuracy: 1.0000
+  Sparsity: 0.0362 (best: 0.0000)
+  Lambda:   1.870 → 1.707 (action: warmup)
+  LR:       1.15e-03
+  TaskLambda: 0.8293 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 40 | Phase: exploration
+  KL Loss:  0.2279 (budget: 0.6000, gap: -0.3721)
+  Accuracy: 1.0000
+  Sparsity: 0.0365 (best: 0.0000)
+  Lambda:   2.032 → 1.846 (action: warmup)
+  LR:       1.15e-03
+  TaskLambda: 0.8083 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 45 | Phase: exploration
+  KL Loss:  0.2427 (budget: 0.6000, gap: -0.3573)
+  Accuracy: 1.0000
+  Sparsity: 0.0365 (best: 0.0000)
+  Lambda:   2.171 → 1.992 (action: warmup)
+  LR:       1.15e-03
+  TaskLambda: 0.7868 (adaptive, target=0.950)
+  ✅ Within budget
+[Checkpoint] Saved at epoch 50 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.6kl_dual_ascent/checkpoint.pt
+
+[Scheduler] Epoch 50 | Phase: exploration
+  KL Loss:  0.2477 (budget: 0.6000, gap: -0.3523)
+  Accuracy: 1.0000
+  Sparsity: 0.0366 (best: 0.0000)
+  Lambda:   2.317 → 2.141 (action: warmup)
+  LR:       1.15e-03
+  TaskLambda: 0.7652 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 60 | Phase: exploration
+  KL Loss:  0.2621 (budget: 0.6000, gap: -0.3379)
+  Accuracy: 1.0000
+  Sparsity: 0.0397 (best: 0.0000)
+  Lambda:   2.791 → 2.622 (action: warmup)
+  LR:       1.18e-03
+  TaskLambda: 0.7433 (adaptive, target=0.950)
+  ✅ Within budget
+Epoch 61: LR 1.18e-03 → 1.21e-03 | λ 2.62 → 2.69 | warmup | warmup | KL 0.420
+Epoch 62: LR 1.21e-03 → 1.23e-03 | λ 2.69 → 2.75 | warmup | warmup | KL 0.375
+Epoch 63: LR 1.23e-03 → 1.25e-03 | λ 2.75 → 2.82 | warmup | warmup | KL 0.244
+Epoch 64: LR 1.25e-03 → 1.27e-03 | λ 2.82 → 2.88 | warmup | warmup | KL 0.234
+
+[Scheduler] Epoch 70 | Phase: exploration
+  KL Loss:  0.2439 (budget: 0.6000, gap: -0.3561)
+  Accuracy: 1.0000
+  Sparsity: 0.0411 (best: 0.0000)
+  Lambda:   3.272 → 3.094 (action: warmup)
+  LR:       1.35e-03
+  TaskLambda: 0.7217 (adaptive, target=0.950)
+  ✅ Within budget
+Epoch 71: LR 1.35e-03 → 1.38e-03 | λ 3.09 → 3.16 | warmup | warmup | KL 0.396
+Epoch 72: LR 1.38e-03 → 1.41e-03 | λ 3.16 → 3.22 | warmup | warmup | KL 0.360
+Epoch 73: LR 1.41e-03 → 1.43e-03 | λ 3.22 → 3.29 | warmup | warmup | KL 0.346
+Epoch 74: LR 1.43e-03 → 1.45e-03 | λ 3.29 → 3.35 | warmup | warmup | KL 0.322
+
+[Scheduler] Epoch 80 | Phase: exploration
+  KL Loss:  0.2737 (budget: 0.6000, gap: -0.3263)
+  Accuracy: 1.0000
+  Sparsity: 0.0438 (best: 0.0000)
+  Lambda:   3.744 → 3.581 (action: warmup)
+  LR:       1.55e-03
+  TaskLambda: 0.6994 (adaptive, target=0.950)
+  ✅ Within budget
+Epoch 81: LR 1.55e-03 → 1.59e-03 | λ 3.58 → 3.65 | warmup | warmup | KL 0.491
+Epoch 82: LR 1.59e-03 → 1.62e-03 | λ 3.65 → 3.71 | warmup | warmup | KL 0.432
+Epoch 83: LR 1.62e-03 → 1.64e-03 | λ 3.71 → 3.78 | warmup | warmup | KL 0.289
+Epoch 84: LR 1.64e-03 → 1.66e-03 | λ 3.78 → 3.84 | warmup | warmup | KL 0.360
+
+[Scheduler] Epoch 90 | Phase: exploration
+  KL Loss:  0.3090 (budget: 0.6000, gap: -0.2910)
+  Accuracy: 1.0000
+  Sparsity: 0.0484 (best: 0.0000)
+  Lambda:   4.231 → 4.086 (action: warmup)
+  LR:       1.73e-03
+  TaskLambda: 0.6761 (adaptive, target=0.950)
+  ✅ Within budget
+[Checkpoint] Saved at epoch 100 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.6kl_dual_ascent/checkpoint.pt
+
+[Scheduler] Epoch 100 | Phase: exploration
+  KL Loss:  0.3548 (budget: 0.6000, gap: -0.2452)
+  Accuracy: 1.0000
+  Sparsity: 0.0562 (best: 0.0000)
+  Lambda:   4.736 → 4.613 (action: warmup)
+  LR:       1.74e-03
+  TaskLambda: 0.6516 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 120 | Phase: exploration
+  KL Loss:  0.5418 (budget: 0.6000, gap: -0.0582)
+  Accuracy: 1.0000
+  Sparsity: 0.0896 (best: 0.0000)
+  Lambda:   5.913 → 5.884 (action: warmup)
+  LR:       1.74e-03
+  TaskLambda: 0.6218 (adaptive, target=0.950)
+  ✅ Within budget
+
+[Scheduler] Epoch 140 | Phase: recovery
+  KL Loss:  0.7341 (budget: 0.6000, gap: +0.1341)
+  Accuracy: 0.9990
+  Sparsity: 0.1579 (best: 0.0000)
+  Lambda:   7.184 → 7.251 (action: warmup)
+  LR:       1.74e-03
+  TaskLambda: 0.5900 (adaptive, target=0.950)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 150 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.6kl_dual_ascent/checkpoint.pt
+
+[Scheduler] Epoch 160 | Phase: recovery
+  KL Loss:  0.9943 (budget: 0.6000, gap: +0.3943)
+  Accuracy: 0.7992
+  Sparsity: 0.2899 (best: 0.0000)
+  Lambda:   8.551 → 8.748 (action: decrease)
+  LR:       1.74e-03
+  TaskLambda: 0.6936 (adaptive, target=0.950)
+  ⚠️  Exceeds budget
+Epoch 161: LR 1.74e-03 → 1.69e-03 | λ 8.75 → 6.44 | decrease | recovery | KL 0.997
+Epoch 162: LR 1.69e-03 → 1.60e-03 | λ 6.44 → 4.64 | decrease | recovery | KL 1.014
+Epoch 163: LR 1.60e-03 → 1.48e-03 | λ 4.64 → 4.24 | decrease_gentle | recovery | KL 1.000
+Epoch 164: LR 1.48e-03 → 1.33e-03 | λ 4.24 → 3.88 | decrease_gentle | recovery | KL 1.026
+Epoch 165: LR 1.33e-03 → 1.18e-03 | λ 3.88 → 3.56 | decrease_gentle | recovery | KL 1.022
+Epoch 166: LR 1.18e-03 → 1.02e-03 | λ 3.56 → 3.27 | decrease_gentle | recovery | KL 1.026
+Epoch 167: LR 1.02e-03 → 8.66e-04 | λ 3.27 → 3.00 | decrease_gentle | recovery | KL 1.008
+Epoch 168: LR 8.66e-04 → 7.14e-04 | λ 3.00 → 2.76 | decrease_gentle | recovery | KL 1.014
+Epoch 169: LR 7.14e-04 → 5.71e-04 | λ 2.76 → 2.54 | decrease_gentle | recovery | KL 1.020
+Epoch 170: LR 5.71e-04 → 4.39e-04 | λ 2.54 → 2.35 | decrease_gentle | recovery | KL 1.013
+Epoch 171: LR 4.39e-04 → 3.21e-04 | λ 2.35 → 2.16 | decrease_gentle | recovery | KL 1.011
+Epoch 172: LR 3.21e-04 → 2.17e-04 | λ 2.16 → 2.00 | decrease_gentle | recovery | KL 1.008
+Epoch 173: LR 2.17e-04 → 1.27e-04 | λ 2.00 → 1.85 | decrease_gentle | recovery | KL 1.006
+Epoch 174: LR 1.27e-04 → 1.00e-04 | λ 1.85 → 1.71 | decrease_gentle | recovery | KL 1.016
+
+[Scheduler] Epoch 180 | Phase: recovery
+  KL Loss:  1.0261 (budget: 0.6000, gap: +0.4261)
+  Accuracy: 0.6394
+  Sparsity: 0.3613 (best: 0.0000)
+  Lambda:   1.072 → 1.286 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 0.9137 (adaptive, target=0.950)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 200 -> ./results/ioi_kl_budget_final_1B_with_blocks_0.6kl_dual_ascent/checkpoint.pt
+
+[Scheduler] Epoch 200 | Phase: recovery
+  KL Loss:  1.0125 (budget: 0.6000, gap: +0.4125)
+  Accuracy: 0.5115
+  Sparsity: 0.3631 (best: 0.0000)
+  Lambda:   0.294 → 0.501 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 1.2246 (adaptive, target=0.950)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 220 | Phase: recovery
+  KL Loss:  1.0213 (budget: 0.6000, gap: +0.4213)
+  Accuracy: 0.4092
+  Sparsity: 0.3635 (best: 0.0000)
+  Lambda:   0.120 → 0.331 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 1.6080 (adaptive, target=0.950)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 240 | Phase: recovery
+  KL Loss:  1.0184 (budget: 0.6000, gap: +0.4184)
+  Accuracy: 0.3274
+  Sparsity: 0.3632 (best: 0.0000)
+  Lambda:   0.082 → 0.292 (action: decrease_gentle)
+  LR:       1.00e-04
+  TaskLambda: 2.0494 (adaptive, target=0.950)
+  ⚠️  Exceeds budget
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1606, in <module>
+    loss.backward()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/_tensor.py", line 630, in backward
+    torch.autograd.backward(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/autograd/__init__.py", line 364, in backward
+    _engine_run_backward(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/autograd/graph.py", line 865, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_llama_kl_budget.py", line 1606, in <module>
+    loss.backward()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/_tensor.py", line 630, in backward
+    torch.autograd.backward(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/autograd/__init__.py", line 364, in backward
+    _engine_run_backward(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/autograd/graph.py", line 865, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt

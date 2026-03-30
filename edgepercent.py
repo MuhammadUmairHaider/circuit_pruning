@@ -109,22 +109,24 @@ def calculate_pruned_edges(pruning_summary: dict):
 
 # Paste your summary table here
 summary_table = """
-📍 DETAILED LAYER REPORT:
-📍 DETAILED LAYER REPORT:
 Layer  | Status   | Attn Block  | MLP Block  | Attn Heads   | Attn Neurons    | MLP Hidden      | MLP Output     
 -----------------------------------------------------------------------------------------------------------------
-0      | Active   | Active      | Active     | 9/12         | 299/768         | 2120/3072       | 732/768        
-1      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1588/3072       | 635/768        
-2      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-3      | Active   | Active      | Pruned     | 6/12         | 272/768         | 0/3072          | 0/768          
-4      | Active   | Pruned      | Pruned     | 0/12         | 0/768           | 0/3072          | 0/768          
-5      | Active   | Active      | Active     | 3/12         | 138/768         | 1513/3072       | 604/768        
-6      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1495/3072       | 595/768        
-7      | Active   | Active      | Pruned     | 5/12         | 247/768         | 0/3072          | 0/768          
-8      | Active   | Pruned      | Active     | 0/12         | 0/768           | 1454/3072       | 562/768        
-9      | Active   | Active      | Pruned     | 4/12         | 189/768         | 0/3072          | 0/768          
-10     | Active   | Active      | Pruned     | 7/12         | 276/768         | 0/3072          | 0/768          
-11     | Active   | Pruned      | Active     | 0/12         | 0/768           | 1565/3072       | 571/768"""
+0      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 5095/8192       | 1097/2048      
+1      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2523/8192       | 422/2048       
+2      | Active   | Active      | Active     | 3/32         | 89/2048         | 2180/8192       | 619/2048       
+3      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 2137/8192       | 563/2048       
+4      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+5      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+6      | Active   | Pruned      | Pruned     | 0/32         | 0/2048          | 0/8192          | 0/2048         
+7      | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1969/8192       | 619/2048       
+8      | Active   | Active      | Active     | 4/32         | 169/2048        | 2285/8192       | 986/2048       
+9      | Active   | Active      | Active     | 10/32        | 397/2048        | 2498/8192       | 1025/2048      
+10     | Active   | Active      | Active     | 8/32         | 310/2048        | 2839/8192       | 974/2048       
+11     | Active   | Active      | Active     | 10/32        | 436/2048        | 2396/8192       | 738/2048       
+12     | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1778/8192       | 523/2048       
+13     | Active   | Pruned      | Active     | 0/32         | 0/2048          | 1619/8192       | 619/2048       
+14     | Active   | Active      | Active     | 14/32        | 756/2048        | 1977/8192       | 988/2048       
+15     | Active   | Active      | Active     | 15/32        | 725/2048        | 2419/8192       | 1180/2048      | 571/768"""
 
 # Parse the table and run the calculation
 parsed_summary = parse_summary_table(summary_table)

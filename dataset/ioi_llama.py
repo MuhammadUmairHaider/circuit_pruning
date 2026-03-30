@@ -360,14 +360,14 @@ def run_evaluation(
                     end_pos = min(t_end, valid_length)
 
                     if t_start < end_pos:
-                        model_logits = outputs.logits[i, t_start:end_pos, :]
-                        full_logits = full_outputs.logits[i, t_start:end_pos, :]
+                        model_logits = outputs.logits[i, t_start]
+                        full_logits = full_outputs.logits[i, t_start]
 
                         kl = F.kl_div(
-                            F.log_softmax(full_logits, dim=-1),
                             F.log_softmax(model_logits, dim=-1),
+                            F.log_softmax(full_logits, dim=-1),
                             log_target=True,
-                            reduction='batchmean'
+                            reduction='sum'
                         ).item()
 
                         total_kl += kl

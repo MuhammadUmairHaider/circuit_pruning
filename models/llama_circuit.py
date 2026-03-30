@@ -674,8 +674,10 @@ class PrunableLlamaForCausalLM(LlamaForCausalLM):
             if self.pruning_config.sparsity_warmup_steps > 0 else 1.0
         )
 
+        density_count = 0
+
         def add_weighted(term_key, raw_loss, lam, layer_idx=None):
-            nonlocal total_loss
+            nonlocal total_loss, density_count
             depth_mult = 1.0
             if layer_idx is not None and self.pruning_config.depth_penalty_scaling > 0:
                 n_layers = len(self.model.layers)
@@ -684,6 +686,7 @@ class PrunableLlamaForCausalLM(LlamaForCausalLM):
 
             term_loss = lam * warmup_mult * depth_mult * raw_loss
             total_loss = total_loss + term_loss
+            density_count += 1
 
             if term_key not in losses:
                 losses[term_key] = 0.0
@@ -723,5 +726,5 @@ class PrunableLlamaForCausalLM(LlamaForCausalLM):
                 add_weighted('mlp_output', block.mlp.output_gates.get_sparsity_loss(),
                              self.pruning_config.lambda_mlp_output, layer_idx=i)
 
-        losses['total_sparsity'] = total_loss
+        losses['total_sparsity'] = total_loss / density_count if density_count > 0 else total_loss
         return losses

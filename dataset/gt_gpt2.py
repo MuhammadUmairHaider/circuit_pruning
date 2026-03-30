@@ -50,7 +50,7 @@ def convert_disk_sample_to_gt_format(disk_sample):
     }
 
 def load_or_generate_gt_data(
-    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/data/datasets/gt_gen",
+    dataset_path: str = "/home/exouser/circuit_pruning/data/datasets/gt",
     split: str = "train",
     num_samples: Optional[int] = None
 ) -> List[Dict]:

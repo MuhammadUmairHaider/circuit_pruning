@@ -1,4 +1,6 @@
 import random
+import json
+import os
 from typing import List, Dict, Optional, Tuple
 import torch
 from torch.utils.data import Dataset
@@ -7,7 +9,6 @@ from tqdm import tqdm
 import torch.nn.functional as F
 import torch.nn as nn
 from datasets import load_from_disk
-import os
 
 # ==============================================================================
 # DATASET AND EVALUATION (ALIGNED WITH WANG ET AL., 2023)
@@ -49,6 +50,79 @@ ABBA_TEMPLATES = [
     "The {PLACE} {A} and {B} went to had a {OBJECT}. {B} gave it to {A}",
     "Friends {A} and {B} found a {OBJECT} at the {PLACE}. {B} gave it to {A}",
 ]
+
+PLACES = [
+    "store", "market", "hospital", "school", "park", "library", "beach",
+    "restaurant", "airport", "station", "office", "church", "gym", "zoo",
+    "museum", "theater", "garden", "mall", "hotel", "cafe"
+]
+
+OBJECTS = [
+    "ring", "kiss", "bone", "basketball", "book", "drink", "necklace",
+    "computer", "letter", "ball", "guitar", "pen", "phone", "cake",
+    "flower", "hat", "bottle", "toy", "watch", "key"
+]
+
+
+def load_names(names_path: Optional[str] = None) -> List[str]:
+    """Load the names list from names.json."""
+    if names_path is None:
+        names_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "names.json")
+    with open(names_path, 'r') as f:
+        names_data = json.load(f)
+    all_names = names_data.get("girls", []) + names_data.get("boys", [])
+    return list(set(all_names))
+
+
+def generate_ioi_data(
+    num_samples: int,
+    tokenizer,
+    names_path: Optional[str] = None,
+    seed: int = 42,
+) -> List[Dict]:
+    """
+    Generate IOI data samples on-the-fly.
+
+    Corruption strategy: replace name A with name B so the corrupted sentence
+    has B appearing twice. This removes the indirect object signal.
+
+    Returns list of dicts with keys:
+        - sentence, corrupted_sentence, a, b, ioi_sentences, corr_ioi_sentences
+    """
+    random.seed(seed)
+
+    all_names = load_names(names_path)
+
+    if len(all_names) < 2:
+        raise ValueError(f"Not enough names. Found {len(all_names)}")
+
+    all_templates = BABA_TEMPLATES + ABBA_TEMPLATES
+    samples = []
+
+    for _ in range(num_samples):
+        name_a, name_b = random.sample(all_names, 2)
+        template = random.choice(all_templates)
+        place = random.choice(PLACES)
+        obj = random.choice(OBJECTS)
+
+        sentence = template.format(A=name_a, B=name_b, PLACE=place, OBJECT=obj)
+        corrupted_sentence = template.format(A=name_b, B=name_b, PLACE=place, OBJECT=obj)
+
+        order = "baba" if template in BABA_TEMPLATES else "abba"
+
+        samples.append({
+            "sentence": sentence,
+            "corrupted_sentence": corrupted_sentence,
+            "ioi_sentences": sentence,
+            "corr_ioi_sentences": corrupted_sentence,
+            "a": name_a,
+            "b": name_b,
+            "template_order": order,
+        })
+
+    print(f"Generated {len(samples)} IOI samples")
+    return samples
+
 
 def convert_disk_sample_to_ioi_format(disk_sample):
     """Convert a sample from the disk dataset format to the IOI format expected by the code"""
@@ -119,7 +193,7 @@ def find_template(string: str) -> Optional[Dict[str, str]]:
     return None
 
 def load_or_generate_ioi_data(
-    dataset_path: str = "/u/amo-d1/grad/mha361/work/circuits/filtered_datasets/ioi",
+    dataset_path: str = "/home/exouser/circuit_pruning/data/datasets/ioi",
     split: str = "train",
     num_samples: Optional[int] = None
 ) -> List[Dict]:
@@ -364,8 +438,8 @@ def run_evaluation(
                     
                     # Calculate KL from target start position to end of valid sequence
                     if t_start < valid_length:
-                        model_logits = outputs.logits[i, t_start:t_end, :]
-                        full_logits = full_outputs.logits[i, t_start:t_end, :]
+                        model_logits = outputs.logits[i, t_start]
+                        full_logits = full_outputs.logits[i, t_start]
                         
                         kl = F.kl_div(
                             F.log_softmax(model_logits, dim=-1),

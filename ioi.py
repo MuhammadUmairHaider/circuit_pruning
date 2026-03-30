@@ -9,7 +9,7 @@ from tqdm import tqdm
 import random
 import time
 from models.gpt2_circuit import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
-from dataset.ioi import IOIDataset, load_or_generate_ioi_data, run_evaluation, filter_dataset_by_model_correctness
+from dataset.ioi import IOIDataset, generate_ioi_data, load_or_generate_ioi_data, run_evaluation, filter_dataset_by_model_correctness
 from utils import disable_dropout, analyze_and_finalize_circuit
 
 # ==============================================================================
@@ -109,11 +109,12 @@ if __name__ == '__main__':
 
     # --- Dataset Setup ---
     print("\nSetting up IOI dataset...")
-    
-    # 1. Load Raw Data
-    test_data = load_or_generate_ioi_data(split="test", num_samples=1000) 
-    train_data = load_or_generate_ioi_data(split="train", num_samples=200)
-    val_data = load_or_generate_ioi_data(split="validation", num_samples=200)
+
+    # 1. Generate data on-the-fly with proper B-appears-twice corruption
+    all_data = generate_ioi_data(num_samples=1400, tokenizer=tokenizer, seed=42)
+    train_data = all_data[:200]
+    val_data   = all_data[200:400]
+    test_data  = all_data[400:1400]
 
     # 2. Filter datasets
     print("\n--- Filtering datasets based on Base Model correctness ---")

@@ -209,7 +209,7 @@ def run_evaluation(
                 if control_logits is not None:
                     logits_ = F.log_softmax(logits[j, prefix_length-1], dim=-1)
                     control_logits_ = F.log_softmax(control_logits[j, prefix_length-1], dim=-1)
-                    kld = F.kl_div(logits_, control_logits_, reduction="sum", log_target=True)
+                    kld = F.kl_div(logits_, control_logits_, reduction="batchmean", log_target=True)
                     kl_divergence += kld.detach().cpu().item()
                 
                 # Check accuracy (exact match with argmax)

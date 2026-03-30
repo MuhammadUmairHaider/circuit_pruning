@@ -377,10 +377,10 @@ if __name__ == '__main__':
                 if t_start < end_pos:
                     circuit_logits_slice = circuit_outputs.logits[i, t_start:end_pos].float()
                     target_logits_slice = target_logits[i, t_start:end_pos].float()
-
+                    
                     kl = F.kl_div(
-                        F.log_softmax(circuit_logits_slice, dim=-1),
                         F.log_softmax(target_logits_slice, dim=-1),
+                        F.log_softmax(circuit_logits_slice, dim=-1),
                         reduction='sum',
                         log_target=True,
                     )

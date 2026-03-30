@@ -1,0 +1,36 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/9ikxnd72
+================================================================================
+  GPT-2 KL BUDGET CIRCUIT DISCOVERY
+================================================================================
+Device: cuda
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4717.39it/s]
+Model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4764.06it/s]
+Total parameters:    124495273
+Trainable (gates):   55465 (0.0446%)
+
+--- Loading IOI dataset ---
+Attempting to load dataset from: /u/amo-d1/grad/mha361/work/circuits/filtered_datasets/ioi
+Failed to load dataset from disk: Directory /u/amo-d1/grad/mha361/work/circuits/filtered_datasets/ioi not found
+Please ensure the IOI dataset is available at /u/amo-d1/grad/mha361/work/circuits/filtered_datasets/ioi
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1169, in <module>
+    train_data = load_or_generate_ioi_data(dataset_path=args.dataset_path, split="train", num_samples=NUM_TRAIN)
+  File "/home/exouser/circuit_pruning/dataset/ioi.py", line 139, in load_or_generate_ioi_data
+    dataset_dict = load_from_disk(dataset_path)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/datasets/load.py", line 1762, in load_from_disk
+    raise FileNotFoundError(f"Directory {dataset_path} not found")
+FileNotFoundError: Directory /u/amo-d1/grad/mha361/work/circuits/filtered_datasets/ioi not found
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1169, in <module>
+    train_data = load_or_generate_ioi_data(dataset_path=args.dataset_path, split="train", num_samples=NUM_TRAIN)
+  File "/home/exouser/circuit_pruning/dataset/ioi.py", line 139, in load_or_generate_ioi_data
+    dataset_dict = load_from_disk(dataset_path)
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/datasets/load.py", line 1762, in load_from_disk
+    raise FileNotFoundError(f"Directory {dataset_path} not found")
+FileNotFoundError: Directory /u/amo-d1/grad/mha361/work/circuits/filtered_datasets/ioi not found

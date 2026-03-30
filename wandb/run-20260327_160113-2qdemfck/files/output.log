@@ -1,0 +1,313 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/2qdemfck
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY (GPT-2)
+================================================================================
+Device: cuda
+Task Loss: Disabled
+W&B Logging: Enabled
+
+--- Loading models ---
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4796.97it/s]
+GPT-2 model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4439.72it/s]
+Generated 200 IOI samples
+Generated 200 IOI samples
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions:   0%|                                                                                      | 0/7 [00:00<?, ?it/s]/home/exouser/circuit_pruning/dataset/ioi.py:326: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  "target_tokens": torch.tensor(target_tokens, dtype=torch.long),
+/home/exouser/circuit_pruning/dataset/ioi.py:327: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  "distractor_tokens": torch.tensor(distractor_tokens, dtype=torch.long),
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 11.67it/s]
+  -> Retained: 197/200 (98.50%)
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 18.66it/s]
+  -> Retained: 193/200 (96.50%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 17.20it/s]
+  -> Retained: 979/1000 (97.90%)
+Processed 197 valid samples from 197 total
+Processed 193 valid samples from 193 total
+Processed 979 valid samples from 979 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 28.13it/s]
+
+Processed 979 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      3.2127
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.5000
+   Tolerance: ±0.0500
+   Acceptable range: [0.4500, 0.5500]
+   Task Loss: Disabled
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   0%|▎                                                                                         | 19/5000 [00:30<1:58:11,  1.42s/it]
+                                                                                                                                             
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  1.5194 (budget: 0.5000, gap: +1.0194)
+  Accuracy: 1.0000
+  Sparsity: 0.0233 (best: 0.0000)
+  Lambda:   1.285 → 1.346 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  1.9126 (budget: 0.5000, gap: +1.4126)
+  Accuracy: 1.0000
+  Sparsity: 0.0324 (best: 0.0000)
+  Lambda:   1.660 → 1.724 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  1.3209 (budget: 0.5000, gap: +0.8209)
+  Accuracy: 1.0000
+  Sparsity: 0.0356 (best: 0.0000)
+  Lambda:   2.046 → 2.111 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 20 | Phase: warmup
+  KL Loss:  1.6204 (budget: 0.5000, gap: +1.1204)
+  Accuracy: 1.0000
+  Sparsity: 0.0358 (best: 0.0000)
+  Lambda:   2.435 → 2.500 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 25 | Phase: warmup
+  KL Loss:  2.4470 (budget: 0.5000, gap: +1.9470)
+  Accuracy: 1.0000
+  Sparsity: 0.0360 (best: 0.0000)
+  Lambda:   2.825 → 2.890 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 30 | Phase: warmup
+  KL Loss:  1.6049 (budget: 0.5000, gap: +1.1049)
+  Accuracy: 1.0000
+  Sparsity: 0.0362 (best: 0.0000)
+  Lambda:   3.215 → 3.280 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 35 | Phase: warmup
+  KL Loss:  1.8367 (budget: 0.5000, gap: +1.3367)
+  Accuracy: 1.0000
+  Sparsity: 0.0363 (best: 0.0000)
+  Lambda:   3.605 → 3.670 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 40 | Phase: warmup
+  KL Loss:  1.5004 (budget: 0.5000, gap: +1.0004)
+  Accuracy: 1.0000
+  Sparsity: 0.0369 (best: 0.0000)
+  Lambda:   3.995 → 4.060 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 45 | Phase: warmup
+  KL Loss:  1.3870 (budget: 0.5000, gap: +0.8870)
+  Accuracy: 1.0000
+  Sparsity: 0.0377 (best: 0.0000)
+  Lambda:   4.385 → 4.450 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 50 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 50 | Phase: warmup
+  KL Loss:  2.1039 (budget: 0.5000, gap: +1.6039)
+  Accuracy: 1.0000
+  Sparsity: 0.0383 (best: 0.0000)
+  Lambda:   4.775 → 4.840 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 60 | Phase: warmup
+  KL Loss:  1.8323 (budget: 0.5000, gap: +1.3323)
+  Accuracy: 1.0000
+  Sparsity: 0.0432 (best: 0.0000)
+  Lambda:   5.490 → 5.555 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 70 | Phase: warmup
+  KL Loss:  2.1969 (budget: 0.5000, gap: +1.6969)
+  Accuracy: 1.0000
+  Sparsity: 0.0479 (best: 0.0000)
+  Lambda:   6.205 → 6.270 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 80 | Phase: warmup
+  KL Loss:  2.1434 (budget: 0.5000, gap: +1.6434)
+  Accuracy: 1.0000
+  Sparsity: 0.0536 (best: 0.0000)
+  Lambda:   6.920 → 6.985 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 90 | Phase: warmup
+  KL Loss:  3.6082 (budget: 0.5000, gap: +3.1082)
+  Accuracy: 1.0000
+  Sparsity: 0.0607 (best: 0.0000)
+  Lambda:   7.635 → 7.700 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 100 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 100 | Phase: warmup
+  KL Loss:  3.8137 (budget: 0.5000, gap: +3.3137)
+  Accuracy: 1.0000
+  Sparsity: 0.0713 (best: 0.0000)
+  Lambda:   8.350 → 8.415 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 120 | Phase: warmup
+  KL Loss:  5.9546 (budget: 0.5000, gap: +5.4546)
+  Accuracy: 1.0000
+  Sparsity: 0.0981 (best: 0.0000)
+  Lambda:   9.715 → 9.780 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 140 | Phase: warmup
+  KL Loss:  6.6874 (budget: 0.5000, gap: +6.1874)
+  Accuracy: 1.0000
+  Sparsity: 0.1327 (best: 0.0000)
+  Lambda:   11.080 → 11.145 (action: warmup)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 150 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 160 | Phase: recovery
+  KL Loss:  7.6615 (budget: 0.5000, gap: +7.1615)
+  Accuracy: 1.0000
+  Sparsity: 0.1779 (best: 0.0000)
+  Lambda:   12.445 → 9.159 (action: decrease)
+  LR:       1.00e-03
+  ⚠️  Exceeds budget
+Epoch 163: LR 1.00e-03 → 9.70e-04 | λ 4.62 → 3.14 | decrease | recovery | KL 7.916
+Epoch 164: LR 9.70e-04 → 9.17e-04 | λ 3.14 → 2.05 | decrease | recovery | KL 7.694
+Epoch 165: LR 9.17e-04 → 8.47e-04 | λ 2.05 → 1.69 | decrease_gentle | recovery | KL 7.444
+Epoch 166: LR 8.47e-04 → 7.66e-04 | λ 1.69 → 1.40 | decrease_gentle | recovery | KL 7.924
+Epoch 167: LR 7.66e-04 → 6.77e-04 | λ 1.40 → 1.16 | decrease_gentle | recovery | KL 7.802
+Epoch 168: LR 6.77e-04 → 5.87e-04 | λ 1.16 → 0.96 | decrease_gentle | recovery | KL 7.493
+Epoch 169: LR 5.87e-04 → 4.96e-04 | λ 0.96 → 0.80 | decrease_gentle | recovery | KL 7.607
+Epoch 170: LR 4.96e-04 → 4.09e-04 | λ 0.80 → 0.67 | decrease_gentle | recovery | KL 7.543
+Epoch 171: LR 4.09e-04 → 3.27e-04 | λ 0.67 → 0.56 | decrease_gentle | recovery | KL 7.945
+Epoch 172: LR 3.27e-04 → 2.52e-04 | λ 0.56 → 0.47 | decrease_gentle | recovery | KL 7.732
+Epoch 173: LR 2.52e-04 → 1.84e-04 | λ 0.47 → 0.39 | decrease_gentle | recovery | KL 7.877
+Epoch 174: LR 1.84e-04 → 1.24e-04 | λ 0.39 → 0.33 | decrease_gentle | recovery | KL 7.619
+Epoch 175: LR 1.24e-04 → 1.00e-04 | λ 0.33 → 0.28 | decrease_gentle | recovery | KL 7.645
+
+[Scheduler] Epoch 180 | Phase: recovery
+  KL Loss:  7.7986 (budget: 0.5000, gap: +7.2986)
+  Accuracy: 1.0000
+  Sparsity: 0.1935 (best: 0.0000)
+  Lambda:   0.123 → 0.106 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 200 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 200 | Phase: recovery
+  KL Loss:  7.7855 (budget: 0.5000, gap: +7.2855)
+  Accuracy: 1.0000
+  Sparsity: 0.1952 (best: 0.0000)
+  Lambda:   0.011 → 0.010 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 220 | Phase: recovery
+  KL Loss:  7.8040 (budget: 0.5000, gap: +7.3040)
+  Accuracy: 1.0000
+  Sparsity: 0.1944 (best: 0.0000)
+  Lambda:   0.002 → 0.002 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 240 | Phase: recovery
+  KL Loss:  7.6581 (budget: 0.5000, gap: +7.1581)
+  Accuracy: 1.0000
+  Sparsity: 0.1955 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 250 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 260 | Phase: recovery
+  KL Loss:  7.8451 (budget: 0.5000, gap: +7.3451)
+  Accuracy: 1.0000
+  Sparsity: 0.1945 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 280 | Phase: recovery
+  KL Loss:  7.7380 (budget: 0.5000, gap: +7.2380)
+  Accuracy: 1.0000
+  Sparsity: 0.1944 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 300 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 300 | Phase: recovery
+  KL Loss:  7.6608 (budget: 0.5000, gap: +7.1608)
+  Accuracy: 1.0000
+  Sparsity: 0.1941 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 320 | Phase: recovery
+  KL Loss:  7.7661 (budget: 0.5000, gap: +7.2661)
+  Accuracy: 1.0000
+  Sparsity: 0.1945 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 340 | Phase: recovery
+  KL Loss:  7.7858 (budget: 0.5000, gap: +7.2858)
+  Accuracy: 1.0000
+  Sparsity: 0.1947 (best: 0.0000)
+  Lambda:   0.001 → 0.001 (action: decrease_gentle)
+  LR:       1.00e-04
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 350 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1544, in <module>
+    t_start = batch['T_Start'][i].item() - 1
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1544, in <module>
+    t_start = batch['T_Start'][i].item() - 1
+KeyboardInterrupt

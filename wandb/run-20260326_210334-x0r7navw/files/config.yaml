@@ -1,0 +1,105 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            h3c5yyjvcveg9v5kn49trvw11z6kl2dr:
+                args:
+                    - --model
+                    - gpt2
+                    - --kl-budget
+                    - "0.5"
+                    - --min-lr
+                    - "1e-3"
+                    - --max-lr
+                    - "1e-2"
+                    - --no-early-stopping
+                    - --epochs
+                    - "5000"
+                    - --save-dir
+                    - ./results/ioi_kl_budget_gpt2_0.5kl
+                    - --wandb
+                    - --wandb-project
+                    - circuit-discovery
+                    - --wandb-name
+                    - ioi-gpt2-With-Blocks
+                    - --no-early-stopping
+                    - --use-task-loss
+                codePath: ioi_gpt2_kl_budget.py
+                codePathLocal: ioi_gpt2_kl_budget.py
+                cpu_count: 32
+                cpu_count_logical: 32
+                cudaVersion: "13.0"
+                disk:
+                    /:
+                        total: "518933680128"
+                        used: "55716212736"
+                email: muhammadumairhaider@gmail.com
+                executable: /home/exouser/circuit_pruning/.venv/bin/python
+                git:
+                    commit: 3b203a9eb8327fc3673fa3fc0fcf05fc9048e217
+                    remote: https://github.com/MuhammadUmairHaider/circuit_pruning.git
+                gpu: NVIDIA A100-SXM4-40GB
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-SXM4-40GB
+                      uuid: GPU-c60a64bb-a645-a662-87c7-0fa18df0c65f
+                host: circuits
+                memory:
+                    total: "123626684416"
+                os: Linux-6.17.0-19-generic-x86_64-with-glibc2.39
+                program: /home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py
+                python: CPython 3.10.20
+                root: /home/exouser/circuit_pruning
+                startedAt: "2026-03-26T21:03:34.717480Z"
+                writerId: h3c5yyjvcveg9v5kn49trvw11z6kl2dr
+        m: []
+        python_version: 3.10.20
+        t:
+            "1":
+                - 1
+                - 11
+                - 49
+                - 51
+            "2":
+                - 1
+                - 11
+                - 49
+                - 51
+            "3":
+                - 13
+                - 15
+                - 16
+            "4": 3.10.20
+            "5": 0.25.1
+            "6": 5.3.0
+            "12": 0.25.1
+            "13": linux-x86_64
+adaptive_lr:
+    value: true
+base_lr:
+    value: 0.001
+batch_size:
+    value: 32
+component_adaptation:
+    value: true
+initial_lambda:
+    value: 2
+kl_budget:
+    value: 0.5
+kl_tolerance:
+    value: 0.05
+lambda_add_inc:
+    value: 0.08
+lambda_mult_dec:
+    value: 0.85
+min_lambda:
+    value: 0.001
+model:
+    value: gpt2
+task_lambda:
+    value: 1
+use_task_loss:
+    value: true

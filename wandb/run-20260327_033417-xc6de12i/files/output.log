@@ -1,0 +1,242 @@
+🔗 W&B run: https://wandb.ai/multifacetednlp/circuit-discovery/runs/xc6de12i
+================================================================================
+  KL BUDGET CIRCUIT DISCOVERY (GPT-2)
+================================================================================
+Device: cuda
+Task Loss: Enabled (λ=1.0)
+W&B Logging: Enabled
+
+--- Loading models ---
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4747.05it/s]
+GPT-2 model successfully adapted for pruning with block-level gates.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████| 148/148 [00:00<00:00, 4586.38it/s]
+Generated 200 IOI samples
+Generated 200 IOI samples
+Generated 1000 IOI samples
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions:   0%|                                                                                      | 0/7 [00:00<?, ?it/s]/home/exouser/circuit_pruning/dataset/ioi.py:326: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  "target_tokens": torch.tensor(target_tokens, dtype=torch.long),
+/home/exouser/circuit_pruning/dataset/ioi.py:327: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  "distractor_tokens": torch.tensor(distractor_tokens, dtype=torch.long),
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00,  8.47it/s]
+  -> Retained: 196/200 (98.00%)
+Filtering 200 samples for base model correctness...
+Processed 200 valid samples from 200 total
+Checking model predictions: 100%|██████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 18.72it/s]
+  -> Retained: 194/200 (97.00%)
+Filtering 1000 samples for base model correctness...
+Processed 1000 valid samples from 1000 total
+Checking model predictions: 100%|████████████████████████████████████████████████████████████████████████████| 32/32 [00:01<00:00, 17.20it/s]
+  -> Retained: 977/1000 (97.70%)
+Processed 196 valid samples from 196 total
+Processed 194 valid samples from 194 total
+Processed 977 valid samples from 977 total
+
+--- Baseline evaluation ---
+
+==================================================
+  EVALUATING: Baseline
+==================================================
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 28.12it/s]
+
+Processed 977 valid samples.
+
+==================================================
+Baseline Evaluation Summary:
+  - Accuracy:              1.0000
+  - Logit Difference:      3.2880
+==================================================
+🎯 Baseline: 1.0000
+
+🎯 Mode: KL BUDGET CONSTRAINT (Adaptive AIMD Strategy)
+   KL Budget: 0.5000
+   Tolerance: ±0.0500
+   Acceptable range: [0.4500, 0.5500]
+   Task Loss: Enabled (λ=1.0)
+   AIMD: Additive increase=0.0500, Multiplicative decrease=0.75
+   Adaptive LR: Enabled
+   Component Adaptation: Enabled
+   Will maximize sparsity within this KL budget
+
+🚀 Caching full model outputs...
+
+================================================================================
+  TRAINING
+================================================================================
+Training:   0%|                                                                                        | 19/50000 [00:30<19:56:34,  1.44s/it]
+                                                                                                                                             
+
+
+[Scheduler] Epoch 5 | Phase: warmup
+  KL Loss:  1.4184 (budget: 0.5000, gap: +0.9184)
+  Accuracy: 1.0000
+  Sparsity: 0.0391 (best: 0.0000)
+  Lambda:   1.285 → 1.346 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.8480 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 10 | Phase: warmup
+  KL Loss:  1.8352 (budget: 0.5000, gap: +1.3352)
+  Accuracy: 1.0000
+  Sparsity: 0.0371 (best: 0.0000)
+  Lambda:   1.660 → 1.724 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.7462 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 15 | Phase: warmup
+  KL Loss:  1.7620 (budget: 0.5000, gap: +1.2620)
+  Accuracy: 1.0000
+  Sparsity: 0.0361 (best: 0.0000)
+  Lambda:   2.046 → 2.111 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.6444 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 20 | Phase: warmup
+  KL Loss:  1.4895 (budget: 0.5000, gap: +0.9895)
+  Accuracy: 1.0000
+  Sparsity: 0.0359 (best: 0.0000)
+  Lambda:   2.435 → 2.500 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.5426 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 25 | Phase: warmup
+  KL Loss:  1.3390 (budget: 0.5000, gap: +0.8390)
+  Accuracy: 1.0000
+  Sparsity: 0.0361 (best: 0.0000)
+  Lambda:   2.825 → 2.890 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.4408 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 30 | Phase: warmup
+  KL Loss:  1.8019 (budget: 0.5000, gap: +1.3019)
+  Accuracy: 1.0000
+  Sparsity: 0.0359 (best: 0.0000)
+  Lambda:   3.215 → 3.280 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.3390 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 35 | Phase: warmup
+  KL Loss:  1.8080 (budget: 0.5000, gap: +1.3080)
+  Accuracy: 1.0000
+  Sparsity: 0.0364 (best: 0.0000)
+  Lambda:   3.605 → 3.670 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.2372 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 40 | Phase: warmup
+  KL Loss:  1.6336 (budget: 0.5000, gap: +1.1336)
+  Accuracy: 1.0000
+  Sparsity: 0.0372 (best: 0.0000)
+  Lambda:   3.995 → 4.060 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.1353 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 45 | Phase: warmup
+  KL Loss:  1.4385 (budget: 0.5000, gap: +0.9385)
+  Accuracy: 1.0000
+  Sparsity: 0.0372 (best: 0.0000)
+  Lambda:   4.385 → 4.450 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0335 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 50 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 50 | Phase: warmup
+  KL Loss:  1.8475 (budget: 0.5000, gap: +1.3475)
+  Accuracy: 1.0000
+  Sparsity: 0.0371 (best: 0.0000)
+  Lambda:   4.775 → 4.840 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 60 | Phase: warmup
+  KL Loss:  1.6222 (budget: 0.5000, gap: +1.1222)
+  Accuracy: 1.0000
+  Sparsity: 0.0415 (best: 0.0000)
+  Lambda:   5.490 → 5.555 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 70 | Phase: warmup
+  KL Loss:  2.0453 (budget: 0.5000, gap: +1.5453)
+  Accuracy: 1.0000
+  Sparsity: 0.0445 (best: 0.0000)
+  Lambda:   6.205 → 6.270 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 80 | Phase: warmup
+  KL Loss:  2.4354 (budget: 0.5000, gap: +1.9354)
+  Accuracy: 1.0000
+  Sparsity: 0.0493 (best: 0.0000)
+  Lambda:   6.920 → 6.985 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+
+[Scheduler] Epoch 90 | Phase: warmup
+  KL Loss:  3.1621 (budget: 0.5000, gap: +2.6621)
+  Accuracy: 1.0000
+  Sparsity: 0.0545 (best: 0.0000)
+  Lambda:   7.635 → 7.700 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+[Checkpoint] Saved at epoch 100 -> checkpoints_gpt2_kl_budget/checkpoint.pt
+
+[Scheduler] Epoch 100 | Phase: warmup
+  KL Loss:  2.8104 (budget: 0.5000, gap: +2.3104)
+  Accuracy: 1.0000
+  Sparsity: 0.0633 (best: 0.0000)
+  Lambda:   8.350 → 8.415 (action: warmup)
+  LR:       1.00e-03
+  TaskLambda: 0.0000 (adaptive, target=0.900)
+  ⚠️  Exceeds budget
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1529, in <module>
+    for batch_idx, batch in enumerate(train_dataloader):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 741, in __next__
+    data = self._next_data()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 801, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 54, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 54, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/exouser/circuit_pruning/dataset/ioi.py", line 291, in __getitem__
+    inputs = self.tokenizer(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 2490, in __call__
+    encodings = self._encode_plus(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_tokenizers.py", line 924, in _encode_plus
+    encodings = self._tokenizer.encode_batch(
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/exouser/circuit_pruning/ioi_gpt2_kl_budget.py", line 1529, in <module>
+    for batch_idx, batch in enumerate(train_dataloader):
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 741, in __next__
+    data = self._next_data()
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 801, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 54, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 54, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/exouser/circuit_pruning/dataset/ioi.py", line 291, in __getitem__
+    inputs = self.tokenizer(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_base.py", line 2490, in __call__
+    encodings = self._encode_plus(
+  File "/home/exouser/circuit_pruning/.venv/lib/python3.10/site-packages/transformers/tokenization_utils_tokenizers.py", line 924, in _encode_plus
+    encodings = self._tokenizer.encode_batch(
+KeyboardInterrupt
