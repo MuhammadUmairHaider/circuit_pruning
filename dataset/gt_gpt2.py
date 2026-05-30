@@ -263,7 +263,8 @@ def run_evaluation(model_to_eval, model_name: str, full_model_for_faithfulness: 
         print(f"Non-Windowed Avg Prob Diff:        {sum(all_prob_diffs_global) / len(all_prob_diffs_global) if all_prob_diffs_global else 0:.4f}")
         print("="*50)
     
-    return {"prob_diff": avg_pd, "cutoff_sharpness": avg_cs, "kl_div": avg_kl}
+    avg_accuracy = accuracy / n if n > 0 else 0.0
+    return {"prob_diff": avg_pd, "cutoff_sharpness": avg_cs, "kl_div": avg_kl, "accuracy": avg_accuracy}
 
 from torch.utils.data import DataLoader
 def filter_dataset_by_model_correctness(data_list, model, tokenizer, device, two_digit_tokens, batch_size=32):

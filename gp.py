@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
-from models.gpt2_test_copy import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
+from models.gpt2_circuit import PrunableGPT2LMHeadModel as CircuitDiscoveryGPT2, GPT2LMHeadModel, PruningConfig
 from dataset.gp import GPDataset, load_or_generate_gp_data, run_evaluation, filter_dataset_by_model_correctness
 
 import torch
@@ -104,7 +104,56 @@ from dataclasses import dataclass
 #     lambda_full_layers: float = 0.000000005 * PRUNING_FACTOR
 
 
-PRUNING_FACTOR = 0.01  # Keep this at 1.0 to keep math simple
+# PRUNING_FACTOR = 0.01  # Keep this at 1.0 to keep math simple
+
+# @dataclass
+# class PruningConfig:
+#     # Start with gates FULLY OPEN (log_alpha > 0) so gradient flows immediately
+#     init_value: float = 0.5 
+    
+#     # CRITICAL: Don't prune for the first ~5-10 epochs
+#     sparsity_warmup_steps: int = 1000 
+
+#     # --- Lambdas ---
+#     # These values are tuned for GPT-2 Small scale.
+#     # If a lambda is too high, the gate dies instantly (instability).
+#     # If too low, it never closes.
+    
+#     depth_penalty_scaling: float = 0.1
+    
+#     # 1. Heads: Moderate cost. We want to remove many, but they are useful.
+#     prune_attention_heads: bool = True
+#     lambda_attention_heads: float = 0.8 
+
+#     # 2. Neurons (Hidden): There are 3072 of them. 
+#     # Individual neurons are weak. The penalty must be small, or you kill them all.
+#     prune_mlp_hidden: bool = True
+#     lambda_mlp_hidden: float = 1.0  # Much lower than 25.0!
+
+#     # 3. MLP Output (Residual): This is a "strong" cut.
+#     prune_mlp_output: bool = True
+#     lambda_mlp_output: float = 1.0 
+    
+#     # 4. Attention Neurons: 
+#     prune_attention_neurons: bool = True
+#     lambda_attention_neurons: float = 0.15
+
+#     # Structure pruning (Blocks/Layers)
+#     # Usually easier to prune fine-grained first, then structure.
+#     prune_attention_blocks: bool = True
+#     lambda_attention_blocks: float = 0.5
+    
+#     prune_mlp_blocks: bool = True
+#     lambda_mlp_blocks: float = 0.5 
+    
+#     prune_full_layers: bool = False
+#     lambda_full_layers: float = 0.0
+    
+#     prune_embedding: bool = False
+#     lambda_embedding: float = 1 * PRUNING_FACTOR
+
+
+PRUNING_FACTOR = 1.0  # Keep this at 1.0 to keep math simple
 
 @dataclass
 class PruningConfig:
@@ -119,11 +168,11 @@ class PruningConfig:
     # If a lambda is too high, the gate dies instantly (instability).
     # If too low, it never closes.
     
-    depth_penalty_scaling: float = 0.1
+    depth_penalty_scaling: float = 0.0
     
     # 1. Heads: Moderate cost. We want to remove many, but they are useful.
     prune_attention_heads: bool = True
-    lambda_attention_heads: float = 0.8 
+    lambda_attention_heads: float = 1.0 
 
     # 2. Neurons (Hidden): There are 3072 of them. 
     # Individual neurons are weak. The penalty must be small, or you kill them all.
@@ -136,15 +185,15 @@ class PruningConfig:
     
     # 4. Attention Neurons: 
     prune_attention_neurons: bool = True
-    lambda_attention_neurons: float = 0.15
+    lambda_attention_neurons: float = 1.0
 
     # Structure pruning (Blocks/Layers)
     # Usually easier to prune fine-grained first, then structure.
     prune_attention_blocks: bool = True
-    lambda_attention_blocks: float = 0.5
+    lambda_attention_blocks: float = 1.0
     
     prune_mlp_blocks: bool = True
-    lambda_mlp_blocks: float = 0.5 
+    lambda_mlp_blocks: float = 2.0 
     
     prune_full_layers: bool = False
     lambda_full_layers: float = 0.0
@@ -158,7 +207,7 @@ if __name__ == '__main__':
     # --- Configuration ---
     MODEL_NAME = 'gpt2'
     NUM_EPOCHS = 500
-    LEARNING_RATE = 3e-2
+    LEARNING_RATE = 3e-1
     BATCH_SIZE = 64  # Matching the reference implementation
     MAX_SEQ_LEN = 32
     ACCURACY_BUDGET = 0.05  # Allow 5% accuracy drop from baseline
@@ -360,13 +409,13 @@ if __name__ == '__main__':
                 batch['prefix_length'] - 1, 
                 batch['distractor_token']
             ]
-            task_loss = F.relu(4.0 - (logit_good - logit_bad)).mean()
+            task_loss = F.relu(0.1 - (logit_good - logit_bad)).mean()
             
             kl_loss = total_kl / batch_size
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
-            
+            lambda_sparsity = 0.70
             # Total loss
-            loss = kl_loss*4.0 + sparsity_loss# + task_loss
+            loss = (1-lambda_sparsity)*(kl_loss + task_loss) + lambda_sparsity * sparsity_loss
             loss.backward()
             torch.nn.utils.clip_grad_norm_(gate_params, max_norm=1.0)
             optimizer.step()

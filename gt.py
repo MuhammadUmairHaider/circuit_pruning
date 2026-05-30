@@ -80,11 +80,11 @@ class PruningConfig:
     # If a lambda is too high, the gate dies instantly (instability).
     # If too low, it never closes.
     
-    depth_penalty_scaling: float = 0.1
+    depth_penalty_scaling: float = 0.0
     
     # 1. Heads: Moderate cost. We want to remove many, but they are useful.
     prune_attention_heads: bool = True
-    lambda_attention_heads: float = 1.0 
+    lambda_attention_heads: float = 0.0
 
     # 2. Neurons (Hidden): There are 3072 of them. 
     # Individual neurons are weak. The penalty must be small, or you kill them all.
@@ -97,15 +97,15 @@ class PruningConfig:
     
     # 4. Attention Neurons: 
     prune_attention_neurons: bool = True
-    lambda_attention_neurons: float = 0.15
+    lambda_attention_neurons: float = 1.0
 
     # Structure pruning (Blocks/Layers)
     # Usually easier to prune fine-grained first, then structure.
     prune_attention_blocks: bool = True
-    lambda_attention_blocks: float = 0.5
+    lambda_attention_blocks: float = 1.0
     
     prune_mlp_blocks: bool = True
-    lambda_mlp_blocks: float = 0.7 
+    lambda_mlp_blocks: float = 1.0 
     
     prune_full_layers: bool = False
     lambda_full_layers: float = 0.0
@@ -121,7 +121,7 @@ class PruningConfig:
 if __name__ == '__main__':
     # --- Configuration ---
     # (Same as before)
-    MODEL_NAME = 'gpt2-xl'
+    MODEL_NAME = 'gpt2'
     NUM_EPOCHS = 250
     LEARNING_RATE = 5e-2
     BATCH_SIZE = 16
@@ -295,10 +295,8 @@ if __name__ == '__main__':
             )
             
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
-            
-            # Weighted loss
-            kl_loss_weighted = kl_loss * 10.0
-            loss = kl_loss_weighted + sparsity_loss
+            lambda_sparsity = 0.90
+            loss = (1-lambda_sparsity)*(kl_loss) + lambda_sparsity * sparsity_loss
             loss.backward()
             torch.nn.utils.clip_grad_norm_(gate_params, max_norm=1.0)
             optimizer.step()

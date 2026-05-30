@@ -17,7 +17,7 @@ from utils import disable_dropout, analyze_and_finalize_circuit
 # ==============================================================================
 from dataclasses import dataclass
 
-PRUNING_FACTOR = 1.5#2.5
+PRUNING_FACTOR = 25
 @dataclass
 class PruningConfig:
     # Start with gates FULLY OPEN (log_alpha > 0) so gradient flows immediately
@@ -239,7 +239,7 @@ if __name__ == '__main__':
             sparsity_loss = circuit_model.get_sparsity_loss(step=total_steps)['total_sparsity']
             
             # Total loss
-            loss = kl_loss*1.5 + sparsity_loss# + task_loss
+            loss = kl_loss*1.5 + sparsity_loss + task_loss
             loss.backward()
             optimizer.step()
             

@@ -1,9 +1,19 @@
 /data/
 *.pt
-/__pycache__/
 /checkpoints_*
-*/__pycache__/
-/models/__pycache__/
-/dataset/__pycache__/
-/utils/__pycache__/hf_tokken.txt
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Tokens / secrets
 hf_tokken.txt
+
+# Experiment tracking
+wandb/
+
+# External baseline repos & large checkpoints
+baselines/
+
+# Large data archives
+*.zip
